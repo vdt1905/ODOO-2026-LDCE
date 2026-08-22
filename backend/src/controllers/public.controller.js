@@ -3,7 +3,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 import { escapeRegex } from '../utils/escapeRegex.js';
-import { buildBudget } from '../services/budget.service.js';
+import { buildBudget, estimateTripCosts } from '../services/budget.service.js';
 import { buildItinerary } from '../services/itinerary.service.js';
 
 /**
@@ -107,48 +107,20 @@ export const listPublicTrips = asyncHandler(async (req, res) => {
     Trip.countDocuments(filter),
   ]);
 
-  const ids = trips.map((trip) => trip._id);
-
-  // Destination chips and costs for the whole page in two grouped queries.
-  const [stopRows, costRows] = await Promise.all([
-    Stop.aggregate([
-      { $match: { trip: { $in: ids } } },
-      { $sort: { order: 1 } },
-      { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'city' } },
-      { $unwind: { path: '$city', preserveNullAndEmptyArrays: true } },
-      {
-        $group: {
-          _id: '$trip',
-          count: { $sum: 1 },
-          cities: { $push: '$city.name' },
-          transport: { $sum: '$transportCost' },
-          stay: { $sum: '$accommodationCost' },
-        },
-      },
-    ]),
-    TripActivity.aggregate([
-      { $match: { trip: { $in: ids } } },
-      { $group: { _id: '$trip', count: { $sum: 1 }, cost: { $sum: '$cost' } } },
-    ]),
-  ]);
-
-  const stopsBy = Object.fromEntries(stopRows.map((row) => [String(row._id), row]));
-  const costBy = Object.fromEntries(costRows.map((row) => [String(row._id), row]));
+  // Same shared estimator as the trip list — the feed used to omit meals,
+  // which understated every published trip.
+  const costs = await estimateTripCosts(trips.map((trip) => trip._id));
 
   const items = trips.map((trip) => {
-    const stopRow = stopsBy[String(trip._id)];
-    const costRow = costBy[String(trip._id)];
-
+    const cost = costs.get(String(trip._id));
     return {
       ...publicTripSummary(trip),
       owner: publicOwner(trip.user),
-      stopCount: stopRow?.count || 0,
-      cities: (stopRow?.cities || []).filter(Boolean),
-      activityCount: costRow?.count || 0,
-      estimatedCost:
-        Math.round(
-          ((stopRow?.transport || 0) + (stopRow?.stay || 0) + (costRow?.cost || 0)) * 100
-        ) / 100,
+      stopCount: cost.stopCount,
+      activityCount: cost.activityCount,
+      cities: cost.cities,
+      countries: cost.countries,
+      estimatedCost: cost.estimatedCost,
     };
   });
 

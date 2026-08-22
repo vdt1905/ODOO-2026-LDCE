@@ -6,7 +6,7 @@ import { addDays, differenceInDays, startOfUTCDay } from '../utils/dates.js';
 import { escapeRegex } from '../utils/escapeRegex.js';
 import { publicSlug } from '../utils/slug.js';
 import { deleteTripCascade, loadOwnedTrip, loadTripGraph } from '../services/trip.service.js';
-import { buildBudget } from '../services/budget.service.js';
+import { buildBudget, estimateTripCosts } from '../services/budget.service.js';
 import { buildItinerary } from '../services/itinerary.service.js';
 import { copyTrip } from '../services/copyTrip.service.js';
 import { deleteImage, uploadImage } from '../services/upload.service.js';
@@ -62,52 +62,29 @@ export const listTrips = asyncHandler(async (req, res) => {
     Trip.countDocuments(filter),
   ]);
 
-  // One grouped query each — stops (with city names, for the card's "Paris,
-  // Rome" line) and activity costs — rather than N queries inside a map.
-  const ids = trips.map((trip) => trip._id);
-  const [stops, activityCounts] = await Promise.all([
-    Stop.find({ trip: { $in: ids } })
-      .select('trip city order startDate endDate transportCost accommodationCost mealBudgetPerDay')
-      .sort('order')
-      .populate('city', 'name')
-      .lean(),
-    TripActivity.aggregate([
-      { $match: { trip: { $in: ids } } },
-      { $group: { _id: '$trip', count: { $sum: 1 }, cost: { $sum: '$cost' } } },
-    ]),
-  ]);
-
-  const stopsBy = new Map();
-  stops.forEach((stop) => {
-    const key = String(stop.trip);
-    if (!stopsBy.has(key)) stopsBy.set(key, []);
-    stopsBy.get(key).push(stop);
-  });
-  const actsBy = Object.fromEntries(activityCounts.map((row) => [String(row._id), row]));
+  // One shared estimator for the whole page — same maths as /budget, so a card
+  // and the budget screen can never show different numbers.
+  const costs = await estimateTripCosts(trips.map((trip) => trip._id));
 
   const items = trips.map((trip) => {
-    const tripStops = stopsBy.get(String(trip._id)) || [];
-    // Same formula as budget.service.js's `total`, minus the day-by-day spread
-    // a list card has no use for — so this figure never disagrees with the
-    // budget screen for the same trip.
-    const stopCost = tripStops.reduce((sum, stop) => {
-      const nights = Math.max(0, differenceInDays(stop.endDate, stop.startDate));
-      return (
-        sum + (stop.transportCost || 0) + (stop.accommodationCost || 0) + (stop.mealBudgetPerDay || 0) * nights
-      );
-    }, 0);
-    const activityCost = actsBy[String(trip._id)]?.cost || 0;
-
+    const cost = costs.get(String(trip._id));
     return {
       ...trip,
       status: statusOf(trip),
-      stopCount: tripStops.length,
-      cityNames: tripStops.map((stop) => stop.city?.name).filter(Boolean),
-      activityCount: actsBy[String(trip._id)]?.count || 0,
-      plannedCost: activityCost,
-      estimatedTotal: Math.round((stopCost + activityCost) * 100) / 100,
       days: differenceInDays(trip.endDate, trip.startDate) + 1,
       nights: differenceInDays(trip.endDate, trip.startDate),
+      stopCount: cost.stopCount,
+      activityCount: cost.activityCount,
+      cities: cost.cities,
+      countries: cost.countries,
+      // Full four-category total, not just activities.
+      estimatedCost: cost.estimatedCost,
+      costBreakdown: {
+        transport: cost.transport,
+        stay: cost.stay,
+        meals: cost.meals,
+        activities: cost.activities,
+      },
     };
   });
 
@@ -116,57 +93,68 @@ export const listTrips = asyncHandler(async (req, res) => {
   });
 });
 
-/** GET /trips/stats — totals for the dashboard's budget strip, unfiltered by list controls. */
-export const tripStats = asyncHandler(async (req, res) => {
-  const trips = await Trip.find({ user: req.user._id })
-    .select('name startDate endDate currency')
-    .lean();
+/**
+ * GET /trips/summary — the dashboard's "budget highlights" and quick counts.
+ *
+ * One call for the whole home screen: totals across every trip, the next trip
+ * up, and a per-status breakdown. Without this the dashboard would have to hit
+ * /trips/:id/budget once per trip.
+ */
+export const tripsSummary = asyncHandler(async (req, res) => {
+  const trips = await Trip.find({ user: req.user._id }).lean();
+  const costs = await estimateTripCosts(trips.map((trip) => trip._id));
 
-  const ids = trips.map((trip) => trip._id);
-  const [stops, activityCosts] = await Promise.all([
-    Stop.find({ trip: { $in: ids } })
-      .select('city startDate endDate transportCost accommodationCost mealBudgetPerDay')
-      .lean(),
-    TripActivity.aggregate([{ $match: { trip: { $in: ids } } }, { $group: { _id: null, cost: { $sum: '$cost' } } }]),
-  ]);
+  const round2 = (value) => Math.round((Number(value) || 0) * 100) / 100;
 
-  // "Planned spend" must match the sum of the cards below it, so it uses the
-  // same stop-cost formula as listTrips rather than counting activities alone.
-  const stopCost = stops.reduce((sum, stop) => {
-    const nights = Math.max(0, differenceInDays(stop.endDate, stop.startDate));
-    return sum + (stop.transportCost || 0) + (stop.accommodationCost || 0) + (stop.mealBudgetPerDay || 0) * nights;
-  }, 0);
-  const cityCount = new Set(stops.map((stop) => String(stop.city))).size;
+  const totals = { transport: 0, stay: 0, meals: 0, activities: 0 };
+  const byStatus = { upcoming: 0, ongoing: 0, completed: 0 };
+  let totalPlanned = 0;
+  let totalDays = 0;
+  const visited = new Set();
 
-  let upcomingCount = 0;
-  let ongoingCount = 0;
-  let completedCount = 0;
-  let nextTrip = null;
-
-  trips.forEach((trip) => {
+  const enriched = trips.map((trip) => {
+    const cost = costs.get(String(trip._id));
     const status = statusOf(trip);
-    if (status === 'upcoming') {
-      upcomingCount += 1;
-      if (!nextTrip || trip.startDate < nextTrip.startDate) nextTrip = trip;
-    } else if (status === 'ongoing') {
-      ongoingCount += 1;
-    } else {
-      completedCount += 1;
-    }
+
+    byStatus[status] += 1;
+    totalPlanned += cost.estimatedCost;
+    totalDays += differenceInDays(trip.endDate, trip.startDate) + 1;
+    cost.cities.forEach((city) => visited.add(city));
+    Object.keys(totals).forEach((key) => {
+      totals[key] = round2(totals[key] + cost[key]);
+    });
+
+    return { trip, cost, status };
   });
+
+  // Soonest trip that has not finished yet.
+  const next = enriched
+    .filter((row) => row.status !== 'completed')
+    .sort((a, b) => new Date(a.trip.startDate) - new Date(b.trip.startDate))[0];
 
   return sendSuccess(res, {
     data: {
-      stats: {
-        tripCount: trips.length,
-        upcomingCount,
-        ongoingCount,
-        completedCount,
-        cityCount,
-        plannedTotal: Math.round((stopCost + (activityCosts[0]?.cost || 0)) * 100) / 100,
-        currency: trips[0]?.currency || 'USD',
-        nextTrip: nextTrip ? { name: nextTrip.name, startDate: nextTrip.startDate } : null,
-      },
+      tripCount: trips.length,
+      byStatus,
+      citiesPlanned: visited.size,
+      totalDaysPlanned: totalDays,
+      totalPlannedCost: round2(totalPlanned),
+      avgTripCost: trips.length ? round2(totalPlanned / trips.length) : 0,
+      byCategory: totals,
+      nextTrip: next
+        ? {
+            _id: String(next.trip._id),
+            name: next.trip.name,
+            startDate: next.trip.startDate,
+            endDate: next.trip.endDate,
+            coverPhotoUrl: next.trip.coverPhotoUrl,
+            currency: next.trip.currency,
+            status: next.status,
+            daysUntil: differenceInDays(next.trip.startDate, new Date()),
+            estimatedCost: next.cost.estimatedCost,
+            cities: next.cost.cities,
+          }
+        : null,
     },
   });
 });

@@ -20,8 +20,8 @@ router.use(requireAuth);
 router.get('/', validate(listTripsQuerySchema, 'query'), tripController.listTrips);
 router.post('/', validate(createTripSchema), tripController.createTrip);
 
-// Must come before /:tripId — otherwise Express matches "stats" as a tripId param.
-router.get('/stats', tripController.tripStats);
+// Before '/:tripId', or 'summary' is matched as a trip id.
+router.get('/summary', tripController.tripsSummary);
 
 router.get('/:tripId', tripController.getTrip);
 router.patch('/:tripId', validate(updateTripSchema), tripController.updateTrip);

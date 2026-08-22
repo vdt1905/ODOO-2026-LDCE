@@ -3,7 +3,12 @@ import * as userController from '../controllers/user.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { requireFile, uploadSingleImage } from '../middleware/upload.middleware.js';
-import { updateProfileSchema } from '../validators/user.validator.js';
+import { authLimiter } from '../middleware/rateLimit.middleware.js';
+import {
+  changePasswordSchema,
+  deleteAccountSchema,
+  updateProfileSchema,
+} from '../validators/user.validator.js';
 
 const router = Router();
 
@@ -11,6 +16,20 @@ const router = Router();
 router.use(requireAuth);
 
 router.patch('/me', validate(updateProfileSchema), userController.updateMe);
+
+// Credential changes share the tighter auth rate limit.
+router.post(
+  '/me/password',
+  authLimiter,
+  validate(changePasswordSchema),
+  userController.changePassword
+);
+router.delete('/me', authLimiter, validate(deleteAccountSchema), userController.deleteMe);
+
+// Saved destinations (PDF feature 12)
+router.get('/me/saved', userController.listSavedDestinations);
+router.post('/me/saved/:cityId', userController.saveDestination);
+router.delete('/me/saved/:cityId', userController.unsaveDestination);
 
 router.patch(
   '/me/avatar',

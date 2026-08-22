@@ -6,7 +6,8 @@ const email = z
   .toLowerCase()
   .email('Enter a valid email address');
 
-const password = z
+/** Exported so the profile screen's change-password flow enforces the same rules. */
+export const strongPassword = z
   .string({ required_error: 'Password is required' })
   .min(8, 'Password must be at least 8 characters')
   .max(72, 'Password is too long')
@@ -24,7 +25,7 @@ export const registerSchema = z.object({
   firstName: name('First name'),
   lastName: name('Last name'),
   email,
-  password,
+  password: strongPassword,
   phone: z.string().trim().max(20).optional().default(''),
   city: z.string().trim().max(80).optional().default(''),
   country: z.string().trim().max(80).optional().default(''),
@@ -41,5 +42,5 @@ export const forgotPasswordSchema = z.object({ email });
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(1, 'Reset token is required'),
-  password,
+  password: strongPassword,
 });

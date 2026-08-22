@@ -1,6 +1,7 @@
 import json
 import re
 
+from bson import ObjectId
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from app import db
@@ -9,6 +10,11 @@ from app.groq_client import get_chat_model
 from app.sarvam_client import identify_language, language_name
 
 MAX_RETRIES = 1
+
+# Internal/binary Mongo fields the LLM never needs. Everything else on a city/activity
+# document — including any new field you add later, like a longer `description` — is
+# passed through automatically, so the catalog schema can grow without touching this file.
+_EXCLUDE_FIELDS = {"_id", "imageUrl", "__v", "createdAt", "updatedAt"}
 
 SYSTEM_PROMPT = """You are the trip-planning assistant for GlobeTrotter, a multi-city travel \
 itinerary app. Given a traveler's request and a catalog context pulled from the app's own \
@@ -40,6 +46,16 @@ async def identify_language_node(state: SuggestionState) -> dict:
     return {"language_code": result["language_code"], "script_code": result["script_code"]}
 
 
+def _serialize_catalog_doc(doc: dict, extra_exclude: frozenset = frozenset()) -> dict:
+    return {
+        key: value
+        for key, value in doc.items()
+        if key not in _EXCLUDE_FIELDS
+        and key not in extra_exclude
+        and not isinstance(value, ObjectId)
+    }
+
+
 async def fetch_context_node(state: SuggestionState) -> dict:
     context: dict = {}
 
@@ -50,15 +66,13 @@ async def fetch_context_node(state: SuggestionState) -> dict:
             context["trip"] = trip_context
 
     cities = await db.search_cities([state["prompt"]], limit=5)
-    context["cities"] = [
-        {"name": c["name"], "country": c["country"], "costIndex": c.get("costIndex")}
-        for c in cities
-    ]
+    city_name_by_id = {c["_id"]: c["name"] for c in cities}
+    context["cities"] = [_serialize_catalog_doc(c) for c in cities]
 
-    city_ids = [c["_id"] for c in cities]
-    activities = await db.search_activities(city_ids, [state["prompt"]], limit=8)
+    activities = await db.search_activities(list(city_name_by_id.keys()), [state["prompt"]], limit=8)
     context["activities"] = [
-        {"name": a["name"], "type": a.get("type"), "cost": a.get("cost")} for a in activities
+        {**_serialize_catalog_doc(a, extra_exclude=frozenset({"city"})), "city": city_name_by_id.get(a.get("city"))}
+        for a in activities
     ]
 
     return {"context": context}

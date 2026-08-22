@@ -7,9 +7,7 @@ import { NAV_LINKS, ROUTES } from '../../lib/constants.js';
 import { useAuthStore } from '../../store/authStore.js';
 import { Button } from '../ui/Button.jsx';
 import { Logo } from '../ui/Logo.jsx';
-
-const initials = (user) =>
-  `${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`.toUpperCase() || 'GT';
+import { Avatar } from '../ui/Avatar.jsx';
 
 /**
  * Floating pill navigation.
@@ -94,9 +92,7 @@ export const Navbar = ({ floating = false }) => {
                   to={ROUTES.profile}
                   className="flex items-center gap-2 rounded-full bg-ink-900 py-1.5 pr-4 pl-1.5 text-sm font-medium text-canvas transition-colors hover:bg-ink-700"
                 >
-                  <span className="grid size-7 place-items-center rounded-full bg-clay-500 text-[11px] font-semibold text-white">
-                    {initials(user)}
-                  </span>
+                  <Avatar user={user} />
                   {user.firstName}
                 </Link>
                 <button

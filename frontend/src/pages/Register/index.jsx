@@ -24,12 +24,17 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const registerUser = useAuthStore((s) => s.register);
+  const uploadAvatar = useAuthStore((s) => s.uploadAvatar);
   const submitting = useAuthStore((s) => s.submitting);
   const error = useAuthStore((s) => s.error);
   const clearError = useAuthStore((s) => s.clearError);
 
-  // Held locally for now — uploads go live with the profile screen (Cloudinary).
+  // The photo is uploaded after the account exists, because the upload
+  // endpoint needs the access token that registration issues.
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarError, setAvatarError] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const {
     register,
@@ -71,14 +76,28 @@ const RegisterPage = () => {
       bio,
       password,
     });
-    if (result.ok) {
-      navigate(ROUTES.landing, { replace: true });
+    if (!result.ok) {
+      result.error?.errors?.forEach((issue) => {
+        if (issue.field) setError(issue.field, { type: 'server', message: issue.message });
+      });
       return;
     }
 
-    result.error?.errors?.forEach((issue) => {
-      if (issue.field) setError(issue.field, { type: 'server', message: issue.message });
-    });
+    // A failed photo upload must not cost them the account they just created —
+    // it is reported inline and can be retried from the profile screen.
+    if (avatarFile) {
+      setUploading(true);
+      const upload = await uploadAvatar(avatarFile, { onProgress: setProgress });
+      setUploading(false);
+
+      if (!upload.ok) {
+        setAvatarError(`${upload.error.message} You can add a photo later from your profile.`);
+        window.setTimeout(() => navigate(ROUTES.landing, { replace: true }), 2500);
+        return;
+      }
+    }
+
+    navigate(ROUTES.landing, { replace: true });
   };
 
   return (
@@ -99,10 +118,24 @@ const RegisterPage = () => {
         {error && error.errors?.length === 0 && <Alert tone="error" title={error.message} />}
 
         <div className="flex flex-col items-center gap-2">
-          <AvatarUpload onChange={setAvatarFile} />
+          <AvatarUpload
+            onChange={setAvatarFile}
+            onError={setAvatarError}
+            uploading={uploading}
+            progress={progress}
+          />
           <p className="text-xs text-ink-500">
-            {avatarFile ? avatarFile.name : 'Add a profile photo (optional)'}
+            {uploading
+              ? 'Uploading your photo…'
+              : avatarFile
+                ? avatarFile.name
+                : 'Add a profile photo (optional)'}
           </p>
+          {avatarError && (
+            <p role="alert" className="max-w-sm text-center text-xs font-medium text-clay-600">
+              {avatarError}
+            </p>
+          )}
         </div>
 
         {/* Name */}
@@ -223,10 +256,10 @@ const RegisterPage = () => {
           type="submit"
           size="lg"
           fullWidth
-          loading={submitting}
+          loading={submitting || uploading}
           rightIcon={<ArrowRight className="size-4" />}
         >
-          Create account
+          {uploading ? 'Uploading photo' : 'Create account'}
         </Button>
 
         <p className="text-center text-xs text-ink-500">

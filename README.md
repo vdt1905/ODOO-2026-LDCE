@@ -12,6 +12,7 @@
 | Backend skeleton (config, models, middleware, controllers, routes, seed) | ✅ done |
 | Auth API — register / login / refresh / logout / me / forgot / reset | ✅ done & smoke-tested |
 | City catalog API + 30 seeded cities + demo accounts | ✅ done |
+| Cloudinary image uploads — avatars + generic images, live-tested | ✅ done |
 | Frontend shell — theme tokens, UI kit, routing, Zustand auth store | ✅ done |
 | **9.1** Login & Signup screens | ✅ done |
 | **9.2** Landing page (hero, destinations, how-it-works, budget preview, CTA) | ✅ done |
@@ -70,7 +71,7 @@ Everything else (community tab, admin analytics, i18n) is a bonus that only gets
 | Backend | **Node 20 + Express 4** | Fastest path to a REST API the whole team knows |
 | Database | **MongoDB Atlas + Mongoose 8** | Free hosted cluster, no local setup friction for teammates |
 | Auth | **JWT (access + refresh) + bcrypt** | Stateless, simple to demo |
-| Uploads | **Cloudinary** (multer memory storage) | Cover photos and avatars without touching the host filesystem |
+| Uploads | **Cloudinary + multer** (memory storage) | Cover photos and avatars without touching the host filesystem — Render's disk is ephemeral |
 | Validation | **zod** on both sides | One schema, two consumers |
 | Deploy | **Vercel** (frontend) + **Render** (API) + **Atlas** (DB) | All free tiers, all deploy from git |
 
@@ -274,8 +275,16 @@ Base: `/api/v1`. Every response wraps as `{ success, data, message }`; errors as
 | POST | `/reset-password` | token, newPassword |
 | GET | `/me` | current user |
 
-### Users — `/users`
-`PATCH /me` (profile) · `PATCH /me/avatar` (multipart) · `DELETE /me` (cascade delete trips) · `POST /me/saved/:cityId` · `DELETE /me/saved/:cityId`
+### Users — `/users` *(all auth-protected)*
+| Method | Path | Notes |
+| --- | --- | --- |
+| PATCH | `/me` | profile fields only — `.strict()` zod schema rejects anything else |
+| PATCH | `/me/avatar` | multipart, field `avatar` → uploads to Cloudinary, returns the updated user |
+| DELETE | `/me/avatar` | removes the image from Cloudinary and clears the URL |
+| POST | `/me/images?kind=tripCover\|misc` | multipart, field `image` → `{ url, publicId, width, height }` |
+| DELETE | `/me/images/*` | deletes by Cloudinary `public_id` (wildcard — the id contains slashes) |
+| DELETE | `/me` | ⬜ cascade delete trips |
+| POST/DELETE | `/me/saved/:cityId` | ⬜ saved destinations |
 
 ### Trips — `/trips` *(all auth-protected, all ownership-checked)*
 | Method | Path | Notes |
@@ -572,6 +581,27 @@ node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```
 VITE_API_URL=http://localhost:5000/api/v1
 ```
+
+### Cloudinary (image uploads)
+
+1. Create a free account at [cloudinary.com](https://cloudinary.com), then open **Dashboard → Product Environment Credentials**
+2. Copy Cloud name, API Key and API Secret into `backend/.env`:
+
+```
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=123456789012345
+CLOUDINARY_API_SECRET=your-api-secret
+CLOUDINARY_FOLDER=globetrotter
+UPLOAD_MAX_MB=5
+```
+
+**How it works** — files stream through Express (`multer.memoryStorage`) to Cloudinary via `upload_stream`; nothing is ever written to disk, because Render's filesystem is ephemeral. The API secret stays server-side, so the browser never holds a signing key.
+
+- Uploads are folder-scoped: `globetrotter/avatars`, `globetrotter/trip-covers`, `globetrotter/misc`
+- Avatars are transformed at upload time to a 400×400 face-gravity crop with `quality:auto, format:auto`; trip covers to 1600×900
+- Replacing an avatar reuses the stored `public_id`, so Cloudinary overwrites in place instead of leaving orphans
+- The vars are **optional** — without them the API still boots and upload routes return a clear `503` rather than crashing, so a teammate without keys can work on trips
+- Deletes are best-effort and never fail the request; the CDN may serve a cached copy for a few minutes after `destroy`
 
 **Notes**
 - The database name (`/globetrotter`) must be in the URI or Mongo writes to `test`

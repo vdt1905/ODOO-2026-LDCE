@@ -6,7 +6,13 @@ export const Field = ({ label, htmlFor, error, hint, required, className, childr
     {label && (
       <label htmlFor={htmlFor} className="text-sm font-medium text-ink-700">
         {label}
-        {required && <span className="ml-0.5 text-clay-500">*</span>}
+        {/* Hidden from the accessibility tree so the field's accessible name
+            stays "Password", not "Password *". */}
+        {required && (
+          <span className="ml-0.5 text-clay-500" aria-hidden="true">
+            *
+          </span>
+        )}
       </label>
     )}
 

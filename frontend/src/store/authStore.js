@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { authApi } from '../api/auth.api.js';
+import { userApi } from '../api/user.api.js';
 import { onUnauthorized, setAccessToken, toApiError } from '../api/client.js';
 
 /**
@@ -67,6 +68,34 @@ export const useAuthStore = create((set, get) => ({
       return { ok: false, error: parsed };
     } finally {
       set({ submitting: false });
+    }
+  },
+
+  /** Replaces the cached user after a profile or avatar change. */
+  setUser: (user) => set({ user }),
+
+  /**
+   * Uploads a profile photo for the signed-in user.
+   * Returns { ok } rather than throwing so callers can treat a failed photo as
+   * non-fatal — losing the avatar should never lose the account.
+   */
+  uploadAvatar: async (file, { onProgress } = {}) => {
+    try {
+      const user = await userApi.uploadAvatar(file, { onProgress });
+      set({ user });
+      return { ok: true, user };
+    } catch (error) {
+      return { ok: false, error: toApiError(error) };
+    }
+  },
+
+  removeAvatar: async () => {
+    try {
+      const user = await userApi.removeAvatar();
+      set({ user });
+      return { ok: true, user };
+    } catch (error) {
+      return { ok: false, error: toApiError(error) };
     }
   },
 

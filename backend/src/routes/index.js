@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import cityRoutes from './city.routes.js';
+import userRoutes from './user.routes.js';
 
 const router = Router();
 
@@ -10,7 +11,8 @@ router.get('/health', (_req, res) =>
 
 router.use('/auth', authRoutes);
 router.use('/cities', cityRoutes);
+router.use('/users', userRoutes);
 
-// Mounted as they are built: /users, /trips, /activities, /public, /admin
+// Mounted as they are built: /trips, /activities, /public, /admin
 
 export default router;

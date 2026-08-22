@@ -1,9 +1,8 @@
 import axios from 'axios';
-
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+import { env } from '../lib/env.js';
 
 export const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: env.apiUrl,
   withCredentials: true, // send the httpOnly refresh cookie
   headers: { 'Content-Type': 'application/json' },
 });

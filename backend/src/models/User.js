@@ -26,6 +26,8 @@ const userSchema = new Schema(
     country: { type: String, trim: true, default: '' },
     bio: { type: String, trim: true, maxlength: 500, default: '' },
     avatarUrl: { type: String, default: '' },
+    // Cloudinary public_id — kept so the old image can be removed on replace.
+    avatarPublicId: { type: String, default: '', select: false },
 
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     languagePref: { type: String, default: 'en' },
@@ -41,6 +43,7 @@ const userSchema = new Schema(
       virtuals: true,
       transform: (_doc, ret) => {
         delete ret.password;
+        delete ret.avatarPublicId;
         delete ret.resetPasswordToken;
         delete ret.resetPasswordExpires;
         delete ret.__v;

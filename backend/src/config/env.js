@@ -31,6 +31,26 @@ export const env = {
 
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
 
+  /**
+   * Optional on purpose — the API boots without Cloudinary so a teammate who
+   * has not filled these in can still run auth and trips. Upload routes return
+   * a clear 503 instead of crashing at import time.
+   */
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    apiKey: process.env.CLOUDINARY_API_KEY || '',
+    apiSecret: process.env.CLOUDINARY_API_SECRET || '',
+    folder: process.env.CLOUDINARY_FOLDER || 'globetrotter',
+    get isConfigured() {
+      return Boolean(this.cloudName && this.apiKey && this.apiSecret);
+    },
+  },
+
+  upload: {
+    maxFileSizeMb: Number(process.env.UPLOAD_MAX_MB) || 5,
+    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
+  },
+
   cookie: {
     name: 'gt_refresh',
     // 7 days in ms — keep in sync with jwt.refreshExpiry

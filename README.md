@@ -1,673 +1,478 @@
-# 🌍 GlobeTrotter — Empowering Personalized Travel Planning
+# Tripora
 
-> Odoo Hackathon submission — **Team LDCE**
-> A multi-city trip planner: build day-wise itineraries, auto-estimate budgets, visualize timelines, and share plans publicly.
+**Plan the trip, not the spreadsheet.**
 
-**This document is the build plan.** It defines the stack, data model, API surface, screen-by-screen scope, and the execution order. Build in the order given in [§10 Execution Plan](#10-execution-plan-hackathon-timeline).
+<p align="center">
+  <a href="https://react.dev"><img alt="React" src="https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react&logoColor=61DAFB" /></a>
+  <a href="https://nodejs.org"><img alt="Node.js" src="https://img.shields.io/badge/Node.js-20%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white" /></a>
+  <a href="https://expressjs.com"><img alt="Express" src="https://img.shields.io/badge/Express-4-000000?style=flat-square&logo=express&logoColor=white" /></a>
+  <a href="https://www.mongodb.com"><img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white" /></a>
+  <a href="https://www.python.org"><img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=FFD43B" /></a>
+  <a href="https://fastapi.tiangolo.com"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white" /></a>
+</p>
 
-### 📍 Current status
+<p align="center">
+  <a href="https://vite.dev"><img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" /></a>
+  <a href="https://tailwindcss.com"><img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" /></a>
+  <a href="https://reactrouter.com"><img alt="React Router" src="https://img.shields.io/badge/React_Router-7-CA4245?style=flat-square&logo=reactrouter&logoColor=white" /></a>
+  <a href="https://zustand-demo.pmnd.rs"><img alt="Zustand" src="https://img.shields.io/badge/Zustand-5-433E38?style=flat-square" /></a>
+  <a href="https://zod.dev"><img alt="Zod" src="https://img.shields.io/badge/Zod-v3_%7C_v4-3E67B1?style=flat-square&logo=zod&logoColor=white" /></a>
+  <a href="https://mongoosejs.com"><img alt="Mongoose" src="https://img.shields.io/badge/Mongoose-8-880000?style=flat-square" /></a>
+</p>
 
-| Area | State |
-| --- | --- |
-| Backend skeleton (config, models, middleware, controllers, routes, seed) | ✅ done |
-| Auth API — register / login / refresh / logout / me / forgot / reset | ✅ done & smoke-tested |
-| City catalog API + 30 seeded cities + demo accounts | ✅ done |
-| Cloudinary image uploads — avatars + generic images, live-tested | ✅ done |
-| Trip API — list / stats / create (auto-seeds stops) / read / update / delete | ✅ done & tested |
-| Frontend shell — theme tokens, UI kit, routing, Zustand auth store | ✅ done |
-| **9.1** Login & Signup screens | ✅ done |
-| **9.2** Landing — marketing when signed out, **dashboard when signed in** | ✅ done |
-| **9.3** Create Trip screen | ✅ done |
-| Everything else in §9 | ⬜ next — routed to an honest `ComingSoon` placeholder so no link dead-ends |
+<p align="center">
+  <a href="https://groq.com"><img alt="Groq" src="https://img.shields.io/badge/Groq-LPU_Inference-F55036?style=flat-square" /></a>
+  <a href="https://ai.google.dev"><img alt="Gemini" src="https://img.shields.io/badge/Gemini-2.5_Flash-8E75B2?style=flat-square&logo=googlegemini&logoColor=white" /></a>
+  <a href="https://www.langchain.com/langgraph"><img alt="LangGraph" src="https://img.shields.io/badge/LangGraph-0.2-1C3C3C?style=flat-square" /></a>
+  <a href="https://jwt.io"><img alt="JWT" src="https://img.shields.io/badge/Auth-JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white" /></a>
+  <a href="https://cloudinary.com"><img alt="Cloudinary" src="https://img.shields.io/badge/Cloudinary-Media-3448C5?style=flat-square&logo=cloudinary&logoColor=white" /></a>
+</p>
 
-Sign in with the seeded accounts: `demo@globetrotter.com / Demo@1234` · `admin@globetrotter.com / Admin@123`
+<p align="center">
+  <img alt="Hackathon" src="https://img.shields.io/badge/Hackathon-Odoo-c2703f?style=flat-square" />
+  <img alt="Team" src="https://img.shields.io/badge/Team-LDCE-2e4034?style=flat-square" />
+  <img alt="Status" src="https://img.shields.io/badge/Status-Active_Development-2e4034?style=flat-square" />
+</p>
+
+Multi-city travel itinerary planner. Built for the Odoo Hackathon by Team LDCE.
+
+Plan a trip across several cities, give each city a date range and a budget, hang
+activities off each day, and watch the cost roll up per day, per city, and per
+category. Generate a first draft with AI instead of starting blank, ask a
+travel-savvy assistant questions about the trip you're building, and publish a
+finished itinerary to a public URL that anyone can view and copy onto their own
+account.
+
+**The core loop:** sign up → create a trip → add city stops → add activities →
+watch the budget update live → share a public link → someone else copies it.
 
 ---
 
 ## Table of Contents
 
-1. [Product Summary](#1-product-summary)
-2. [Tech Stack & Why](#2-tech-stack--why)
-3. [Repository Structure](#3-repository-structure)
-4. [Data Model](#4-data-model)
-5. [API Surface](#5-api-surface)
-6. [Auth & Security Plan](#6-auth--security-plan)
-7. [Frontend Architecture](#7-frontend-architecture)
-8. [Design System (Tailwind)](#8-design-system-tailwind)
-9. [Screen-by-Screen Plan](#9-screen-by-screen-plan)
-10. [Execution Plan (Hackathon Timeline)](#10-execution-plan-hackathon-timeline)
-11. [Seed Data Strategy](#11-seed-data-strategy)
-12. [Environment & Setup](#12-environment--setup)
-13. [Deployment](#13-deployment)
-14. [Demo Script](#14-demo-script)
-15. [Scope Guardrails](#15-scope-guardrails)
+1. [Features](#features)
+2. [Architecture](#architecture)
+3. [Tech Stack](#tech-stack)
+4. [Project Structure](#project-structure)
+5. [Getting Started](#getting-started)
+6. [Environment Variables](#environment-variables)
+7. [API Reference](#api-reference)
+8. [Data Model](#data-model)
+9. [Conventions & Gotchas](#conventions--gotchas)
+10. [Design Language](#design-language)
 
 ---
 
-## 1. Product Summary
+## Features
 
-A traveler signs up, creates a **Trip** (name + date range + cover photo), then adds **Stops** — each stop is a city with its own date range. Inside each stop they attach **Activities** (sightseeing, food, adventure…) picked from a searchable catalog, each with a cost and duration. The app continuously recomputes the **budget breakdown** (transport / stay / activities / meals), renders the plan as a **day-wise timeline and calendar**, and can publish a **read-only public URL** that anyone can view and "Copy Trip" from.
+**Trip planning**
+- Multi-city trips: each stop is a city with its own date range, transport cost,
+  accommodation cost, and per-day meal budget
+- A searchable catalog of cities and activities, seeded with 30 cities across 6
+  regions and 180 activities
+- Drag-free reordering endpoints for both stops and the activities inside a day
+- Custom, off-catalog activities alongside catalog ones
 
-**Core loop we must nail for the demo:**
-`Signup → Create Trip → Add 2–3 city stops → Add activities → See budget chart update → See calendar/timeline → Share public link → Another user copies the trip.`
+**Budgeting**
+- Every number on the budget screen — category totals, per-stop totals, daily
+  spend, the overbudget flag — is computed server-side in one place
+  (`budget.service.js`), so the pie chart, the sticky builder bar, and the
+  dashboard total can never disagree
+- Costs break down by transport, stay, meals, and activities, both per stop and
+  per day
+- An optional budget limit drives an even daily allowance and flags the days
+  (and the trip as a whole) that exceed it
 
-Everything else (community tab, admin analytics, i18n) is a bonus that only gets built once the core loop is bulletproof.
+**AI, two different ways**
+- **AI trip generator** (`/trips/ai`) — describe a trip in a sentence and get
+  back a complete, fully editable trip with real stops and activities already
+  written to the database. Backed by Groq or Gemini, whichever key is configured
+  on the server.
+- **Ask Triplie** — a floating assistant on every screen, backed by a standalone
+  LangGraph service. It classifies each message as conversation or a planning
+  request, answers general questions directly, and grounds trip suggestions in
+  the real city/activity catalog — never inventing a destination the database
+  doesn't have. It also reads whatever trip you're currently viewing, so "am I
+  over budget in Kyoto?" gets a real answer. It understands English and the ten
+  Indic languages Sarvam supports, and degrades to an offline notice rather than
+  an error when the service isn't running.
+
+**Sharing & community**
+- Publish a trip to a short, unguessable public URL (`/t/:slug`) that strips all
+  owner PII and works for someone with no account
+- "Copy Trip" clones a published itinerary into another account in one call
+- A community feed of public trips, sortable by recency or view count
+
+**Accounts & admin**
+- JWT auth (short-lived access token + httpOnly refresh cookie) with silent
+  refresh on 401
+- Profile editing, avatar upload, saved destinations, password change, account
+  deletion
+- An admin dashboard with platform stats, popular cities/activities, and signup
+  trends, gated on both the client and the server
 
 ---
 
-## 2. Tech Stack & Why
+## Architecture
 
-| Layer | Choice | Reason |
+Three independent services, each with its own runtime and its own reason to
+exist separately:
+
+```
+frontend/   React + Vite            talks to backend/ and, optionally, AI/
+backend/    Node + Express + Mongo  the system of record — auth, trips, budget, catalog
+AI/         Python + FastAPI        the Ask Triplie assistant (LangGraph + Groq + Sarvam)
+```
+
+`backend/` is the only service with write access to the core collections
+(`users`, `trips`, `stops`, `tripActivities`, `cities`, `activities`) and the
+only one the frontend depends on for the app to function at all. `AI/` reads
+that same MongoDB database read-only for grounding and writes only to its own
+`ai_suggestion_logs` collection — it ships and iterates independently, and the
+app works completely normally with it turned off. The AI trip generator is a
+third path, but it isn't a separate service: it's a Groq/Gemini call made from
+inside `backend/`, gated behind `GET /ai/status` so the client can hide the
+entry point rather than offer a button that always fails.
+
+---
+
+## Tech Stack
+
+| Service | Layer | Choice |
 | --- | --- | --- |
-| Frontend | **React 19 + Vite 8** | Instant HMR; far faster than CRA for a timed build |
-| Routing | **react-router-dom v6** | Nested layouts + protected route wrappers |
-| Styling | **Tailwind CSS v4** (`@tailwindcss/vite`) | Required by the brief. v4 means design tokens live in `@theme` inside `index.css` — there is no `tailwind.config.js` |
-| Icons | **lucide-react** | One consistent icon set, tree-shaken |
-| Server state | **TanStack Query** *(added with trip data)* | Caching and refetch. Auth + catalog reads are thin enough to run on plain hooks today |
-| Client state | **Zustand** | `authStore` today; `builderStore` for the itinerary draft next |
-| Forms | **react-hook-form + zod** | Shared zod schemas between client and server validation |
-| Charts | **Recharts** | Pie + bar for the budget screen, ~5 lines each |
-| Calendar | **react-big-calendar** (or a hand-rolled month grid) | Screen 11 needs a month view with trip chips |
-| Drag & drop | **@dnd-kit/core** | Reorder stops and activities |
-| Dates | **date-fns** | Lightweight day math for itinerary generation |
-| Backend | **Node 20 + Express 4** | Fastest path to a REST API the whole team knows |
-| Database | **MongoDB Atlas + Mongoose 8** | Free hosted cluster, no local setup friction for teammates |
-| Auth | **JWT (access + refresh) + bcrypt** | Stateless, simple to demo |
-| Uploads | **Cloudinary + multer** (memory storage) | Cover photos and avatars without touching the host filesystem — Render's disk is ephemeral |
-| Validation | **zod** on both sides | One schema, two consumers |
-| Deploy | **Vercel** (frontend) + **Render** (API) + **Atlas** (DB) | All free tiers, all deploy from git |
-
-### ⚠️ On "relational database"
-
-The brief asks for *"proper use of relational databases."* We use MongoDB but model it **relationally, not as one fat nested document**:
-
-- Separate collections: `users`, `trips`, `stops`, `activities`, `tripActivities`, `cities`, `expenses`
-- Real foreign keys via `ObjectId` refs with `populate()`
-- `tripActivities` is an explicit **join collection** between a stop and a catalog activity, carrying its own attributes (date, time, cost override, notes) — a textbook associative entity
-- Indexes on every FK plus text indexes on `cities.name` / `activities.name`
-- An **ER diagram** goes in `/docs/er-diagram.png` and gets shown during judging
-
-If a judge insists on SQL, the fallback is Postgres + Prisma — the schema in §4 maps 1:1. **Do not attempt this switch mid-hackathon.**
+| **Frontend** | Framework | React 19 + Vite 8 |
+| | Routing | react-router-dom v7 |
+| | Styling | Tailwind CSS v4 (`@tailwindcss/vite` — no `tailwind.config.js`; tokens live in `@theme` in `index.css`) |
+| | Client state | Zustand |
+| | Forms & validation | react-hook-form + zod v4 |
+| | Icons | lucide-react |
+| **Backend** | Runtime | Node 20+ (ESM), Express 4 |
+| | Database | MongoDB + Mongoose 8 |
+| | Auth | JWT (access + refresh) + bcryptjs |
+| | Validation | zod v3, via a `validate(schema)` middleware — the only input validation in the app |
+| | Uploads | Cloudinary + multer (memory storage, no disk writes) |
+| | AI providers | Groq (`openai/gpt-oss-120b`, OpenAI-compatible) and/or Gemini (`gemini-2.5-flash`), behind one interface |
+| **AI service** | Framework | Python 3.11+, FastAPI + Uvicorn |
+| | Orchestration | LangGraph (`StateGraph`) |
+| | Models | Groq (`openai/gpt-oss-20b`) via `langchain-openai`; Sarvam AI for language ID |
+| | Database | Motor (async MongoDB driver), read-only against the same cluster |
 
 ---
 
-## 3. Repository Structure
-
-`✅` exists today · `⬜` planned.
+## Project Structure
 
 ```
-ODOO-LDCE/
-├── README.md
-├── .gitignore                     ✅ keeps .env out of git
-├── backend/
-│   ├── .env / .env.example        ✅
-│   └── src/
-│       ├── config/                ✅ env.js, db.js, cloudinary.js
-│       ├── models/                ✅ User, City, Activity, Trip, Stop, TripActivity, index.js
-│       ├── middleware/            ✅ auth, validate, error, rateLimit
-│       ├── validators/            ✅ auth, user, trip         ⬜ stop, activity
-│       ├── controllers/           ✅ auth, city, user, trip   ⬜ stop, admin
-│       ├── services/              ✅ token, upload, trip      ⬜ budget, itinerary, copyTrip
-│       ├── routes/                ✅ index, auth, city, user, trip  ⬜ stop, public, admin
-│       ├── utils/                 ✅ ApiError, apiResponse, asyncHandler, dates, escapeRegex
-│       ├── seed/                  ✅ cities.json (30), seed.js
-│       ├── app.js  server.js      ✅
-│       └── package.json           ✅
-└── frontend/
-    ├── .env / .env.example        ✅
-    └── src/
-        ├── index.css              ✅ @theme design tokens (Tailwind v4)
-        ├── api/                   ✅ client.js (axios + silent refresh), auth, city, user, trip
-        ├── store/                 ✅ authStore.js             ⬜ builderStore.js
-        ├── lib/                   ✅ cn, constants, validation, dates, format, env
-        ├── hooks/                 ✅ usePageTitle, usePopularCities, useTrips, useCityCatalog, useDebouncedValue
-        ├── components/
-        │   ├── ui/                ✅ Button, Input/PasswordInput/TextArea, Select, Field,
-        │   │                         Alert, Badge, Logo, AvatarUpload, Spinner,
-        │   │                         EmptyState, ConfirmDialog
-        │   ├── layout/            ✅ Navbar, Footer, MainLayout, RouteGuards, ScrollToTop
-        │   ├── auth/              ✅ AuthLayout
-        │   ├── landing/           ✅ Hero, HeroScene, HeroSearch, CityCard, DestinationRail,
-        │   │                         HowItWorks, BudgetPreview, CtaBand
-        │   ├── dashboard/         ✅ DashboardHero, BudgetHighlights, DestinationBoard,
-        │   │                         TripToolbar, TripBoard, PlanTripFab
-        │   ├── trip/              ✅ TripCard   ⬜ StopCard, ActivityCard, BudgetBar
-        │   └── charts/            ⬜ BudgetPie, BudgetBar, DailySpendLine
-        ├── pages/                 ✅ Landing, Dashboard, CreateTrip, Login, Register, ComingSoon, NotFound
-        ├── routes.jsx  App.jsx  main.jsx  ✅
-        └── package.json           ✅
+backend/src/
+  config/        env.js (the only place process.env is read), db.js, cloudinary.js
+  models/        User, City, Activity, Trip, Stop, TripActivity
+  controllers/   one per resource, thin, wrapped in asyncHandler
+  services/      budget.service, itinerary.service, ai.service, llm.service (+ groq/gemini transports)
+  validators/    zod v3 request schemas
+  middleware/    auth, validate, error, upload, rateLimit
+  routes/        index.js mounts everything under /api/v1
+  utils/         ApiError, apiResponse, asyncHandler, dates, escapeRegex
+  seed/          cities.json, activities.json, seed.js, fetchImages.js, mirrorImages.js
+
+frontend/src/
+  api/           one module per resource; each unwraps the { success, data, message } envelope
+  components/    ui/ (primitives) · layout/ · landing/ · dashboard/ · trip/ · ai/
+  hooks/         fetch-on-key-change hooks — there is no query library
+  lib/           constants, dates, format, validation (zod v4), env, cn
+  pages/         one folder per screen (Landing, Trips, CreateTrip, AiTrip, TripBuilder,
+                 TripBudget, TripView, Cities, Activities, Community, PublicTrip, Profile, Admin)
+  store/         authStore.js (zustand)
+
+AI/app/
+  main.py            FastAPI app + CORS
+  config.py          pydantic-settings, env-driven
+  db.py              Motor client — reads cities/activities/trips/stops
+  sarvam_client.py   language identification
+  groq_client.py     chat completion for suggestion generation
+  routes/            POST /api/v1/suggestions, GET /api/v1/health
+  graph/             state.py, nodes.py, build.py — the LangGraph pipeline
 ```
-
-**Module conventions**
-- **Backend:** a route file only wires middleware to a controller; controllers never touch `res.json` directly (they call `sendSuccess`/`sendCreated`); anything reusable across controllers becomes a `service`. No controller reads `process.env` or `req.body` unvalidated.
-- **Frontend:** pages compose components, components compose `ui/` primitives. Only `api/` talks to axios, only `store/` holds cross-page state, and every colour/spacing value comes from a token in `index.css`.
-
-**Team split:** one person owns `backend/`, one owns auth + trip CRUD screens, one owns the itinerary builder + budget + calendar, one owns search/public/admin + polish. Agree on the API contract in §5 **before** anyone writes code so nobody blocks.
 
 ---
 
-## 4. Data Model
+## Getting Started
 
-### `User`
-```js
-{
-  firstName, lastName,
-  email,     // unique, lowercased, indexed
-  password,  // bcrypt hash, select:false
-  phone, city, country, bio,
-  avatarUrl,
-  role,              // 'user' | 'admin'
-  languagePref,      // 'en' default
-  savedDestinations: [ObjectId → City],
-  resetPasswordToken, resetPasswordExpires,
-  timestamps
-}
-```
+### Prerequisites
 
-### `City` (catalog, seeded)
-```js
-{
-  name, country, region,
-  costIndex,      // 1–100, drives budget suggestions
-  popularity,     // 1–100, drives "Top Regional Selections"
-  imageUrl, description,
-  latitude, longitude,
-  currency
-}
-// index: { name: 'text', country: 'text' }, { country: 1 }, { popularity: -1 }
-```
+- Node.js 20+
+- A MongoDB connection string (Atlas or local)
+- Python 3.11+ (only if you want to run the Ask Triplie service)
 
-### `Activity` (catalog, seeded, belongs to a City)
-```js
-{
-  city: ObjectId → City,
-  name, description, imageUrl,
-  type,            // 'sightseeing' | 'food' | 'adventure' | 'culture' | 'nightlife' | 'relaxation' | 'shopping'
-  cost,            // in base currency
-  durationMinutes,
-  rating
-}
-// index: { city: 1, type: 1 }, { name: 'text' }, { cost: 1 }
-```
-
-### `Trip`
-```js
-{
-  user: ObjectId → User,
-  name, description,
-  startDate, endDate,
-  coverPhotoUrl,
-  budgetLimit,       // optional; powers the overbudget alerts
-  currency,          // 'USD' default
-  isPublic,          // boolean
-  publicSlug,        // nanoid, unique sparse index
-  copiedFrom: ObjectId → Trip,   // provenance for "Copy Trip"
-  viewCount,
-  timestamps
-}
-// index: { user: 1, startDate: -1 }, { publicSlug: 1 }
-// virtual: stops (populate), status ('upcoming'|'ongoing'|'completed' from dates vs today)
-```
-
-### `Stop` — one city leg of a trip
-```js
-{
-  trip: ObjectId → Trip,
-  city: ObjectId → City,
-  order,             // 0-based, drives reordering
-  startDate, endDate,
-  notes,
-  transportCost,     // to reach this stop
-  accommodationCost, // for the whole stay
-  mealBudgetPerDay
-}
-// index: { trip: 1, order: 1 }
-```
-
-### `TripActivity` — the join / associative entity
-```js
-{
-  trip: ObjectId → Trip,          // denormalized for fast trip-wide queries
-  stop: ObjectId → Stop,
-  activity: ObjectId → Activity,  // nullable → allows fully custom activities
-  customName,                     // used when activity is null
-  date,                           // the specific day it happens
-  startTime,                      // 'HH:mm'
-  durationMinutes,
-  cost,                           // snapshot; catalog price may drift
-  notes,
-  order                           // within its day
-}
-// index: { trip: 1, date: 1, order: 1 }, { stop: 1 }
-```
-
-### `Expense` (optional, for extra budget granularity)
-```js
-{ trip, stop, category /* transport|stay|activities|meals|other */, label, amount, date }
-```
-
-### Relationship map
-```
-User 1───∞ Trip 1───∞ Stop ∞───1 City 1───∞ Activity
-                       │                        │
-                       └──∞ TripActivity ∞──────┘
-User ∞───∞ City (savedDestinations)
-Trip 1───∞ Expense
-```
-
-### Derived values (never stored, always computed in `budget.service.js`)
-- `stop.nights = differenceInDays(endDate, startDate)`
-- `stop.activityTotal = Σ tripActivity.cost` for that stop
-- `stop.mealTotal = mealBudgetPerDay × nights`
-- `trip.total = Σ (transport + accommodation + meals + activities)` across stops
-- `trip.avgPerDay = total / trip nights`
-- `dailySpend[date]` → powers the overbudget-day alerts and the line chart
-
----
-
-## 5. API Surface
-
-Base: `/api/v1`. Every response wraps as `{ success, data, message }`; errors as `{ success:false, message, errors[] }`.
-
-### Auth — `/auth`
-| Method | Path | Body / Notes |
-| --- | --- | --- |
-| POST | `/register` | firstName, lastName, email, password, phone?, city?, country?, bio? |
-| POST | `/login` | email, password → `{ user, accessToken }` + httpOnly refresh cookie |
-| POST | `/refresh` | rotates access token from the cookie |
-| POST | `/logout` | clears the refresh cookie |
-| POST | `/forgot-password` | issues a reset token (dev: return it in the response) |
-| POST | `/reset-password` | token, newPassword |
-| GET | `/me` | current user |
-
-### Users — `/users` *(all auth-protected)*
-| Method | Path | Notes |
-| --- | --- | --- |
-| PATCH | `/me` | profile fields only — `.strict()` zod schema rejects anything else |
-| PATCH | `/me/avatar` | multipart, field `avatar` → uploads to Cloudinary, returns the updated user |
-| DELETE | `/me/avatar` | removes the image from Cloudinary and clears the URL |
-| POST | `/me/images?kind=tripCover\|misc` | multipart, field `image` → `{ url, publicId, width, height }` |
-| DELETE | `/me/images/*` | deletes by Cloudinary `public_id` (wildcard — the id contains slashes) |
-| DELETE | `/me` | ⬜ cascade delete trips |
-| POST/DELETE | `/me/saved/:cityId` | ⬜ saved destinations |
-
-### Trips — `/trips` *(all auth-protected, all ownership-checked)*
-
-`✅` live · `⬜` planned. Ownership is re-checked in the controller on every
-single-trip route; a trip that belongs to someone else 404s rather than 403s, so
-the API never confirms that an id exists.
-
-| Method | Path | Notes |
-| --- | --- | --- |
-| ✅ GET | `/` | `?status=all\|ongoing\|upcoming\|completed&visibility=&search=&sort=&page=&limit=`. Status is derived from dates, so it is translated to a date filter using the same UTC day boundaries as the `status` virtual. Bad values fall back to defaults instead of 422-ing. Each item carries `stopCount`, `nights`, `cityNames`, `estimatedTotal` and a category `breakdown` |
-| ✅ GET | `/stats` | dashboard totals: `plannedTotal`, `tripCount`, `cityCount`, per-status counts, `nextTrip` |
-| ✅ POST | `/` | create; validates end ≥ start and ≤ 365 days. Optional `cityIds[]` become dated stops in the same request — see `seedStopsFromCities` |
-| ✅ GET | `/:id` | the trip plus its rollup |
-| ✅ PATCH | `/:id` | edit basics; `.strict()` so unknown keys are rejected |
-| ✅ DELETE | `/:id` | cascades to stops + tripActivities |
-| PATCH | `/:id/cover` | multipart cover photo |
-| GET | `/:id/budget` | full breakdown + per-day spend + overbudget flags |
-| GET | `/:id/itinerary` | day-by-day array, ready to render |
-| POST | `/:id/share` | flips `isPublic`, mints `publicSlug` |
-| DELETE | `/:id/share` | unpublish |
-| POST | `/:id/copy` | deep-clone into the caller's account |
-
-### Stops — `/trips/:tripId/stops`
-`GET /` · `POST /` · `PATCH /:stopId` · `DELETE /:stopId` · `PATCH /reorder` (body: `{ orderedIds: [] }`)
-
-### Trip activities — `/trips/:tripId/activities`
-`POST /` (attach catalog activity or custom) · `PATCH /:id` · `DELETE /:id` · `PATCH /reorder`
-
-### Catalog — `/cities`, `/activities`
-`GET /cities?search=&country=&region=&sort=popularity&page=` · `GET /cities/popular` · `GET /cities/:id` ·
-`GET /activities?city=&type=&maxCost=&maxDuration=&search=&sort=&page=`
-
-### Public — `/public` *(no auth)*
-`GET /public/trips/:slug` — read-only itinerary + budget summary; bumps `viewCount`
-`GET /public/trips` — community feed of published trips
-
-### Admin — `/admin` *(requireAdmin)*
-`GET /stats` (users, trips, avg trip length, avg budget) · `GET /popular-cities` · `GET /popular-activities` · `GET /trends?days=30` · `GET /users` · `PATCH /users/:id` (role/ban) · `DELETE /users/:id`
-
----
-
-## 6. Auth & Security Plan
-
-- **bcrypt**, 10 salt rounds; `password` is `select: false` so it never leaks through a populate
-- **Access token** in memory (Zustand), 15-min expiry; **refresh token** in an httpOnly SameSite=Lax cookie, 7 days
-- Axios response interceptor: on `401` → hit `/auth/refresh` once → replay the original request → on second failure, log out
-- `ProtectedRoute` on the client is UX only; **every controller re-checks `trip.user === req.user.id`** — that check is the actual security boundary
-- Public itineraries are exposed only via unguessable `nanoid(12)` slugs and pass through a serializer that strips owner email, phone, and internal IDs
-- `helmet`, `cors` locked to the deployed frontend origin, `express-rate-limit` at 100 req/15min (5/15min on `/auth/*`)
-- Every request body validated with zod through a `validate(schema)` middleware — no controller trusts `req.body`
-- Secrets only in `.env`; commit `.env.example` and never the real file
-
----
-
-## 7. Frontend Architecture
-
-**Route map**
-```
-/                       Landing / Dashboard   (public shell, personalized when logged in)
-/login  /register  /forgot-password  /reset-password/:token
-/trips                  My Trips            🔒
-/trips/new              Create Trip         🔒
-/trips/:id              Itinerary View      🔒
-/trips/:id/build        Itinerary Builder   🔒
-/trips/:id/budget       Budget breakdown    🔒
-/trips/:id/calendar     Calendar / timeline 🔒
-/cities                 City Search
-/activities             Activity Search
-/community              Community feed
-/profile                Profile & settings  🔒
-/t/:slug                Public itinerary    (no auth, no navbar chrome)
-/admin                  Admin dashboard     🔒 admin
-```
-
-**Conventions**
-- One folder per page: `pages/ItineraryBuilder/{index.jsx, StopCard.jsx, AddStopModal.jsx}`
-- All server data goes through React Query hooks (`useTrip(id)`), never raw `useEffect` + `fetch`
-- Mutations invalidate `['trip', id]` so budget / itinerary / calendar all refresh from one write
-- Optimistic updates only for drag-reorder (it must feel instant); everything else waits for the server
-- Every list renders three states: **loading skeleton**, **empty state with a CTA**, **error with retry**. Judges notice empty states.
-- Mobile-first: build at 375px, then layer `md:` / `lg:`
-
----
-
-## 8. Design System (Tailwind)
-
-Warm, sunlit-valley palette — cream paper, terracotta and moss, soft floating pills. Deliberately not another blue SaaS dashboard.
-
-Tailwind v4 has **no `tailwind.config.js`** — the whole system lives in `@theme` at the top of [frontend/src/index.css](frontend/src/index.css), and every token is usable as a utility (`bg-canvas`, `text-ink-700`, `shadow-lift`, `rounded-4xl`).
-
-```css
-@theme {
-  --color-canvas: #faf6ef;        /* warm paper, never cold grey */
-  --color-canvas-deep: #f2ebe0;
-  --color-surface: #ffffff;
-  --color-line: #e9e1d5;
-
-  --color-ink-900: #17140f;  --color-ink-700: #3d372e;
-  --color-ink-500: #6e665a;  --color-ink-300: #a79e90;
-
-  --color-clay-500: #ce7440;      /* brand — sunset terracotta */
-  --color-moss-500: #7e9264;      /* secondary — meadow */
-  --color-dawn-300: #f7c9a3;      /* hero sky accents */
-
-  /* Budget categories — identical in charts, badges and calendar chips */
-  --color-cat-transport: #8b7bb8;  --color-cat-stay: #4fa398;
-  --color-cat-activities: #ce7440; --color-cat-meals: #d9a441;
-
-  --font-display: "Outfit";  --font-sans: "Inter";
-  --shadow-soft / --shadow-lift / --shadow-pill;
-  --animate-fade-up / --animate-fade-in;
-}
-```
-
-**Rules**
-- Never write a hex value in a component — add a token instead
-- Cards: `rounded-3xl bg-surface border border-line shadow-soft`; pills and buttons are always `rounded-full`
-- Buttons come from one component with six variants (`primary`, `dark`, `light`, `outline`, `ghost`, `glass`); `glass` is for controls sitting over the hero
-- Page shell: `mx-auto max-w-6xl px-4 sm:px-6`
-- The hero backdrop is a drawn SVG ([HeroScene.jsx](frontend/src/components/landing/HeroScene.jsx)), not a photo, so it never flashes a broken image or waits on a CDN. Swap it for an `<img>` if you get licensed photography.
-- Every animation is disabled under `prefers-reduced-motion`
-- Dark mode **only if time remains** — do not start it before hour 20
-
-## 9. Screen-by-Screen Plan
-
-Each screen lists what we build, the endpoints it calls, and its definition of done. Priority: **P0 = demo-critical**, **P1 = strongly expected**, **P2 = bonus**.
-
----
-
-### 9.1 Login / Signup — `/login`, `/register` · **P0** · *(mockup screens 1–2)*
-Split layout: full-bleed travel photo on the left, form card on the right. Login takes email + password with a "Forgot password?" link. Register mirrors the mockup — avatar upload circle up top, then a two-column grid: First Name / Last Name, Email / Phone, City / Country, and a full-width "Additional Information" textarea.
-
-- **Calls:** `POST /auth/register`, `POST /auth/login`
-- **Details:** react-hook-form + zod, inline field errors, password strength hint, show/hide toggle, disabled + spinner button while submitting, toast on failure, redirect to `/` on success
-- **Done when:** a fresh user can register, gets bounced out on refresh-with-no-token, and can log back in
-
-### 9.2 Dashboard / Landing — `/` · **P0** · *(mockup screen 3)* · ✅ **built**
-`/` is two screens on one route. Signed out it is the marketing page (hero, search bar, destination rail, how-it-works, budget preview, CTA). Signed in it swaps to the dashboard, because a returning user wants their trips, not the pitch they already accepted.
-
-The dashboard: a full-bleed banner with the welcome message, **+ Plan a new trip**, and a destination search; a **budget-highlight** row (planned spend / cities / upcoming / next departure); **Top Regional Selections**; then **Your trips** under the search · group by · filter · sort controls; and the floating **+ Plan a trip** button bottom-right.
-
-- **Calls:** `GET /trips/stats`, `GET /trips?...`, `GET /cities/popular`, `GET /cities?search=`, `DELETE /trips/:id`
-- **Details:**
-  - The banner search filters the city rail **in place** rather than navigating to a results page, and clicking a city opens Create Trip with it pre-selected (`/trips/new?city=<id>`) — so the search always leads somewhere useful.
-  - Search / filter / sort are server params (search debounced 300ms); **grouping is client-side**, since it only changes how the same trips are stacked.
-  - Budget tiles sit on canvas, not on the banner: the illustration fades to cream at its foot and white-on-cream is not readable.
-  - Every list has three states — skeleton, empty-with-a-CTA, and error-with-a-message — and the empty state differs when a filter is on ("no trips match that") from when the account is genuinely new ("no trips yet").
-  - Deleting a trip goes through a `<dialog>` confirm and cascades server-side.
-- **Done when:** it's a genuinely good first screenshot — this is the judges' first impression
-
-### 9.3 Create Trip — `/trips/new` · **P0** · *(mockup screen 4)* · ✅ **built**
-Two-column card: trip name, description, start/end dates, budget limit + currency on the left; the cover-photo dropzone on the right. Below them, a searchable **"Suggestions for places to visit"** grid — ticked cities become dated stops on save, in the order they were picked.
-
-- **Calls:** `GET /cities/popular`, `GET /cities?search=`, `GET /cities/:id` (for `?city=`), `POST /users/me/images?kind=tripCover`, `POST /trips`
-- **Details:**
-  - **One write, not two.** `cityIds` travels with `POST /trips` and the server creates the stops in the same request, so the browser closing mid-flow cannot leave a trip without the stops the user asked for. If a city id is bad, the whole trip is rolled back rather than half-created.
-  - Stops split the trip window evenly (11 nights over 3 cities → 4/4/3) and **share their boundary day** — you arrive in Rome the day you leave Paris — so the day-wise itinerary has no gaps. Each one is seeded with an opening budget from the city's `costIndex` (see `COST_MODEL` in `trip.service.js`) so the budget screen is meaningful immediately.
-  - The cover is uploaded to Cloudinary *before* the trip is created, so the trip is saved with its final URL. If that upload fails — including the 503 you get with no Cloudinary keys — the trip is still created and the reason is carried to the dashboard in router state, so it is read where the user lands instead of flashing on a page that is unmounting.
-  - The start date has no `min`: a past trip is legitimate (the app has a Completed status). The end date's `min` is the start date, the one thing that is genuinely invalid.
-- **Done when:** creating a trip lands you back on the dashboard with it highlighted in the list, its cities as stops and a real cost estimate — and it will land you in the builder instead once §9.5 exists
-
-### 9.4 My Trips — `/trips` · **P1** · *(mockup screen 6)*
-Search bar + Group by / Filter / Sort controls, then trips grouped under **Ongoing**, **Upcoming**, **Completed** headings. Each card: cover image, name, date range, destination count, total budget, and view / edit / delete actions.
-
-- **Calls:** `GET /trips?status=&search=&sort=`, `DELETE /trips/:id`
-- **Details:** debounced search (300ms), confirm modal before delete, empty state per group with a "Plan your first trip" CTA
-- **Done when:** grouping is correct against today's date and delete cascades cleanly
-
-### 9.5 Itinerary Builder — `/trips/:id/build` · **P0 — the centerpiece** · *(mockup screen 5)*
-Vertical list of **Stop sections**, each showing the city name + country, its date range, its per-stop budget, its activity list, and edit/delete controls. `+ Add Stop` at the bottom opens a modal with a city typeahead and a date-range picker. Inside a stop, `+ Add Activity` opens a drawer with the filterable activity catalog for that city. Stops and activities are drag-reorderable via dnd-kit. A **sticky budget bar** across the bottom shows the running total and turns rose when it crosses `budgetLimit`.
-
-- **Calls:** stops CRUD + reorder, trip-activities CRUD + reorder, `GET /trips/:id/budget`
-- **Details:** reordering renumbers `order` server-side in one call. Warn (don't block) when stop dates fall outside the trip range or overlap another stop. Every mutation invalidates the trip query so the budget bar stays live.
-- **Done when:** adding a city and an activity updates the total without a page reload, and a refresh shows the exact same state
-
-### 9.6 Itinerary View — `/trips/:id` · **P0** · *(mockup screen 9)*
-Read view of the finished plan. Trip header with cover photo, dates, total cost, and Share / Edit / Copy buttons. Then a **day-by-day timeline**: `Day 1 — Paris` header, activity blocks down the left with connecting arrows, cost chips down the right, and a day subtotal. A toggle switches between **timeline** and **grouped-by-city** layouts.
-
-- **Calls:** `GET /trips/:id/itinerary`, `GET /trips/:id/budget`
-- **Details:** days with no activities render a soft "Free day" placeholder rather than collapsing. Print-friendly CSS is a cheap, impressive bonus.
-- **Done when:** every activity added in the builder appears on the right day in the right order
-
-### 9.7 City Search — `/cities` · **P1** · *(mockup screen 8)*
-Search bar with country/region filters and a sort control. Results are rows/cards showing image, city, country, cost index (as a small meter), popularity, and an **Add to Trip** button that opens a "pick which trip" modal.
-
-- **Calls:** `GET /cities?...`, `POST /trips/:tripId/stops`
-- **Details:** debounced server-side text search, pagination or infinite scroll, a "save to favorites" heart writing to `savedDestinations`
-- **Done when:** a city found here can be added to an existing trip in two clicks
-
-### 9.8 Activity Search — `/activities` · **P1** · *(mockup screen 8)*
-Same shell as city search, filtered by type / max cost / max duration, with a city filter chip. Cards show image, name, type badge, cost, duration, rating, and Add/Remove.
-
-- **Calls:** `GET /activities?...`, `POST /trips/:tripId/activities`
-- **Details:** shares one `<SearchLayout>` component with city search — build it once, use it twice
-- **Done when:** filters compose correctly (city + type + cost together)
-
-### 9.9 Budget & Cost Breakdown — `/trips/:id/budget` · **P0** · *(mockup screen 9, budget section)*
-Four KPI tiles up top: total cost, average per day, most expensive stop, remaining vs `budgetLimit`. Then a **pie chart** by category (transport / stay / activities / meals), a **bar chart** of cost per city, and a **line chart** of daily spend with any overbudget day marked in rose. A table lists per-stop costs. An alert banner appears when the trip exceeds its budget limit.
-
-- **Calls:** `GET /trips/:id/budget`
-- **Details:** all math lives in `budget.service.js` on the server — the client only renders. Consistent category colors from §8.
-- **Done when:** adding one $200 activity in the builder visibly moves the pie and the total
-
-### 9.10 Calendar / Timeline — `/trips/:id/calendar` · **P1** · *(mockup screen 11)*
-Month grid with trip days shaded and activity chips inside each day cell, colored by category. Clicking a day expands a panel listing that day's activities with quick edit/delete. A toggle switches to a vertical timeline. Stretch: drag an activity from one day to another to reschedule.
-
-- **Calls:** `GET /trips/:id/itinerary`, `PATCH /trips/:id/activities/:id`
-- **Done when:** the month renders correctly for a trip spanning two months
-
-### 9.11 Public / Shared Itinerary — `/t/:slug` · **P0 — differentiator**
-Chrome-free read-only page: cover photo hero, trip summary, day-wise itinerary, budget summary, "planned by {firstName}", a **Copy Trip** button, and social share buttons (WhatsApp / X / copy-link). Copying while logged out routes through login and resumes afterward.
-
-- **Calls:** `GET /public/trips/:slug`, `POST /trips/:id/copy`
-- **Details:** the serializer strips all owner PII. On the owner's side, the Share button opens a modal with a public toggle and a copy-to-clipboard link.
-- **Done when:** the link opens in an incognito window and Copy Trip clones the whole itinerary into a second account
-
-### 9.12 Profile / Settings — `/profile` · **P1** · *(mockup screen 7)*
-Left: avatar with upload. Right: editable name, email, phone, city, country, bio, language preference. Below: **Preplanned Trips** and **Previous Trips** card grids, a saved-destinations list, a change-password section, and a red **Delete Account** zone behind a type-to-confirm modal.
-
-- **Calls:** `PATCH /users/me`, `PATCH /users/me/avatar`, `DELETE /users/me`, `GET /trips`
-- **Done when:** an avatar upload persists across a reload
-
-### 9.13 Community Feed — `/community` · **P2** · *(mockup screen 10)*
-Feed of public trips: author avatar, trip name, destination chips, duration, total budget, view count, and a View button — plus the shared search / group-by / filter / sort bar. This is effectively a browse view over `isPublic` trips, so it's cheap to build once §9.11 exists.
-
-- **Calls:** `GET /public/trips?search=&sort=`
-- **Done when:** publishing a trip makes it appear in the feed
-
-### 9.14 Admin / Analytics — `/admin` · **P2** · *(mockup screen 12)*
-Admin-only. Tab bar: **Manage Users**, **Popular Cities**, **Popular Activities**, **User Trends & Analytics**. KPI tiles (total users, total trips, trips this week, avg budget), a pie of top cities, a bar of top activities, a line of signups over 30 days, and a user table with role toggle and delete.
-
-- **Calls:** `GET /admin/*`
-- **Details:** aggregation pipelines, not JS loops. Guard the route on both client and server. Seed one admin account in `seed.js`.
-- **Done when:** a non-admin hitting `/admin` gets bounced, and an admin sees real numbers
-
----
-
-## 10. Execution Plan (Hackathon Timeline)
-
-Roughly a 24–30 hour build. Ship a working vertical slice early; polish late.
-
-| Phase | Hours | Deliverable |
-| --- | --- | --- |
-| **0 — Setup** | 0–2 | Repo scaffold, Vite + Tailwind, Express + Atlas connected, `.env.example`, shared API contract agreed, one dummy endpoint rendering in the browser |
-| **1 — Auth** | 2–5 | User model, register/login/refresh/me, JWT middleware, login + register pages, ProtectedRoute, axios interceptor. **Auth must land before anything else starts.** |
-| **2 — Data + seed** | 4–6 | All models, indexes, 60+ cities and 200+ activities seeded (runs in parallel with phase 1) |
-| **3 — Trip CRUD** | 5–9 | Trip endpoints, Create Trip page, My Trips page, trip card component, `components/ui/` finished |
-| **4 — Builder** | 9–15 | Stops + trip-activities endpoints, Itinerary Builder screen, add-stop modal, activity drawer, drag reorder. **The single most important block — protect this time.** |
-| **5 — Budget + views** | 15–19 | `budget.service.js`, budget screen with all three charts, itinerary view timeline |
-| **6 — Search + share** | 19–23 | City search, activity search, share endpoint, public `/t/:slug` page, Copy Trip |
-| **7 — Calendar + profile** | 23–26 | Calendar screen, profile/settings |
-| **8 — Bonus** | 26–28 | Community feed, admin dashboard (only if 1–7 are genuinely done) |
-| **9 — Ship** | 28–30 | Deploy, seed prod DB, create demo accounts, record video, README screenshots, ER diagram, rehearse the demo twice |
-
-**Hard rules**
-- Deploy at the end of phase 3, not at hour 29. A broken build discovered at hour 29 loses the hackathon.
-- Commit every working feature; never leave `main` broken overnight.
-- If a phase runs over, cut a P2 screen — **never cut phases 4 or 5.**
-
----
-
-## 11. Seed Data Strategy
-
-Judges see an empty app as an unfinished app. Seeding is not optional.
-
-- `seed/cities.json` — 60+ cities across 6 regions with `costIndex`, `popularity`, and an image URL each
-- `seed/activities.json` — 3–5 activities per major city spanning every type, with realistic costs and durations
-- `seed.js` — wipes and reloads catalog collections, then creates:
-  - `admin@globetrotter.com / Admin@123` (role: admin)
-  - `demo@globetrotter.com / Demo@123` with **3 pre-built trips** — one completed, one ongoing, one upcoming — the upcoming one fully fleshed out with 3 cities and 10+ activities for the public-share demo
-- Run: `npm run seed` in `backend/`. Re-runnable and idempotent.
-
----
-
-## 12. Environment & Setup
-
-**Prerequisites:** Node 20+ and a MongoDB Atlas connection string.
+### 1 — Backend (`http://localhost:5000`)
 
 ```bash
-# 1 — API  (http://localhost:5000)
 cd backend
 npm install
-cp .env.example .env      # fill in MONGO_URI + both JWT secrets
-npm run seed              # 30 cities + admin/demo accounts
+cp .env.example .env      # fill in MONGO_URI + both JWT secrets, at minimum
+npm run seed               # loads 30 cities, 180 activities, and two demo accounts
 npm run dev
+```
 
-# 2 — Web  (http://localhost:5173) — second terminal
+`npm run seed` is idempotent — safe to re-run any time. Two optional scripts
+fetch real photos for the catalog instead of the UI's gradient fallback:
+`npm run seed:images` (downloads and rewrites `imageUrl`) and
+`npm run seed:images:mirror` (re-hosts them).
+
+### 2 — Frontend (`http://localhost:5173`)
+
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-`backend/.env`
-```
-NODE_ENV=development
-PORT=5000
-MONGO_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/globetrotter?retryWrites=true&w=majority
-JWT_ACCESS_SECRET=<64+ random hex chars>
-JWT_REFRESH_SECRET=<a different 64+ random hex chars>
-ACCESS_TOKEN_EXPIRY=15m
-REFRESH_TOKEN_EXPIRY=7d
-CLIENT_URL=http://localhost:5173
-```
+No `.env` is required for local development — Vite proxies `/api` to
+`http://localhost:5000`, and the AI service URL defaults to
+`http://localhost:8000`. Copy `.env.example` to `.env` only if you need to point
+at a deployed API or a non-default AI service origin.
 
-Generate the secrets with:
+### 3 — Ask Triplie (optional, `http://localhost:8000`)
+
+The app works fully without this — the assistant widget just shows an offline
+notice. To run it:
+
 ```bash
-node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+cd AI
+python -m venv .venv
+.venv\Scripts\activate        # Windows — use `source .venv/bin/activate` on macOS/Linux
+pip install -r requirements.txt
+cp .env.example .env          # point MONGO_URI at the SAME database as backend/.env
+uvicorn app.main:app --reload --port 8000
 ```
 
-`frontend/.env`
-```
-VITE_API_URL=http://localhost:5000/api/v1
-```
+You'll need a Groq API key (generation) and, optionally, a Sarvam API key
+(language identification — without it, input is assumed to be English). See
+[`AI/README.md`](AI/README.md) for the full request-flow writeup and a Mermaid
+state diagram of the graph.
 
-### Cloudinary (image uploads)
+### Demo accounts
 
-1. Create a free account at [cloudinary.com](https://cloudinary.com), then open **Dashboard → Product Environment Credentials**
-2. Copy Cloud name, API Key and API Secret into `backend/.env`:
+Created by `npm run seed`:
 
-```
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=123456789012345
-CLOUDINARY_API_SECRET=your-api-secret
-CLOUDINARY_FOLDER=globetrotter
-UPLOAD_MAX_MB=5
-```
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@globetrotter.com` | `Admin@123` |
+| User | `demo@globetrotter.com` | `Demo@1234` |
 
-**How it works** — files stream through Express (`multer.memoryStorage`) to Cloudinary via `upload_stream`; nothing is ever written to disk, because Render's filesystem is ephemeral. The API secret stays server-side, so the browser never holds a signing key.
-
-- Uploads are folder-scoped: `globetrotter/avatars`, `globetrotter/trip-covers`, `globetrotter/misc`
-- Avatars are transformed at upload time to a 400×400 face-gravity crop with `quality:auto, format:auto`; trip covers to 1600×900
-- Replacing an avatar reuses the stored `public_id`, so Cloudinary overwrites in place instead of leaving orphans
-- The vars are **optional** — without them the API still boots and upload routes return a clear `503` rather than crashing, so a teammate without keys can work on trips
-- Deletes are best-effort and never fail the request; the CDN may serve a cached copy for a few minutes after `destroy`
-
-**Notes**
-- The database name (`/globetrotter`) must be in the URI or Mongo writes to `test`
-- `.env` is gitignored. If a credential ever lands in a commit, rotate it in Atlas — deleting the line does not un-leak it
-- Health check: `curl http://localhost:5000/api/v1/health`
-- `npm run seed` is idempotent — safe to re-run any time
-
-## 13. Deployment
-
-- **Frontend → Vercel:** root `frontend`, build `npm run build`, output `dist`, set `VITE_API_URL` to the Render URL, add a SPA rewrite so deep links like `/t/:slug` don't 404
-- **Backend → Render:** root `backend`, start `node src/server.js`, all env vars set, CORS `origin: CLIENT_URL, credentials: true`
-- **DB → Atlas:** free M0, network access `0.0.0.0/0` for the demo, run the seed against production once
-- Cookies in production need `sameSite:'none', secure:true` since the origins differ — **test this before the demo; it is the classic last-minute failure**
+Neither account starts with any trips — the seed only loads the catalog and
+the two users.
 
 ---
 
-## 14. Demo Script
+## Environment Variables
 
-Rehearse until it's 4 minutes flat, and keep a seeded fallback account open in a second tab in case a live write fails.
+### `backend/.env`
 
-1. Land on the dashboard — popular cities, upcoming trips, budget highlight
-2. Plan a Trip → "Europe Summer 2026", pick dates, upload a cover
-3. Builder → add Paris (3 nights), add Rome (2 nights), drag to reorder
-4. Add activities: Louvre, Seine cruise, Colosseum — watch the sticky budget bar climb
-5. Budget screen → pie, per-city bar, daily-spend line, overbudget alert
-6. Calendar → activities laid out across the month
-7. Share → toggle public, copy the link, open it in incognito
-8. From the second account, Copy Trip → it lands in that user's My Trips
-9. Log in as admin → analytics tiles, top cities, user trends
-10. Close on the ER diagram + the relational modeling justification from §2
+| Variable | Required | Default | Notes |
+| --- | --- | --- | --- |
+| `MONGO_URI` | **Yes** | — | Include the database name before the query string, or writes land in `test` |
+| `JWT_ACCESS_SECRET` | **Yes** | — | Generate with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
+| `JWT_REFRESH_SECRET` | **Yes** | — | Must be a different value from the access secret |
+| `NODE_ENV` | No | `development` | |
+| `PORT` | No | `5000` | |
+| `ACCESS_TOKEN_EXPIRY` / `REFRESH_TOKEN_EXPIRY` | No | `15m` / `7d` | |
+| `CLIENT_URL` | No | `http://localhost:5173` | CORS origin and the refresh cookie's domain |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | No | — | Without all three, upload routes return `503`; everything else still works |
+| `CLOUDINARY_FOLDER` | No | `globetrotter` | |
+| `UPLOAD_MAX_MB` | No | `5` | |
+| `AI_PROVIDER` | No | auto-detect | Forces `gemini` or `groq`; otherwise whichever is configured wins (Gemini first if both are) |
+| `AI_TIMEOUT_MS` | No | `30000` | |
+| `GROQ_API_KEY` / `GROQ_BASE_URL` / `GROQ_CHAT_MODEL` / `GROQ_REASONING_EFFORT` | No | — / Groq's endpoint / `openai/gpt-oss-120b` / `low` | Enables the AI trip generator on the Groq backend |
+| `GEMINI_API_KEY` / `GEMINI_MODEL` | No | — / `gemini-2.5-flash` | Enables the AI trip generator on the Gemini backend |
+
+Without either `GROQ_API_KEY` or `GEMINI_API_KEY`, `GET /ai/status` reports
+`available: false` and the frontend hides the AI trip generator's entry point
+instead of offering a button that always fails.
+
+### `frontend/.env`
+
+| Variable | Required | Default | Notes |
+| --- | --- | --- | --- |
+| `VITE_API_URL` | No | `/api/v1` (proxied to `:5000` in dev) | Set only when the deployed API is on a different origin |
+| `VITE_AI_SERVICE_URL` | No | `http://localhost:8000/api/v1` | Where Ask Triplie looks for the `AI/` service |
+| `VITE_UPLOAD_MAX_MB` | No | `5` | Client-side pre-check; keep in sync with the backend's `UPLOAD_MAX_MB` |
+
+### `AI/.env`
+
+| Variable | Required | Default | Notes |
+| --- | --- | --- | --- |
+| `MONGO_URI` / `MONGO_DB_NAME` | **Yes** | — / `globetrotter` | Point at the **same** cluster and database as `backend/.env` |
+| `GROQ_API_KEY` | **Yes** | — | Runs suggestion generation |
+| `GROQ_BASE_URL` / `GROQ_CHAT_MODEL` | No | Groq's endpoint / `openai/gpt-oss-20b` | |
+| `SARVAM_API_KEY` / `SARVAM_BASE_URL` | No | — / Sarvam's endpoint | Used only for language ID; on any failure (including a missing key) the graph defaults to English rather than failing the request |
+| `PORT` | No | `8000` | |
+| `CORS_ORIGINS` | No | localhost origins | Comma-separated allowlist |
 
 ---
 
-## 15. Scope Guardrails
+## API Reference
 
-**In scope:** everything marked P0 and P1 in §9.
+Base URL: `/api/v1`. Every success response is enveloped as
+`{ success: true, data, message }`; errors as
+`{ success: false, message, errors: [{ field, message }] }` with no `data` key.
+Rate limits: 300 req/15min globally, 20 req/15min (successful requests excluded)
+on credential endpoints, 5 req/15min per user on AI generation.
 
-**Explicitly out of scope** — say no fast if these come up:
-- Real payments or bookings
-- Live flight/hotel APIs (Amadeus, Skyscanner) — rate limits and API-key approval will eat hours
-- Real-time collaborative editing (websockets)
-- A native mobile app — responsive web only
-- Email delivery for password reset — return the token in the dev response and note it as a stub
-- Multi-currency FX conversion — one base currency, mention FX as future work
-- AI itinerary generation — tempting, but a demo-day risk unless P0 and P1 are fully done
+### Auth — `/auth`
 
-**Definition of done for the whole project:** a stranger can sign up on the deployed URL, build a two-city trip with activities, see an accurate budget breakdown, share a public link, and have someone else copy that trip — with no console errors and no broken states on a 375px screen.
+| Method | Path | Auth | Notes |
+| --- | --- | --- | --- |
+| POST | `/register` | — | |
+| POST | `/login` | — | Returns `{ user, accessToken }`; sets an httpOnly refresh cookie |
+| POST | `/refresh` | cookie | Rotates the access token |
+| POST | `/logout` | — | Clears the refresh cookie |
+| GET | `/me` | required | |
+| POST | `/forgot-password` | — | |
+| POST | `/reset-password` | — | |
+
+### Users — `/users` *(all require auth)*
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| PATCH | `/me` | `.strict()` schema — unknown keys 422 |
+| POST | `/me/password` | |
+| DELETE | `/me` | |
+| GET / POST / DELETE | `/me/saved`, `/me/saved/:cityId` | Saved destinations |
+| PATCH / DELETE | `/me/avatar` | Multipart; uploads to / removes from Cloudinary |
+| POST | `/me/images?kind=tripCover\|misc` | Multipart → `{ url, publicId, width, height }` |
+| DELETE | `/me/images/*` | Wildcard — the Cloudinary `public_id` contains slashes |
+
+### Trips — `/trips` *(all require auth and are ownership-checked; a trip you don't own 404s, not 403s)*
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/` | `?status=&visibility=&search=&sort=&page=&limit=`. Each item includes `stopCount`, `nights`, `cityNames`, and an estimated cost breakdown |
+| GET | `/summary` | Dashboard totals — declared before `/:tripId` so Express doesn't read the literal as an id |
+| POST | `/` | Validates `endDate ≥ startDate` and a ≤365-day span. Optional `cityIds[]` become dated stops in the *same* request |
+| GET / PATCH / DELETE | `/:tripId` | PATCH is `.strict()`; DELETE cascades to stops and trip activities |
+| PATCH / DELETE | `/:tripId/cover` | Multipart cover photo |
+| GET | `/:tripId/budget` | Full breakdown — see [Data Model](#data-model) |
+| GET | `/:tripId/itinerary` | Day-by-day array, ready to render |
+| POST / DELETE | `/:tripId/share` | Mints / clears `publicSlug` |
+| POST | `/:tripId/copy` | Deep-clones the trip into the caller's account |
+
+**Stops** — `/trips/:tripId/stops`: `GET /`, `POST /`, `PATCH /reorder` (body:
+`{ orderedIds: [] }`, every stop id on the trip required), `GET /:stopId/days`,
+`PATCH /:stopId`, `DELETE /:stopId`.
+
+**Trip activities** — `/trips/:tripId/activities`: `GET /`, `POST /`,
+`PATCH /reorder` (one day's ids), `PATCH /:activityId`, `DELETE /:activityId`.
+Omitting `cost` or `durationMinutes` on create copies the catalog value;
+sending `cost: 0` pins it to zero.
+
+### Catalog — public, no auth
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/cities` | `?search=&country=&region=&sort=&page=` |
+| GET | `/cities/popular`, `/cities/:id` | |
+| GET | `/activities` | `?city=&type=&maxCost=&maxDuration=&search=&sort=&page=` |
+| GET | `/activities/meta`, `/activities/:id` | |
+
+### Public — `/public`, no auth
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/trips` | Community feed of published trips |
+| GET | `/trips/:slug` | Read-only itinerary + budget; bumps `viewCount`; response strips owner PII |
+
+### AI — `/ai` *(all require auth)*
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| GET | `/status` | `{ available, provider, model, maxDays }` — gate the entry point on this |
+| POST | `/generate-trip` | `{ prompt, startDate, days, travelers?, budgetLimit?, currency?, pace? }` → writes a real trip and returns `{ tripId, stopCount, activityCount, generatedInMs }`. Rate-limited to 5/15min per user |
+
+### Admin — `/admin` *(require auth + admin role)*
+
+`GET /stats`, `GET /popular-cities`, `GET /popular-activities`,
+`GET /trends`, `GET /users`, `PATCH /users/:id` (role), `DELETE /users/:id`.
+
+### Ask Triplie — separate service, not under `/api/v1`
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| POST | `/api/v1/suggestions` | `{ prompt, user_id?, trip_id? }` → `{ summary, reply, intent, suggestions, languageCode, scriptCode }`. No auth of its own and no response envelope — the frontend talks to it with a dedicated client, not the one used for `backend/` |
+| GET | `/api/v1/health` | `{ status: "ok" }` |
+
+---
+
+## Data Model
+
+```
+User 1───∞ Trip 1───∞ Stop ∞───1 City 1───∞ Activity
+                       │                        │
+                       └──∞ TripActivity ∞──────┘
+User ∞───∞ City   (savedDestinations)
+```
+
+`TripActivity` is the associative entity between a `Stop` and a catalog
+`Activity` — it's a separate collection rather than an array on `Stop` because
+it carries its own attributes (date, time, a price *snapshot* since the catalog
+can drift, notes, order within the day), and `activity` is nullable so a fully
+custom, off-catalog activity can use `customName` instead.
+
+| Collection | Key fields | Notes |
+| --- | --- | --- |
+| `User` | email, password (bcrypt, `select: false`), role, savedDestinations[] | `fullName` virtual; password never serializes |
+| `City` | name, country, region, costIndex, popularity, lat/lng | Seeded catalog; text-indexed on name + country |
+| `Activity` | city ref, type, cost, durationMinutes, rating | Seeded catalog; text-indexed on name + description |
+| `Trip` | user ref, name, date range, budgetLimit, isPublic, publicSlug, copiedFrom | `status` virtual (`upcoming`/`ongoing`/`completed`) computed from today vs. the date range at UTC day boundaries — never stored |
+| `Stop` | trip ref, city ref, order, date range, transportCost, accommodationCost, mealBudgetPerDay | One city leg of a trip |
+| `TripActivity` | trip ref, stop ref, activity ref (nullable), date, cost, order | The join entity described above |
+
+None of the derived numbers are stored — they're computed fresh on every read,
+in `budget.service.js`:
+
+- `stop.nights = endDate − startDate`
+- `stop.total = transport + stay + (mealBudgetPerDay × nights) + Σ activity costs`
+- `trip.total = Σ stop totals`; `trip.avgPerDay = total / trip days`
+- `dailySpend[date]` — transport lands on the arrival day, stay and meals spread
+  evenly across the stop's nights, activities land on their own date — which is
+  what powers the daily-spend chart and the overbudget-day flags
+
+---
+
+## Conventions & Gotchas
+
+A few things that aren't obvious from the code on first read:
+
+- **`_id` is the id.** `id` isn't always present — controllers using `.lean()`
+  return raw documents with no `id` virtual. Only `Trip`, `Stop`, and `User` set
+  `virtuals: true`, and only when returned as full documents.
+- **Two date formats ship in the same payload.** `days[].date` and
+  `overBudgetDays[]` are `'YYYY-MM-DD'` strings; every other date is a full ISO
+  datetime. Dates are normalized to UTC day boundaries server-side.
+- **Zod is v3 on the server, v4 in the browser.** Schemas are not portable
+  between them.
+- **Update schemas are `.strict()`.** An unrecognized key on a PATCH is a `422`,
+  not a silent ignore.
+- **`warnings` on a stop/activity write is not an error.** The write already
+  succeeded; `warnings` flags dates outside the trip range or overlapping
+  another stop. Render them — don't throw.
+- **Route order matters.** `/trips/summary` is declared before `/trips/:tripId`,
+  and `/reorder` before `/:stopId` — a static route below a param route gets
+  read as the param.
+- **`GET /ai/status` requires auth**, so the AI entry point can't be gated on a
+  pre-login screen.
+
+---
+
+## Design Language
+
+Warm paper and deep forest, editorial rather than SaaS. Design tokens live in
+`frontend/src/index.css` under Tailwind v4's `@theme` block — there is no
+`tailwind.config.js`, and components reference token names (`bg-canvas`,
+`text-ink-700`, `border-line`) rather than raw hex values.
+
+- `canvas` is warm off-white, never cold grey; `brand` is a deep forest green
+  and the only primary action color; `ember` is a warm terracotta reserved for
+  over-budget states, drafts, and destructive actions — never a primary button
+- Elevation comes from 1px borders, not shadows — the shadow tokens exist but
+  are deliberately faint, so nothing floats off the page
+- `PageHeader` owns the photograph behind the navbar, so the top bar reads as
+  sitting on the image rather than a strip below it

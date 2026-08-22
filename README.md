@@ -30,7 +30,7 @@
 
 <p align="center">
   <img alt="Hackathon" src="https://img.shields.io/badge/Hackathon-Odoo-c2703f?style=flat-square" />
-  <img alt="Team" src="https://img.shields.io/badge/Team-LDCE-2e4034?style=flat-square" />
+  <img alt="Team" src="https://img.shields.io/badge/Team-DOMinators-2e4034?style=flat-square" />
   <img alt="Status" src="https://img.shields.io/badge/Status-Active_Development-2e4034?style=flat-square" />
 </p>
 

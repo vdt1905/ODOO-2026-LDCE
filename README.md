@@ -34,7 +34,7 @@
   <img alt="Status" src="https://img.shields.io/badge/Status-Active_Development-2e4034?style=flat-square" />
 </p>
 
-Multi-city travel itinerary planner. Built for the Odoo Hackathon by Team LDCE.
+Multi-city travel itinerary planner. Built for the Odoo Hackathon by Team DOMinators.
 
 Plan a trip across several cities, give each city a date range and a budget, hang
 activities off each day, and watch the cost roll up per day, per city, and per

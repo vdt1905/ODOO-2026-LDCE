@@ -9,7 +9,20 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 const readJson = async (file) => JSON.parse(await readFile(join(here, file), 'utf8'));
 
-const seedCities = async () => {
+/**
+ * Photo URLs resolved by `npm run seed:images`. Optional — if the file is
+ * missing the seed still runs and the UI falls back to its gradient tiles.
+ */
+const readImages = async () => {
+  try {
+    return await readJson('images.json');
+  } catch {
+    console.warn('[seed] images.json not found — run `npm run seed:images` for photos');
+    return { cities: {}, activities: {} };
+  }
+};
+
+const seedCities = async (images) => {
   const cities = await readJson('cities.json');
 
   // Idempotent: re-running updates existing rows instead of duplicating them.
@@ -17,13 +30,19 @@ const seedCities = async () => {
     cities.map((city) => ({
       updateOne: {
         filter: { name: city.name, country: city.country },
-        update: { $set: city },
+        update: {
+          $set: {
+            ...city,
+            imageUrl: images.cities[`${city.name}|${city.country}`] || city.imageUrl || '',
+          },
+        },
         upsert: true,
       },
     }))
   );
 
-  console.log(`[seed] cities → ${cities.length} upserted`);
+  const withPhotos = cities.filter((c) => images.cities[`${c.name}|${c.country}`]).length;
+  console.log(`[seed] cities → ${cities.length} upserted (${withPhotos} with photos)`);
 };
 
 /**
@@ -33,7 +52,7 @@ const seedCities = async () => {
  * Matched to cities by name + country rather than by id, so the file stays
  * readable and re-runnable.
  */
-const seedActivities = async () => {
+const seedActivities = async (images) => {
   const groups = await readJson('activities.json');
 
   const cities = await City.find().select('name country').lean();
@@ -52,10 +71,13 @@ const seedActivities = async () => {
     }
 
     for (const item of group.items) {
+      const imageUrl =
+        images.activities[`${group.city}|${group.country}|${item.name}`] || item.imageUrl || '';
+
       operations.push({
         updateOne: {
           filter: { city: id, name: item.name },
-          update: { $set: { ...item, city: id } },
+          update: { $set: { ...item, city: id, imageUrl } },
           upsert: true,
         },
       });
@@ -106,9 +128,10 @@ const seedUsers = async () => {
 const run = async () => {
   try {
     await connectDB();
+    const images = await readImages();
     // Cities first — activities are matched to them by name + country.
-    await seedCities();
-    await seedActivities();
+    await seedCities(images);
+    await seedActivities(images);
     await seedUsers();
     console.log('[seed] done');
   } catch (error) {

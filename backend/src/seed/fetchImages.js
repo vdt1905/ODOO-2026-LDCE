@@ -28,22 +28,43 @@ const WIDTH = 900;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Wikimedia thumb URLs embed their width; bump it for a card-sized image. */
-const upscale = (url) => (url ? url.replace(/\/\d+px-/, `/${WIDTH}px-`) : '');
+/**
+ * Titles the automatic lookup gets wrong — "New York" is a disambiguation page
+ * for the state, and a few landmarks sit under a different article name.
+ */
+const OVERRIDES = {
+  'New York': 'New York City',
+  'Statue of Liberty and Ellis Island': 'Statue of Liberty',
+  'High Line and Chelsea Market': 'High Line',
+  'Old Dubai souks and abra crossing': 'Dubai Creek',
+  'Bo-Kaap walk and Cape Malay cooking': 'Bo-Kaap',
+};
 
+/**
+ * Uses the Action API's `pithumbsize` rather than the REST summary endpoint.
+ *
+ * The REST endpoint returns a fixed ~330px thumbnail, and upload.wikimedia.org
+ * will NOT render other widths on demand — rewriting the width in that URL
+ * yields a 400. Asking the Action API for the size renders it server-side and
+ * returns a URL that actually resolves.
+ */
 const lookup = async (title) => {
+  const url =
+    'https://en.wikipedia.org/w/api.php' +
+    '?action=query&format=json&origin=*' +
+    '&prop=pageimages&piprop=thumbnail&redirects=1' +
+    `&pithumbsize=${WIDTH}&titles=${encodeURIComponent(title)}`;
+
   try {
-    const res = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
-      { headers: HEADERS }
-    );
+    const res = await fetch(url, { headers: HEADERS });
     if (!res.ok) return '';
 
     const json = await res.json();
-    // Disambiguation pages carry a generic icon, not a photo of the subject.
-    if (json.type === 'disambiguation') return '';
+    const page = Object.values(json?.query?.pages || {})[0];
+    if (!page || page.missing !== undefined) return '';
 
-    return upscale(json.thumbnail?.source || '');
+    // Strip the tracking query string Wikipedia appends.
+    return (page.thumbnail?.source || '').split('?')[0];
   } catch {
     return '';
   }
@@ -51,8 +72,9 @@ const lookup = async (title) => {
 
 /** Tries each candidate title in order and returns the first image found. */
 const resolve = async (candidates) => {
-  for (const title of candidates) {
-    if (!title) continue;
+  for (const raw of candidates) {
+    if (!raw) continue;
+    const title = OVERRIDES[raw] || raw;
     const url = await lookup(title);
     await sleep(120);
     if (url) return { url, matched: title };

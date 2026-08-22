@@ -1,0 +1,37 @@
+[
+  { "name": "Paris", "country": "France", "region": "Europe", "costIndex": 78, "popularity": 98, "currency": "EUR", "description": "Boulevards, museums and long dinners — the classic first stop in Europe." },
+  { "name": "Rome", "country": "Italy", "region": "Europe", "costIndex": 68, "popularity": 94, "currency": "EUR", "description": "Two thousand years of ruins wrapped around great, cheap food." },
+  { "name": "Barcelona", "country": "Spain", "region": "Europe", "costIndex": 64, "popularity": 92, "currency": "EUR", "description": "Gaudí, beaches and tapas within one walkable grid." },
+  { "name": "Amsterdam", "country": "Netherlands", "region": "Europe", "costIndex": 74, "popularity": 88, "currency": "EUR", "description": "Canals, bikes and world-class galleries in a compact centre." },
+  { "name": "Prague", "country": "Czechia", "region": "Europe", "costIndex": 48, "popularity": 84, "currency": "CZK", "description": "Storybook old town, and the best value city break in Europe." },
+  { "name": "Lisbon", "country": "Portugal", "region": "Europe", "costIndex": 52, "popularity": 86, "currency": "EUR", "description": "Tiled hills, trams and Atlantic light on a modest budget." },
+  { "name": "Santorini", "country": "Greece", "region": "Europe", "costIndex": 72, "popularity": 90, "currency": "EUR", "description": "Caldera sunsets and whitewashed villages above the Aegean." },
+  { "name": "Reykjavik", "country": "Iceland", "region": "Europe", "costIndex": 92, "popularity": 76, "currency": "ISK", "description": "Base camp for glaciers, geysers and the northern lights." },
+  { "name": "Interlaken", "country": "Switzerland", "region": "Europe", "costIndex": 95, "popularity": 74, "currency": "CHF", "description": "Two lakes, one valley, and the Alps in every direction." },
+
+  { "name": "Tokyo", "country": "Japan", "region": "Asia", "costIndex": 76, "popularity": 97, "currency": "JPY", "description": "Neon districts, quiet shrines and the best transit on earth." },
+  { "name": "Kyoto", "country": "Japan", "region": "Asia", "costIndex": 66, "popularity": 91, "currency": "JPY", "description": "Temples, bamboo and machiya streets — Japan at half speed." },
+  { "name": "Bali", "country": "Indonesia", "region": "Asia", "costIndex": 34, "popularity": 95, "currency": "IDR", "description": "Rice terraces, surf breaks and long stays for very little." },
+  { "name": "Bangkok", "country": "Thailand", "region": "Asia", "costIndex": 32, "popularity": 93, "currency": "THB", "description": "Street food, river temples and the cheapest big city in Asia." },
+  { "name": "Singapore", "country": "Singapore", "region": "Asia", "costIndex": 82, "popularity": 87, "currency": "SGD", "description": "Hawker centres and skyline gardens, effortlessly easy to navigate." },
+  { "name": "Dubai", "country": "United Arab Emirates", "region": "Asia", "costIndex": 80, "popularity": 85, "currency": "AED", "description": "Desert dunes on one side, record-breaking towers on the other." },
+  { "name": "Jaipur", "country": "India", "region": "Asia", "costIndex": 24, "popularity": 82, "currency": "INR", "description": "Pink City forts and bazaars — colour-saturated and very affordable." },
+  { "name": "Goa", "country": "India", "region": "Asia", "costIndex": 26, "popularity": 84, "currency": "INR", "description": "Beach shacks, Portuguese churches and slow coastal days." },
+  { "name": "Hanoi", "country": "Vietnam", "region": "Asia", "costIndex": 28, "popularity": 80, "currency": "VND", "description": "Old Quarter chaos, lake mornings and unbeatable street food." },
+
+  { "name": "New York", "country": "United States", "region": "North America", "costIndex": 96, "popularity": 96, "currency": "USD", "description": "Everything, all at once — plan hard or the budget disappears." },
+  { "name": "San Francisco", "country": "United States", "region": "North America", "costIndex": 94, "popularity": 83, "currency": "USD", "description": "Fog, hills and the gateway to Yosemite and the Pacific coast." },
+  { "name": "Vancouver", "country": "Canada", "region": "North America", "costIndex": 78, "popularity": 79, "currency": "CAD", "description": "Mountains meeting the sea at the edge of the city." },
+  { "name": "Mexico City", "country": "Mexico", "region": "North America", "costIndex": 42, "popularity": 86, "currency": "MXN", "description": "Ancient pyramids, modern galleries and the best value on the continent." },
+
+  { "name": "Rio de Janeiro", "country": "Brazil", "region": "South America", "costIndex": 46, "popularity": 88, "currency": "BRL", "description": "Beaches wedged between granite peaks, alive at all hours." },
+  { "name": "Cusco", "country": "Peru", "region": "South America", "costIndex": 36, "popularity": 81, "currency": "PEN", "description": "Andean base for the Sacred Valley and Machu Picchu." },
+  { "name": "Buenos Aires", "country": "Argentina", "region": "South America", "costIndex": 40, "popularity": 78, "currency": "ARS", "description": "European boulevards, Latin nights and remarkable steak." },
+
+  { "name": "Cape Town", "country": "South Africa", "region": "Africa", "costIndex": 44, "popularity": 89, "currency": "ZAR", "description": "Table Mountain, wine valleys and two oceans in one week." },
+  { "name": "Marrakech", "country": "Morocco", "region": "Africa", "costIndex": 38, "popularity": 85, "currency": "MAD", "description": "Souks, riads and the Atlas Mountains an hour away." },
+  { "name": "Zanzibar City", "country": "Tanzania", "region": "Africa", "costIndex": 40, "popularity": 75, "currency": "TZS", "description": "Stone Town alleys opening onto white Indian Ocean sand." },
+
+  { "name": "Sydney", "country": "Australia", "region": "Oceania", "costIndex": 84, "popularity": 90, "currency": "AUD", "description": "Harbour, surf beaches and coastal walks between them." },
+  { "name": "Queenstown", "country": "New Zealand", "region": "Oceania", "costIndex": 76, "popularity": 82, "currency": "NZD", "description": "Adventure capital — bungee, hikes and alpine lakes." }
+]

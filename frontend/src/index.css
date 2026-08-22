@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   GlobeTrotter design tokens (Tailwind v4).
+   Everything visual is defined once here; components only use the token names
+   (bg-canvas, text-ink-700, shadow-lift, ...) and never raw hex values.
+--------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces — warm paper, not cold grey */
+  --color-canvas: #faf6ef;
+  --color-canvas-deep: #f2ebe0;
+  --color-surface: #ffffff;
+  --color-line: #e9e1d5;
+
+  /* Text */
+  --color-ink-900: #17140f;
+  --color-ink-700: #3d372e;
+  --color-ink-500: #6e665a;
+  --color-ink-300: #a79e90;
+
+  /* Brand — sunset terracotta */
+  --color-clay-50: #fdf4ee;
+  --color-clay-100: #f9e4d5;
+  --color-clay-200: #f1c9ae;
+  --color-clay-300: #e9ae87;
+  --color-clay-400: #de9260;
+  --color-clay-500: #ce7440;
+  --color-clay-600: #b25c2e;
+  --color-clay-700: #8e4724;
+
+  /* Secondary — meadow moss */
+  --color-moss-50: #f2f5ee;
+  --color-moss-100: #e2e9d8;
+  --color-moss-300: #b4c29e;
+  --color-moss-500: #7e9264;
+  --color-moss-600: #64764c;
+  --color-moss-800: #3b4630;
+
+  /* Sky accents used by the hero scene */
+  --color-dawn-100: #fde8d2;
+  --color-dawn-300: #f7c9a3;
+  --color-dawn-500: #efa98a;
+  --color-dusk-400: #b9a2b0;
+  --color-dusk-600: #7c7488;
+
+  /* Budget categories — fixed everywhere: charts, badges, calendar chips */
+  --color-cat-transport: #8b7bb8;
+  --color-cat-stay: #4fa398;
+  --color-cat-activities: #ce7440;
+  --color-cat-meals: #d9a441;
+  --color-cat-other: #a79e90;
+
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-4xl: 2rem;
+
+  --shadow-soft: 0 1px 2px rgba(23, 20, 15, 0.05), 0 8px 24px -12px rgba(23, 20, 15, 0.15);
+  --shadow-lift: 0 2px 4px rgba(23, 20, 15, 0.06), 0 18px 40px -18px rgba(23, 20, 15, 0.28);
+  --shadow-pill: 0 1px 2px rgba(23, 20, 15, 0.06), 0 10px 30px -12px rgba(23, 20, 15, 0.25);
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-float: float 7s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  /* Keyboard focus stays visible everywhere; mouse clicks stay clean */
+  :focus-visible {
+    outline: 2px solid var(--color-clay-500);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Staggered reveal for hero children */
+  .delay-1 {
+    animation-delay: 0.08s;
+  }
+  .delay-2 {
+    animation-delay: 0.16s;
+  }
+  .delay-3 {
+    animation-delay: 0.24s;
+  }
+  .delay-4 {
+    animation-delay: 0.32s;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

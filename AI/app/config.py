@@ -1,10 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Base
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    port: int = 8000
+    port: int = 8034
     cors_origins: str = "http://localhost:8000"
 
     mongo_uri: str

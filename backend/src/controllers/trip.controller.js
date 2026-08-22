@@ -5,7 +5,7 @@ import { sendCreated, sendSuccess } from '../utils/apiResponse.js';
 import { addDays, differenceInDays } from '../utils/dates.js';
 import { publicSlug } from '../utils/slug.js';
 import { deleteTripCascade, loadOwnedTrip, loadTripGraph } from '../services/trip.service.js';
-import { buildBudget } from '../services/budget.service.js';
+import { buildBudget, estimateTripCosts } from '../services/budget.service.js';
 import { buildItinerary } from '../services/itinerary.service.js';
 import { copyTrip } from '../services/copyTrip.service.js';
 import { deleteImage, uploadImage } from '../services/upload.service.js';
@@ -55,30 +55,99 @@ export const listTrips = asyncHandler(async (req, res) => {
     Trip.countDocuments(filter),
   ]);
 
-  // One grouped query for the counts, rather than N queries inside a map.
-  const ids = trips.map((trip) => trip._id);
-  const [stopCounts, activityCounts] = await Promise.all([
-    Stop.aggregate([{ $match: { trip: { $in: ids } } }, { $group: { _id: '$trip', count: { $sum: 1 } } }]),
-    TripActivity.aggregate([
-      { $match: { trip: { $in: ids } } },
-      { $group: { _id: '$trip', count: { $sum: 1 }, cost: { $sum: '$cost' } } },
-    ]),
-  ]);
+  // One shared estimator for the whole page — same maths as /budget, so a card
+  // and the budget screen can never show different numbers.
+  const costs = await estimateTripCosts(trips.map((trip) => trip._id));
 
-  const stopsBy = Object.fromEntries(stopCounts.map((row) => [String(row._id), row.count]));
-  const actsBy = Object.fromEntries(activityCounts.map((row) => [String(row._id), row]));
-
-  const items = trips.map((trip) => ({
-    ...trip,
-    status: statusOf(trip),
-    stopCount: stopsBy[String(trip._id)] || 0,
-    activityCount: actsBy[String(trip._id)]?.count || 0,
-    plannedCost: actsBy[String(trip._id)]?.cost || 0,
-    days: differenceInDays(trip.endDate, trip.startDate) + 1,
-  }));
+  const items = trips.map((trip) => {
+    const cost = costs.get(String(trip._id));
+    return {
+      ...trip,
+      status: statusOf(trip),
+      days: differenceInDays(trip.endDate, trip.startDate) + 1,
+      stopCount: cost.stopCount,
+      activityCount: cost.activityCount,
+      cities: cost.cities,
+      countries: cost.countries,
+      // Full four-category total, not just activities.
+      estimatedCost: cost.estimatedCost,
+      costBreakdown: {
+        transport: cost.transport,
+        stay: cost.stay,
+        meals: cost.meals,
+        activities: cost.activities,
+      },
+    };
+  });
 
   return sendSuccess(res, {
     data: { items, total, page, pages: Math.ceil(total / limit) || 1 },
+  });
+});
+
+/**
+ * GET /trips/summary — the dashboard's "budget highlights" and quick counts.
+ *
+ * One call for the whole home screen: totals across every trip, the next trip
+ * up, and a per-status breakdown. Without this the dashboard would have to hit
+ * /trips/:id/budget once per trip.
+ */
+export const tripsSummary = asyncHandler(async (req, res) => {
+  const trips = await Trip.find({ user: req.user._id }).lean();
+  const costs = await estimateTripCosts(trips.map((trip) => trip._id));
+
+  const round2 = (value) => Math.round((Number(value) || 0) * 100) / 100;
+
+  const totals = { transport: 0, stay: 0, meals: 0, activities: 0 };
+  const byStatus = { upcoming: 0, ongoing: 0, completed: 0 };
+  let totalPlanned = 0;
+  let totalDays = 0;
+  const visited = new Set();
+
+  const enriched = trips.map((trip) => {
+    const cost = costs.get(String(trip._id));
+    const status = statusOf(trip);
+
+    byStatus[status] += 1;
+    totalPlanned += cost.estimatedCost;
+    totalDays += differenceInDays(trip.endDate, trip.startDate) + 1;
+    cost.cities.forEach((city) => visited.add(city));
+    Object.keys(totals).forEach((key) => {
+      totals[key] = round2(totals[key] + cost[key]);
+    });
+
+    return { trip, cost, status };
+  });
+
+  // Soonest trip that has not finished yet.
+  const next = enriched
+    .filter((row) => row.status !== 'completed')
+    .sort((a, b) => new Date(a.trip.startDate) - new Date(b.trip.startDate))[0];
+
+  return sendSuccess(res, {
+    data: {
+      tripCount: trips.length,
+      byStatus,
+      citiesPlanned: visited.size,
+      totalDaysPlanned: totalDays,
+      totalPlannedCost: round2(totalPlanned),
+      avgTripCost: trips.length ? round2(totalPlanned / trips.length) : 0,
+      byCategory: totals,
+      nextTrip: next
+        ? {
+            _id: String(next.trip._id),
+            name: next.trip.name,
+            startDate: next.trip.startDate,
+            endDate: next.trip.endDate,
+            coverPhotoUrl: next.trip.coverPhotoUrl,
+            currency: next.trip.currency,
+            status: next.status,
+            daysUntil: differenceInDays(next.trip.startDate, new Date()),
+            estimatedCost: next.cost.estimatedCost,
+            cities: next.cost.cities,
+          }
+        : null,
+    },
   });
 });
 

@@ -1,3 +1,4 @@
+import { Stop, TripActivity } from '../models/index.js';
 import { differenceInDays, eachDayBetween, toDateKey } from '../utils/dates.js';
 
 /**
@@ -137,4 +138,84 @@ export const buildBudget = ({ trip, stops, activities }) => {
     isOverBudget: Boolean(trip.budgetLimit && total > trip.budgetLimit),
     overBudgetDays: dailySpend.filter((day) => day.isOverBudget).map((day) => day.date),
   };
+};
+
+/**
+ * Estimated cost for many trips at once, in two aggregations rather than one
+ * buildBudget() per trip.
+ *
+ * Uses the same four categories and the same arithmetic as buildBudget, so a
+ * trip card, the dashboard total and the budget screen can never disagree.
+ * Meals are the easy one to forget — they are nightly, not per-trip.
+ */
+export const estimateTripCosts = async (tripIds) => {
+  if (!tripIds?.length) return new Map();
+
+  const [stopRows, activityRows] = await Promise.all([
+    Stop.aggregate([
+      { $match: { trip: { $in: tripIds } } },
+      { $sort: { order: 1 } },
+      { $lookup: { from: 'cities', localField: 'city', foreignField: '_id', as: 'cityDoc' } },
+      { $unwind: { path: '$cityDoc', preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          trip: 1,
+          transportCost: 1,
+          accommodationCost: 1,
+          cityName: '$cityDoc.name',
+          countryName: '$cityDoc.country',
+          meals: {
+            $multiply: [
+              { $ifNull: ['$mealBudgetPerDay', 0] },
+              { $dateDiff: { startDate: '$startDate', endDate: '$endDate', unit: 'day' } },
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: '$trip',
+          stopCount: { $sum: 1 },
+          transport: { $sum: '$transportCost' },
+          stay: { $sum: '$accommodationCost' },
+          meals: { $sum: '$meals' },
+          cities: { $push: '$cityName' },
+          countries: { $addToSet: '$countryName' },
+        },
+      },
+    ]),
+    TripActivity.aggregate([
+      { $match: { trip: { $in: tripIds } } },
+      { $group: { _id: '$trip', activityCount: { $sum: 1 }, activities: { $sum: '$cost' } } },
+    ]),
+  ]);
+
+  const activityBy = Object.fromEntries(activityRows.map((row) => [String(row._id), row]));
+
+  const result = new Map();
+
+  for (const id of tripIds) {
+    const key = String(id);
+    const stop = stopRows.find((row) => String(row._id) === key);
+    const act = activityBy[key];
+
+    const transport = round2(stop?.transport);
+    const stay = round2(stop?.stay);
+    const meals = round2(stop?.meals);
+    const activities = round2(act?.activities);
+
+    result.set(key, {
+      stopCount: stop?.stopCount || 0,
+      activityCount: act?.activityCount || 0,
+      cities: (stop?.cities || []).filter(Boolean),
+      countries: (stop?.countries || []).filter(Boolean),
+      transport,
+      stay,
+      meals,
+      activities,
+      estimatedCost: round2(transport + stay + meals + activities),
+    });
+  }
+
+  return result;
 };

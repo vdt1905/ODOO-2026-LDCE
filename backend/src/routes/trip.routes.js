@@ -20,6 +20,9 @@ router.use(requireAuth);
 router.get('/', validate(listTripsQuerySchema, 'query'), tripController.listTrips);
 router.post('/', validate(createTripSchema), tripController.createTrip);
 
+// Before '/:tripId', or 'summary' is matched as a trip id.
+router.get('/summary', tripController.tripsSummary);
+
 router.get('/:tripId', tripController.getTrip);
 router.patch('/:tripId', validate(updateTripSchema), tripController.updateTrip);
 router.delete('/:tripId', tripController.deleteTrip);

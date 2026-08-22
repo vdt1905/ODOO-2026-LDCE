@@ -4,13 +4,14 @@ import { cn } from '../../lib/cn.js';
 import { ACTIVITY_TYPE_META, gradientFor } from '../../lib/constants.js';
 import { formatCurrency, formatDuration } from '../../lib/format.js';
 import { Badge } from '../../components/ui/index.js';
+import { ActivityIcon } from '../../components/ui/ActivityIcon.jsx';
 
 export const ActivityResultCard = ({ activity }) => {
   const meta = ACTIVITY_TYPE_META[activity.type];
   const city = activity.city;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-surface transition-transform duration-300 hover:-translate-y-1">
+    <article className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-surface transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-line-strong">
       <div className="relative aspect-[16/9] overflow-hidden">
         {activity.imageUrl ? (
           <img
@@ -28,9 +29,7 @@ export const ActivityResultCard = ({ activity }) => {
               gradientFor(activity.name)
             )}
           >
-            <span aria-hidden className="text-4xl opacity-90">
-              {meta?.emoji || '📍'}
-            </span>
+            <ActivityIcon type={activity.type} className="size-9 text-white/85" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/55 via-transparent to-ink-900/25" />
@@ -45,8 +44,8 @@ export const ActivityResultCard = ({ activity }) => {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="font-display text-base leading-snug font-semibold text-ink-900">
+      <div className="flex flex-1 flex-col gap-2.5 p-5">
+        <h3 className="line-clamp-2 font-display text-[17px] leading-tight text-ink-900 uppercase">
           {activity.name}
         </h3>
 
@@ -65,14 +64,15 @@ export const ActivityResultCard = ({ activity }) => {
           </p>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-3 text-sm">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-3.5">
           {/* The list endpoint populates the city with name/country/region only,
               so there is no local currency to format against — USD is the app
-              default and the honest fallback. */}
-          <span className="font-medium text-ink-900">
+              default and the honest fallback. Money gets the display face: it is
+              the figure people scan a catalog for. */}
+          <span className="font-display text-xl leading-none text-ink-900">
             {activity.cost > 0 ? formatCurrency(activity.cost) : 'Free'}
           </span>
-          <span className="flex items-center gap-1.5 text-ink-500">
+          <span className="flex items-center gap-1.5 text-xs text-ink-500">
             <Clock className="size-3.5" aria-hidden />
             {formatDuration(activity.durationMinutes)}
           </span>
@@ -85,10 +85,14 @@ export const ActivityResultCard = ({ activity }) => {
 export const ActivityResultCardSkeleton = () => (
   <div className="overflow-hidden rounded-3xl border border-line bg-surface">
     <div className="aspect-[16/9] animate-pulse bg-canvas-deep" />
-    <div className="space-y-3 p-4">
-      <div className="h-3 w-3/4 animate-pulse rounded-full bg-canvas-deep" />
+    <div className="space-y-3 p-5">
+      <div className="h-4 w-3/4 animate-pulse rounded-full bg-canvas-deep" />
       <div className="h-3 w-1/2 animate-pulse rounded-full bg-canvas-deep" />
       <div className="h-3 w-full animate-pulse rounded-full bg-canvas-deep" />
+      <div className="mt-4 flex items-center justify-between border-t border-line pt-3.5">
+        <div className="h-4 w-16 animate-pulse rounded-full bg-canvas-deep" />
+        <div className="h-3 w-12 animate-pulse rounded-full bg-canvas-deep" />
+      </div>
     </div>
   </div>
 );

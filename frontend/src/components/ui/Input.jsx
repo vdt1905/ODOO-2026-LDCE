@@ -2,9 +2,15 @@ import { forwardRef, useId, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
 import { Field } from './Field.jsx';
-import { controlClasses } from './controlStyles.js';
+import { controlClasses, controlIconClasses } from './controlStyles.js';
 
-/** Text input with an optional leading icon. `error` is a string message. */
+/**
+ * Text input with an optional leading icon. `error` is a string message.
+ *
+ * The icon is rendered *after* the input and positioned back over it: the
+ * input carries `peer`, and `peer-*` only reaches later siblings, which is what
+ * lets the icon pick up the brand tint while the field has focus.
+ */
 export const Input = forwardRef(function Input(
   { label, error, hint, required, icon: Icon, className, wrapperClassName, id, ...props },
   ref
@@ -22,19 +28,23 @@ export const Input = forwardRef(function Input(
       className={wrapperClassName}
     >
       <div className="relative">
-        {Icon && (
-          <Icon
-            className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink-300"
-            aria-hidden
-          />
-        )}
         <input
           ref={ref}
           id={inputId}
           aria-invalid={Boolean(error)}
-          className={cn(controlClasses({ error: Boolean(error), leftIcon: Boolean(Icon) }), className)}
+          className={cn(
+            'peer',
+            controlClasses({ error: Boolean(error), leftIcon: Boolean(Icon) }),
+            className
+          )}
           {...props}
         />
+        {Icon && (
+          <Icon
+            className={cn(controlIconClasses({ error: Boolean(error) }), 'left-3.5 size-4')}
+            aria-hidden
+          />
+        )}
       </div>
     </Field>
   );
@@ -59,24 +69,28 @@ export const PasswordInput = forwardRef(function PasswordInput(
       className={wrapperClassName}
     >
       <div className="relative">
-        {Icon && (
-          <Icon
-            className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink-300"
-            aria-hidden
-          />
-        )}
         <input
           ref={ref}
           id={inputId}
           type={visible ? 'text' : 'password'}
           aria-invalid={Boolean(error)}
-          className={cn(controlClasses({ error: Boolean(error), leftIcon: Boolean(Icon), rightIcon: true }), className)}
+          className={cn(
+            'peer',
+            controlClasses({ error: Boolean(error), leftIcon: Boolean(Icon), rightIcon: true }),
+            className
+          )}
           {...props}
         />
+        {Icon && (
+          <Icon
+            className={cn(controlIconClasses({ error: Boolean(error) }), 'left-3.5 size-4')}
+            aria-hidden
+          />
+        )}
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-canvas-deep hover:text-ink-900"
+          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-md p-1.5 text-ink-500 transition-colors hover:bg-canvas-deep hover:text-ink-900"
           aria-label={visible ? 'Hide password' : 'Show password'}
         >
           {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -110,7 +124,7 @@ export const TextArea = forwardRef(function TextArea(
         aria-invalid={Boolean(error)}
         className={cn(
           controlClasses({ error: Boolean(error) }),
-          'h-auto resize-none py-3 leading-relaxed',
+          'h-auto resize-none py-2.5 leading-relaxed',
           className
         )}
         {...props}

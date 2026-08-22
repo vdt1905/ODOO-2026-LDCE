@@ -1,9 +1,21 @@
+import {
+  Drama,
+  Landmark,
+  Leaf,
+  Martini,
+  Mountain,
+  ShoppingBag,
+  Sparkles,
+  UtensilsCrossed,
+} from 'lucide-react';
+
 /** Route paths in one place so no component hardcodes a URL string. */
 export const ROUTES = {
   landing: '/',
   login: '/login',
   register: '/register',
   forgotPassword: '/forgot-password',
+  resetPassword: '/reset-password',
   trips: '/trips',
   newTrip: '/trips/new',
   /** Static, so React Router ranks it above /trips/:id without extra config. */
@@ -22,9 +34,10 @@ export const ROUTES = {
 
 export const NAV_LINKS = [
   { label: 'Home', to: ROUTES.landing },
-  { label: 'Destinations', to: ROUTES.cities },
-  { label: 'Activities', to: ROUTES.activities },
+  { label: 'Discover', to: ROUTES.cities },
+  { label: 'Planner', to: ROUTES.newTrip },
   { label: 'Community', to: ROUTES.community },
+  { label: 'Budget', to: ROUTES.trips },
 ];
 
 /**
@@ -97,10 +110,18 @@ export const TRIP_FILTERS = [
   { value: 'public', label: 'Shared publicly' },
 ];
 
-/** Sent as ?sort=. */
+/**
+ * Sent as ?sort=.
+ *
+ * These values are the server's enum verbatim — `listTripsQuerySchema` accepts
+ * exactly `recent | oldest | name | start-asc | start-desc` and 422s on
+ * anything else. This list used to read `soonest` / `latest`, which meant the
+ * trips list failed to load on first paint with "please check the highlighted
+ * fields" — a validation error on a query param the user never typed.
+ */
 export const TRIP_SORTS = [
-  { value: 'soonest', label: 'Date · soonest' },
-  { value: 'latest', label: 'Date · latest' },
+  { value: 'start-asc', label: 'Date · soonest' },
+  { value: 'start-desc', label: 'Date · latest' },
   { value: 'recent', label: 'Recently added' },
   { value: 'name', label: 'Name · A to Z' },
 ];
@@ -154,14 +175,14 @@ export const MAX_SEED_CITIES = 12;
  * no catalog row behind them, so it needs a label and a colour here too.
  */
 export const ACTIVITY_TYPES = [
-  { value: 'sightseeing', label: 'Sightseeing', emoji: '🏛' },
-  { value: 'food', label: 'Food & drink', emoji: '🍽' },
-  { value: 'adventure', label: 'Adventure', emoji: '🥾' },
-  { value: 'culture', label: 'Culture', emoji: '🎭' },
-  { value: 'nightlife', label: 'Nightlife', emoji: '🌙' },
-  { value: 'relaxation', label: 'Relaxation', emoji: '🌿' },
-  { value: 'shopping', label: 'Shopping', emoji: '🛍' },
-  { value: 'custom', label: 'Custom', emoji: '✳️' },
+  { value: 'sightseeing', label: 'Sightseeing', Icon: Landmark },
+  { value: 'food', label: 'Food & drink', Icon: UtensilsCrossed },
+  { value: 'adventure', label: 'Adventure', Icon: Mountain },
+  { value: 'culture', label: 'Culture', Icon: Drama },
+  { value: 'nightlife', label: 'Nightlife', Icon: Martini },
+  { value: 'relaxation', label: 'Relaxation', Icon: Leaf },
+  { value: 'shopping', label: 'Shopping', Icon: ShoppingBag },
+  { value: 'custom', label: 'Custom', Icon: Sparkles },
 ];
 
 export const ACTIVITY_TYPE_META = Object.fromEntries(

@@ -71,6 +71,48 @@ export const env = {
     },
   },
 
+  /**
+   * Groq — the second planner backend, and in practice the one that runs.
+   *
+   * Groq speaks the OpenAI chat-completions dialect, so `groq.service.js` is a
+   * different transport for the same contract, not a different feature. It
+   * exists because the AI/ service already ships a working `GROQ_API_KEY`:
+   * without this, a checkout with Groq configured and no Gemini key showed
+   * "the planner is switched off on this server" while a perfectly good model
+   * sat one directory away.
+   *
+   * Same env var and same default model as AI/.env on purpose — one key powers
+   * both the assistant and the planner.
+   */
+  groq: {
+    apiKey: process.env.GROQ_API_KEY || '',
+    baseUrl: (process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1').replace(/\/+$/, ''),
+    model: process.env.GROQ_CHAT_MODEL || 'openai/gpt-oss-120b',
+    timeoutMs: Number(process.env.AI_TIMEOUT_MS) || 30000,
+    maxOutputTokens: Number(process.env.GROQ_MAX_OUTPUT_TOKENS) || 16384,
+    // gpt-oss reasons before it answers, and those tokens come out of the same
+    // budget — the Groq equivalent of Gemini's thinkingBudget. 'low' cut a
+    // six-day plan from 3,727 completion tokens and 8.1s to 1,380 and 3.2s
+    // with no loss of quality, so it is the default rather than an economy.
+    reasoningEffort: process.env.GROQ_REASONING_EFFORT || 'low',
+    get isConfigured() {
+      return Boolean(this.apiKey);
+    },
+  },
+
+  /**
+   * Which backend the planner uses. `AI_PROVIDER` forces one; otherwise
+   * whichever is configured wins, Gemini first because its structured-output
+   * mode is stricter than a JSON-mode prompt.
+   */
+  get aiProvider() {
+    const forced = (process.env.AI_PROVIDER || '').trim().toLowerCase();
+    if (forced === 'gemini' || forced === 'groq') return forced;
+    if (this.gemini.isConfigured) return 'gemini';
+    if (this.groq.isConfigured) return 'groq';
+    return null;
+  },
+
   cookie: {
     name: 'gt_refresh',
     // 7 days in ms — keep in sync with jwt.refreshExpiry

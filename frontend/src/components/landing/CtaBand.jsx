@@ -1,43 +1,59 @@
-import { ArrowRight } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore.js';
+import { ArrowRight, Compass } from 'lucide-react';
+
+import { Section, SectionHeading } from '../layout/Section.jsx';
+import { Button } from '../ui/index.js';
 import { ROUTES } from '../../lib/constants.js';
-import { Button } from '../ui/Button.jsx';
 
-export const CtaBand = () => {
-  const user = useAuthStore((s) => s.user);
+/**
+ * The closing band, and the darkest thing on the page.
+ *
+ * `tone="dark"` paints the ground; the photograph sits on a negative z-index
+ * inside the section's own stacking context, which puts it above the band's
+ * background but below every child — so it never needs its own wrapper and
+ * the content keeps the shared `.shell` measure. `isolate` stops that
+ * negative layer from escaping into the page behind it.
+ */
+export const CtaBand = () => (
+  <Section tone="dark" className="relative isolate overflow-hidden">
+    <img
+      src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=70"
+      alt=""
+      aria-hidden
+      loading="lazy"
+      className="absolute inset-0 -z-20 size-full object-cover opacity-40"
+    />
+    <div
+      aria-hidden
+      className="absolute inset-0 -z-10 bg-linear-to-b from-brand-700/85 via-brand-700/75 to-brand-700/90"
+    />
 
-  return (
-    <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <div className="relative overflow-hidden rounded-4xl bg-ink-900 px-6 py-16 text-center sm:px-12">
-        {/* Warm glow echoing the hero */}
-        <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-brand-500/25 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-moss-500/20 blur-3xl" />
+    <div className="flex flex-col items-center text-center">
+      <span className="grid size-12 place-items-center rounded-2xl border border-canvas/25 bg-brand-700/40 text-canvas">
+        <Compass className="size-5" aria-hidden />
+      </span>
 
-        <h2 className="relative font-display text-3xl font-bold text-white sm:text-4xl">
-          {user ? `Ready for the next one, ${user.firstName}?` : 'Your next trip starts here'}
-        </h2>
-        <p className="relative mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/70">
-          {user
-            ? 'Pick the dates, drop in the cities, and let the budget keep itself in check.'
-            : 'Create a free account and build your first multi-city itinerary in a few minutes.'}
-        </p>
+      <SectionHeading
+        align="center"
+        invert
+        eyebrow="Start planning"
+        title="Your next trip is already half planned"
+        sub="Free while we are in beta. No card, no lock-in, and the itinerary stays yours — export it, share it, or keep it private."
+        className="mt-7"
+      />
 
-        <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button
-            to={user ? ROUTES.newTrip : ROUTES.register}
-            variant="light"
-            size="lg"
-            rightIcon={<ArrowRight className="size-4" />}
-          >
-            {user ? 'Plan a new trip' : 'Create your account'}
-          </Button>
-          {!user && (
-            <Button to={ROUTES.login} variant="glass" size="lg">
-              I already have one
-            </Button>
-          )}
-        </div>
+      <div className="mt-9 flex flex-wrap justify-center gap-3">
+        <Button
+          to={ROUTES.register}
+          variant="light"
+          size="lg"
+          rightIcon={<ArrowRight className="size-4" aria-hidden />}
+        >
+          Create an account
+        </Button>
+        <Button to={ROUTES.community} variant="glass" size="lg">
+          Explore public trips
+        </Button>
       </div>
-    </section>
-  );
-};
+    </div>
+  </Section>
+);

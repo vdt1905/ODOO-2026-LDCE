@@ -18,16 +18,24 @@ export const CategoryDonut = ({ byCategory, total, currency }) => {
   // An empty trip has a zero in every category. Dividing by that total would
   // put NaN straight into strokeDasharray and blank the whole SVG.
   const safeTotal = total > 0 ? total : 0;
+  const divisor = safeTotal > 0 ? safeTotal : 1;
 
-  let drawn = 0;
-  const segments = BUDGET_CATEGORIES.map((category) => {
-    const amount = Number(byCategory?.[category.value]) || 0;
-    const share = safeTotal > 0 ? amount / safeTotal : 0;
-    const length = share * CIRCUMFERENCE;
-    const offset = drawn;
-    drawn += length;
+  const amounts = BUDGET_CATEGORIES.map((category) => Number(byCategory?.[category.value]) || 0);
 
-    return { ...category, amount, share, length, offset };
+  const segments = BUDGET_CATEGORIES.map((category, index) => {
+    const amount = amounts[index];
+    // Where this arc starts: the prefix sum of the arcs before it. A running
+    // counter would read better, but reassigning one across a render is a
+    // compiler error, and four categories make the cost irrelevant.
+    const preceding = amounts.slice(0, index).reduce((sum, value) => sum + value, 0);
+
+    return {
+      ...category,
+      amount,
+      share: amount / divisor,
+      length: (amount / divisor) * CIRCUMFERENCE,
+      offset: (preceding / divisor) * CIRCUMFERENCE,
+    };
   });
 
   const drawable = segments.filter((segment) => segment.length > 0);

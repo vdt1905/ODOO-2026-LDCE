@@ -5,6 +5,7 @@ import { ACTIVITY_TYPE_META } from '../../lib/constants.js';
 import { formatDate } from '../../lib/dates.js';
 import { formatCurrency } from '../../lib/format.js';
 import { Badge } from '../../components/ui/index.js';
+import { ActivityIcon } from '../../components/ui/ActivityIcon.jsx';
 
 /** "2h 30m" / "45m". Falsy durations return '' and the row simply omits them. */
 const formatDuration = (minutes) => {
@@ -56,8 +57,9 @@ const ActivityRow = ({ activity, currency }) => {
               </div>
 
               <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-500">
-                <span>
-                  <span aria-hidden>{meta.emoji}</span> {meta.label}
+                <span className="flex items-center gap-1.5">
+                  <ActivityIcon type={activity.type} className="size-3.5" />
+                  {meta.label}
                 </span>
                 {duration && (
                   <span className="flex items-center gap-1">

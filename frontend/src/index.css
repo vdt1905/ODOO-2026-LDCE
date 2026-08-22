@@ -1,36 +1,44 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   GlobeTrotter design tokens (Tailwind v4).
+   TRIPORA design tokens (Tailwind v4).
 
    Everything visual is defined once here; components only use the token names
    (bg-canvas, text-ink-700, border-line, ...) and never raw hex values.
 
-   The palette is warm paper + deep forest, taken from the design mockup in
-   `Multi-city itinerary planner/`. Elevation is carried by 1px borders and
+   The palette is a near-white neutral ground under a deep forest brand, with
+   ember as the single warm counter-accent. Elevation is carried by 1px borders and
    photographic overlays rather than shadows — the shadow tokens still exist
    but are deliberately almost invisible, so a stray shadow-* class cannot
    make a card float off the page and break the flat, editorial feel.
 --------------------------------------------------------------------------- */
 @theme {
-  /* Surfaces — warm paper, not cold grey */
-  --color-canvas: #f6f4ef;
-  --color-canvas-deep: #edeae0;
+  /* Surfaces.
+     These used to be warm paper (#f6f4ef and friends) and the beige read as
+     dated next to the deep forest — more manila folder than editorial. They are
+     now a near-white neutral pulled a few degrees towards the brand green, so
+     the ground stays quiet and clean while the forest and the ember still land
+     on something that belongs to the same family. `canvas` is the page,
+     `surface` is a card, `inset` is a well inside a card, `canvas-deep` is the
+     hover/skeleton step. */
+  --color-canvas: #f4f6f4;
+  --color-canvas-deep: #e7ebe8;
   --color-surface: #ffffff;
-  --color-inset: #f9f8f4;
+  --color-inset: #fafbfa;
 
   /* Borders. `line` is the default card edge; `line-strong` is for controls
      that must read as interactive (inputs, outline buttons). */
-  --color-line: #e6e3d9;
-  --color-line-soft: #f0ede4;
-  --color-line-strong: #dad7cc;
-  --color-line-dashed: #c9c6ba;
+  --color-line: #e2e7e3;
+  --color-line-soft: #edf1ee;
+  --color-line-strong: #d1d8d3;
+  --color-line-dashed: #c0c8c2;
 
-  /* Text */
-  --color-ink-900: #191a15;
-  --color-ink-700: #5c5a51;
-  --color-ink-500: #7a7869;
-  --color-ink-300: #9a988e;
+  /* Text. Neutral-cool to match the surfaces above — the old ink was warm grey,
+     which looked muddy the moment the beige came out from under it. */
+  --color-ink-900: #141814;
+  --color-ink-700: #4c544e;
+  --color-ink-500: #6b736d;
+  --color-ink-300: #98a09a;
 
   /* Brand — deep forest. 500 is the primary action colour. */
   --color-brand-50: #edf1ea;
@@ -72,37 +80,65 @@
   --color-cat-stay: #2e4034;
   --color-cat-activities: #c2703f;
   --color-cat-meals: #94a88c;
-  --color-cat-other: #9a988e;
+  --color-cat-other: #98a09a;
 
-  /* Fonts resolve through a second variable so the dev font switcher can
-     repoint them on <html> at runtime without touching a rebuild.
-     See components/dev/DevSettings.jsx. */
-  --font-display: var(--gt-display);
-  --font-sans: var(--gt-body);
+  /* Type: two display faces, not one.
+     `--font-hero` is Anton and is used in exactly one place — the landing
+     page's poster headline, where a 140px condensed grotesque is doing the job
+     it was drawn for. `--font-display` is every OTHER heading in the app, and
+     Anton was wrong there: at 20-32px on a dense planning screen it reads as
+     shouting, and its single 400 weight gives a heading no way to sit quietly.
+     `--font-display` therefore resolves through `--gt-heading-font`, which the
+     Font Lab (bottom-left, dev only) rewrites at runtime. */
+  --font-display: var(--gt-heading-font);
+  --font-hero: "Anton", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Poppins", ui-sans-serif, system-ui, sans-serif;
 
   --radius-4xl: 2rem;
 
   /* Near-invisible on purpose — see the note at the top of this block. */
-  --shadow-soft: 0 1px 2px rgba(25, 26, 21, 0.04);
-  --shadow-lift: 0 1px 3px rgba(25, 26, 21, 0.06), 0 12px 28px -20px rgba(25, 26, 21, 0.18);
-  --shadow-pill: 0 1px 2px rgba(25, 26, 21, 0.05), 0 8px 24px -16px rgba(25, 26, 21, 0.16);
+  --shadow-soft: 0 1px 2px rgba(20, 24, 20, 0.04);
+  --shadow-lift: 0 1px 3px rgba(20, 24, 20, 0.06), 0 12px 28px -20px rgba(20, 24, 20, 0.18);
+  --shadow-pill: 0 1px 2px rgba(20, 24, 20, 0.05), 0 8px 24px -16px rgba(20, 24, 20, 0.16);
 
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-fade-in: fade-in 0.6s ease-out both;
   --animate-float: float 7s ease-in-out infinite;
 }
 
-/* The default pairing. Overridden at runtime on <html> by the dev switcher,
-   and by whatever the user last picked (persisted in localStorage). */
 :root {
-  --gt-display: "Anton", "Oswald", ui-sans-serif, system-ui, sans-serif;
-  --gt-body: "Source Serif 4", "Gelasio", Georgia, serif;
+  /* ---- The heading face --------------------------------------------------
+     Settled after trialling twelve candidates: Space Grotesk at 700, sentence
+     case, tight. Four variables rather than one because a heading face is
+     never just a family name — the weight, the tracking and the case are part
+     of the same decision, and splitting them out is what lets the whole app
+     change voice from one place.
 
-  /* Display faces are condensed and set tight; body faces are not. The
-     switcher rewrites these alongside the families so a swap to a wide
-     display face does not stay artificially cramped. */
-  --gt-display-tracking: 0.005em;
-  --gt-display-weight: 400;
+     Sentence case matters most. Anton forced every heading into caps, which is
+     why it only ever worked on the landing hero; at 20-32px on a planning
+     screen, caps read as shouting and cost about 15% more width. */
+  --gt-heading-font: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --gt-heading-weight: 700;
+  --gt-heading-caps: none;
+  --gt-display-tracking: -0.03em;
+
+  /* One vertical rhythm for the whole site. Every full-width band uses
+     `.section`, so a page cannot drift out of step with its neighbours. */
+  --gt-section-y: 3rem;
+  --gt-shell-max: 1240px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gt-section-y: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gt-section-y: 5rem;
+  }
 }
 
 @keyframes fade-up {
@@ -139,6 +175,16 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+
+    /* One lever for the whole app's scale.
+       Tailwind sizes everything in rem, so dropping the root from the browser
+       default 16px to 15px shrinks every height, gap, padding and type size by
+       the same 6.25% — proportionally, which a file-by-file pass of smaller
+       numbers never is. It is the difference between a signup form that needs
+       a scroll and one that lands inside a 900px viewport.
+       Anything that must NOT scale (hairline borders, 1px rules) is already
+       written in px and is unaffected. */
+    font-size: 15px;
   }
 
   body {
@@ -148,15 +194,35 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Headings inherit the display face and its tracking from the same two
-     variables the switcher writes, so every heading moves together. */
+  /* Every heading is Anton. `font-synthesis: none` is the load-bearing line:
+     Anton has one weight, and without this any `font-bold` further down the
+     tree renders as an algorithmically smeared fake bold that looks broken
+     next to the real thing. With it, a stray weight class is simply ignored. */
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  h5,
+  .font-display,
+  .font-display-caps {
     font-family: var(--font-display);
-    font-weight: var(--gt-display-weight);
+    font-weight: var(--gt-heading-weight);
+    /* Load-bearing: several of the candidate faces ship one weight only, and
+       without this the browser smears an algorithmic fake bold over them that
+       looks broken next to the real thing. With it, a weight the family does
+       not have simply falls back to the nearest one it does. */
+    font-synthesis: none;
     letter-spacing: var(--gt-display-tracking);
+  }
+
+  /* The landing hero is the one place Anton stays, whatever the lab is set to.
+     It needs its own weight and tracking too: Anton is 400-only, and at poster
+     size it wants pulling in rather than opening out. */
+  .font-hero {
+    font-family: var(--font-hero);
+    font-weight: 400;
+    font-synthesis: none;
+    letter-spacing: -0.005em;
   }
 
   /* Keyboard focus stays visible everywhere; mouse clicks stay clean */
@@ -169,16 +235,19 @@
     color: var(--color-ink-300);
   }
 
+  /* No scrollbars anywhere. The page still scrolls — this only removes the
+     furniture, which was cutting a grey gutter down the right of every
+     full-bleed photograph. Both properties are needed: `scrollbar-width` is
+     the standard one Firefox reads, the pseudo-element is what Chrome, Edge
+     and Safari read, and neither engine understands the other's. */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #d8d5cb;
-    border-radius: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
+    display: none;
+    width: 0;
+    height: 0;
   }
 }
 
@@ -205,26 +274,64 @@
     scrollbar-width: none;
   }
 
-  /* Display type that should shout — banner and hero headings. Condensed
-     faces like Anton only look right uppercased, wide ones often do not,
-     so the dev switcher can turn the casing off across the whole app. */
+  /* Display type that should shout — banner and section headings. Whether it
+     actually shouts is the lab's call: a condensed poster face needs caps to
+     work at all, a display serif is ruined by them. */
   .font-display-caps {
-    font-family: var(--font-display);
-    font-weight: var(--gt-display-weight);
-    letter-spacing: var(--gt-display-tracking);
-    text-transform: uppercase;
+    text-transform: var(--gt-heading-caps);
   }
 
-  :root[data-gt-uppercase='off'] .font-display-caps {
-    text-transform: none;
-  }
-
-  /* The eyebrow above a heading: small, wide, quiet. */
+  /* The eyebrow above a heading: small, wide, quiet. Poppins, not Anton —
+     it is a label, and Anton at 11px turns into a smudge. */
   .eyebrow {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
+  }
+
+  /* ---- Layout rhythm -----------------------------------------------------
+     Two classes carry every page's spacing so screens cannot drift apart.
+     `.shell` is the horizontal measure and gutters; `.section` is the
+     vertical band. Before these, the hero used max-w-[1320px]/px-8 while the
+     subpages used max-w-6xl/px-6, so content visibly jumped width between
+     routes.                                                                */
+  .shell {
+    margin-inline: auto;
+    width: 100%;
+    max-width: var(--gt-shell-max);
+    padding-inline: 1rem;
+  }
+
+  .shell-narrow {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1080px;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .shell,
+    .shell-narrow {
+      padding-inline: 2rem;
+    }
+  }
+
+  .section {
+    padding-block: var(--gt-section-y);
+  }
+
+  .section-tight {
+    padding-block: calc(var(--gt-section-y) * 0.6);
+  }
+
+  /* Section heading pair — an Anton title over a Poppins standfirst, at the
+     one size the whole site agrees on. */
+  .section-title {
+    font-size: clamp(1.5rem, 2.6vw, 2.15rem);
+    line-height: 1.06;
+    text-transform: var(--gt-heading-caps);
   }
 }
 

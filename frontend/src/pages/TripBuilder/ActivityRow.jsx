@@ -1,18 +1,32 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp, CircleAlert, Clock, Pencil, Trash2 } from 'lucide-react';
 
 import { cn } from '../../lib/cn.js';
 import { ACTIVITY_TYPE_META } from '../../lib/constants.js';
-import { toDateInputValue } from '../../lib/dates.js';
+import { addDays, formatDate, toDateInputValue } from '../../lib/dates.js';
 import { formatCurrency, formatDuration } from '../../lib/format.js';
 import { Input, Select } from '../../components/ui/index.js';
 import { useDebouncedPatch } from './useDebouncedPatch.js';
+import { ActivityIcon } from '../../components/ui/ActivityIcon.jsx';
 
 const clampMinutes = (value) => Math.min(1440, Math.max(0, Math.round(Number(value) || 0)));
 const clampCost = (value) => Math.max(0, Number(value) || 0);
 
+// Shared with the picker/card module; keeping it here avoids date-label drift.
+// eslint-disable-next-line react-refresh/only-export-components
 export const activityName = (entry) =>
   entry.activity?.name || entry.customName || 'Untitled activity';
+
+/**
+ * The days an activity on this stop may sit on. `nights + 1` is the inclusive
+ * day count — a stop with two nights covers three days.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export const buildDayOptions = (startDate, nights) =>
+  Array.from({ length: Math.max(1, (Number(nights) || 0) + 1) }, (_, index) => {
+    const value = toDateInputValue(addDays(startDate, index));
+    return { value, label: `Day ${index + 1} · ${formatDate(value, { withYear: false })}` };
+  });
 
 /**
  * One scheduled activity inside a stop's day.
@@ -57,6 +71,20 @@ export const ActivityRow = ({
   const isCustom = !activity.activity;
   const name = activityName(activity);
 
+  // A date the server has flagged as outside the stay is still a real date.
+  // Without this the <select> would fall back to day one and quietly misreport
+  // where the activity actually sits.
+  const days = useMemo(
+    () =>
+      dayOptions.some((option) => option.value === draft.date)
+        ? dayOptions
+        : [
+            ...dayOptions,
+            { value: draft.date, label: `${formatDate(draft.date, { withYear: false })} · outside the stay` },
+          ],
+    [dayOptions, draft.date]
+  );
+
   return (
     <li className="rounded-2xl border border-line bg-surface">
       <div className="flex items-start gap-3 p-3">
@@ -81,9 +109,7 @@ export const ActivityRow = ({
           </button>
         </div>
 
-        <span className="mt-0.5 shrink-0 text-base" aria-hidden>
-          {meta.emoji}
-        </span>
+        <ActivityIcon type={activity.type} className="mt-0.5 size-4 text-ink-500" />
 
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-ink-900">{name}</p>
@@ -157,7 +183,7 @@ export const ActivityRow = ({
               label="Day"
               value={draft.date}
               onChange={(event) => setField('date', event.target.value)}
-              options={dayOptions}
+              options={days}
             />
             <Input
               label="Start time"

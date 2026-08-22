@@ -51,38 +51,47 @@ export const CoverPhotoPicker = ({ file, onChange, onError, uploading = false, p
   };
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-ink-700">Cover photo</span>
+    <div className="flex flex-col gap-2">
+      <span className="text-[11px] font-semibold tracking-[0.09em] text-ink-700 uppercase">
+        Cover photo
+      </span>
 
-      <div className="relative">
+      <div className="relative max-w-md">
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
           className={cn(
-            'group relative grid aspect-[16/9] w-full place-items-center overflow-hidden rounded-2xl',
-            'border-2 border-dashed border-line bg-canvas-deep transition-colors',
-            'hover:border-brand-400 hover:bg-brand-50 disabled:cursor-wait'
+            'group relative grid aspect-[16/9] w-full cursor-pointer place-items-center overflow-hidden rounded-2xl',
+            'border border-dashed border-line-dashed bg-inset',
+            'transition-colors duration-200',
+            'hover:border-brand-400 hover:bg-brand-50 disabled:cursor-wait disabled:opacity-70'
           )}
           aria-label={preview ? 'Change the cover photo' : 'Upload a cover photo'}
         >
           {preview ? (
             <img src={preview} alt="" className="size-full object-cover" />
           ) : (
-            <span className="flex flex-col items-center gap-1.5 px-4 text-center text-ink-500">
-              <ImagePlus className="size-6" aria-hidden />
-              <span className="text-sm font-medium">Add a cover photo</span>
-              <span className="text-xs text-ink-300">
+            <span className="flex flex-col items-center gap-2 px-4 text-center">
+              <span className="grid size-11 place-items-center rounded-full border border-line bg-surface text-brand-500 transition-colors group-hover:border-brand-300">
+                <ImagePlus className="size-5" aria-hidden />
+              </span>
+              <span className="font-display text-sm leading-none text-ink-900 uppercase">
+                Add a cover photo
+              </span>
+              <span className="text-xs text-ink-500">
                 Optional · JPG, PNG or WebP up to {env.maxUploadMb}MB
               </span>
             </span>
           )}
 
           {uploading && (
-            <span className="absolute inset-0 grid place-items-center bg-ink-900/55 text-white">
+            <span className="absolute inset-0 grid place-items-center bg-ink-900/60 text-white">
               <Loader2 className="size-6 animate-spin" aria-hidden />
               {progress > 0 && (
-                <span className="absolute bottom-4 text-xs font-semibold">{progress}%</span>
+                <span className="absolute bottom-4 font-display text-lg leading-none">
+                  {progress}%
+                </span>
               )}
             </span>
           )}
@@ -93,15 +102,20 @@ export const CoverPhotoPicker = ({ file, onChange, onError, uploading = false, p
             type="button"
             onClick={clear}
             aria-label="Remove the cover photo"
-            className="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-ink-900/70 text-white backdrop-blur-sm transition-colors hover:bg-brand-600"
+            className="absolute top-3 right-3 grid size-9 cursor-pointer place-items-center rounded-full bg-ink-900/70 text-white backdrop-blur-sm transition-colors hover:bg-ember-500"
           >
             <Trash2 className="size-4" aria-hidden />
           </button>
         )}
       </div>
 
-      {file && !uploading && (
-        <p className="truncate text-xs text-ink-500">{file.name}</p>
+      {file && !uploading ? (
+        <p className="max-w-md truncate text-xs text-ink-500">{file.name}</p>
+      ) : (
+        <p className="max-w-md text-xs leading-relaxed text-ink-500">
+          It makes the trip easy to pick out on your dashboard and gives the shared page a header.
+          Skip it and we draw a gradient from the trip name instead.
+        </p>
       )}
 
       <input

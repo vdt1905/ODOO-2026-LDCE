@@ -4,7 +4,10 @@ import { Hero } from '../../components/landing/Hero.jsx';
 import { DestinationRail } from '../../components/landing/DestinationRail.jsx';
 import { HowItWorks } from '../../components/landing/HowItWorks.jsx';
 import { BudgetPreview } from '../../components/landing/BudgetPreview.jsx';
+import { CommunityPreview } from '../../components/landing/CommunityPreview.jsx';
+import { DestinationCarousel } from '../../components/landing/DestinationCarousel.jsx';
 import { CtaBand } from '../../components/landing/CtaBand.jsx';
+import { AboutContact } from '../../components/landing/AboutContact.jsx';
 import DashboardPage from '../Dashboard/index.jsx';
 
 /**
@@ -15,15 +18,18 @@ import DashboardPage from '../Dashboard/index.jsx';
  * returning user wants their trips, not the pitch they already accepted.
  */
 const MarketingPage = () => {
-  usePageTitle('Plan the trip, not the spreadsheet');
+  usePageTitle('Map the unseen');
 
   return (
     <>
       <Hero />
-      <DestinationRail />
       <HowItWorks />
+      <DestinationRail />
       <BudgetPreview />
+      <CommunityPreview />
+      <DestinationCarousel />
       <CtaBand />
+      <AboutContact />
     </>
   );
 };

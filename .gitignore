@@ -3,8 +3,28 @@ node_modules/
 .pnp
 .pnp.js
 
+# Python — the AI/ suggestions microservice
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
 
-/Multi-city itinerary Planner
+# The Claude Design reference build. Untracked on purpose — it is a mockup, not
+# source. Listed in both cases because the working copy is lowercase and macOS
+# and Linux would not match the capitalised spelling.
+/Multi-city itinerary Planner/
+/Multi-city itinerary planner/
+
+# Scratch space for tooling. Browser automation (headless Edge driven over CDP)
+# drops a COMPLETE browser profile in here per run — caches, cookies, crash
+# dumps — which is how this directory reached 4,500 files and 300MB. Nothing in
+# it is source and none of it should ever reach a commit.
+.tmp/
+.cache/
+*.tmp
+
 # env — never commit real credentials
 .env
 .env.local
@@ -28,5 +48,14 @@ yarn-error.log*
 .idea/
 .DS_Store
 Thumbs.db
-README.md
+
+# Planning notes stay local.
+#
+# NOTE: `plan.md` and `README.md` are ALREADY TRACKED — they were committed
+# before these lines were added, and .gitignore has no effect on a file git is
+# already following. To actually stop tracking them, run:
+#     git rm --cached plan.md README.md
+# That is a shared-history change, so it is left for the team to agree on
+# rather than done unilaterally.
 plan.md
+README.md

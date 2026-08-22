@@ -14,9 +14,13 @@ export const useDebouncedPatch = (commit, delay = 600) => {
   const timer = useRef(null);
 
   // Read through a ref so a new inline `commit` on every render does not
-  // reset the timer that is currently counting down.
+  // reset the timer that is currently counting down. Written in an effect
+  // rather than during render — a render can be thrown away, and the ref
+  // would keep the discarded closure.
   const latest = useRef(commit);
-  latest.current = commit;
+  useEffect(() => {
+    latest.current = commit;
+  });
 
   const flush = useCallback(() => {
     window.clearTimeout(timer.current);

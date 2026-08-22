@@ -4,6 +4,7 @@ import { ACTIVITY_TYPE_META } from '../../lib/constants.js';
 import { formatDate } from '../../lib/dates.js';
 import { formatCurrency } from '../../lib/format.js';
 import { Badge } from '../../components/ui/index.js';
+import { ActivityIcon } from '../../components/ui/ActivityIcon.jsx';
 
 /** 150 → "2h 30m". Local to this screen; nothing else formats a duration yet. */
 const formatDuration = (minutes) => {
@@ -31,8 +32,8 @@ const ActivityRow = ({ activity, currency }) => {
           className="size-12 shrink-0 rounded-xl object-cover"
         />
       ) : (
-        <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-canvas-deep text-lg" aria-hidden>
-          {meta.emoji}
+        <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-canvas-deep text-ink-500">
+          <ActivityIcon type={activity.type} className="size-5" />
         </span>
       )}
 

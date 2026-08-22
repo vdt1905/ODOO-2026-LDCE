@@ -3,57 +3,59 @@ import { ArrowRight, WifiOff } from 'lucide-react';
 
 import { ROUTES } from '../../lib/constants.js';
 import { usePopularCities } from '../../hooks/usePopularCities.js';
-import { Button } from '../ui/Button.jsx';
-import { Badge } from '../ui/Badge.jsx';
+import { Section, SectionHeading } from '../layout/Section.jsx';
 import { CityCard, CityCardSkeleton } from './CityCard.jsx';
 
-/** "Top Regional Selections" from the mockup — a horizontal rail of cities. */
+/**
+ * Four destinations, on the landing page.
+ *
+ * The tiles are the shared <CityCard>, not a private copy — this rail, the
+ * dashboard grid and the Discover results are the same object seen three times,
+ * and when they were three hand-rolled markups they drifted apart within a
+ * fortnight. Anything that should change about a destination tile changes in
+ * CityCard.jsx and lands in all three.
+ */
 export const DestinationRail = () => {
   const navigate = useNavigate();
-  const { cities, loading, offline } = usePopularCities(8);
+  const { cities, loading, offline } = usePopularCities(4);
+
+  const open = (city) =>
+    navigate(`${ROUTES.cities}?search=${encodeURIComponent(city.name)}`);
 
   return (
-    <section id="destinations" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <Badge tone="brand">Top regional selections</Badge>
-          <h2 className="mt-3 font-display text-3xl font-bold text-ink-900 sm:text-4xl">
-            Where people are heading
-          </h2>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-500">
-            Sorted by how often travellers add them to a trip. The bar shows how far a day's
-            budget stretches.
-          </p>
-        </div>
-
-        <Button
-          to={ROUTES.cities}
-          variant="outline"
-          size="sm"
-          rightIcon={<ArrowRight className="size-4" />}
-        >
-          Browse all
-        </Button>
-      </div>
+    <Section id="destinations" tone="canvas" className="scroll-mt-24">
+      <SectionHeading
+        eyebrow="Start somewhere"
+        title="Cities worth the detour"
+        sub="Thirty catalogued destinations with a cost index, a popularity read and the activities already attached — so a stop is a decision, not a research project."
+        action={
+          <button
+            type="button"
+            onClick={() => navigate(ROUTES.cities)}
+            className="inline-flex items-center gap-2 text-[13px] font-semibold text-brand-600 transition-colors hover:text-brand-700"
+          >
+            Browse all cities
+            <ArrowRight className="size-4" aria-hidden />
+          </button>
+        }
+      />
 
       {offline && !loading && (
-        <p className="mt-6 flex items-center gap-2 text-xs text-ink-500">
+        <p className="mt-5 flex items-center gap-2 text-xs text-ink-500">
           <WifiOff className="size-3.5" aria-hidden />
-          Showing sample destinations — start the API to load the live catalog.
+          Showing sample destinations while the catalog reconnects.
         </p>
       )}
 
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {loading
-          ? Array.from({ length: 8 }, (_, i) => <CityCardSkeleton key={i} />)
-          : cities.map((city) => (
-              <CityCard
-                key={city._id}
-                city={city}
-                onClick={() => navigate(`${ROUTES.cities}?search=${encodeURIComponent(city.name)}`)}
-              />
-            ))}
+          ? Array.from({ length: 4 }, (_, index) => <CityCardSkeleton key={index} />)
+          : cities
+              .slice(0, 4)
+              .map((city) => (
+                <CityCard key={city._id || city.name} city={city} onClick={() => open(city)} />
+              ))}
       </div>
-    </section>
+    </Section>
   );
 };

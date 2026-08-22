@@ -9,6 +9,7 @@ import { PhotoCard } from './PhotoCard.jsx';
 import { ProfileForm } from './ProfileForm.jsx';
 import { ProfileStats } from './ProfileStats.jsx';
 import { SavedDestinations } from './SavedDestinations.jsx';
+import { AccountSecurity } from './AccountSecurity.jsx';
 
 /** "Lisbon, Portugal" from whichever halves are filled in. */
 const placeOf = (user) => [user.city, user.country].filter(Boolean).join(', ');
@@ -75,6 +76,8 @@ const ProfilePage = () => {
         </div>
 
         <SavedDestinations ids={user.savedDestinations} />
+
+        <AccountSecurity />
       </div>
     </>
   );

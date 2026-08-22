@@ -1,61 +1,80 @@
-import { CalendarRange, MapPinned, Share2, Wallet } from 'lucide-react';
-import { Badge } from '../ui/Badge.jsx';
+import { CalendarRange, ListChecks, MapPinned, Share2 } from 'lucide-react';
+
+import { Section, SectionHeading } from '../layout/Section.jsx';
+import { cn } from '../../lib/cn.js';
 
 const STEPS = [
   {
     icon: CalendarRange,
-    title: 'Start with the dates',
-    body: 'Name the trip, set a window, and give it a budget ceiling if you have one.',
+    title: 'Name the trip',
+    body: 'Dates, a cover photo and a one-line intent. Ninety seconds of setup.',
   },
   {
     icon: MapPinned,
-    title: 'Stack up the cities',
-    body: 'Add a stop per city with its own dates, then drag them into the order you will travel.',
+    title: 'Drop the stops',
+    body: 'Search cities, pin them on the route, and reorder until the flow makes sense.',
   },
   {
-    icon: Wallet,
-    title: 'Watch the cost build',
-    body: 'Every activity, night and transfer lands in a running breakdown — no spreadsheet.',
+    icon: ListChecks,
+    title: 'Fill the days',
+    body: 'Add activities with a time and a cost. The budget updates as you go.',
   },
   {
     icon: Share2,
-    title: 'Send one link',
-    body: 'Publish a read-only page. Anyone can open it, and copy the whole trip in a click.',
+    title: 'Share the plan',
+    body: 'One public link. Friends can read it, copy it, and make it theirs.',
   },
 ];
 
+/**
+ * The numbered walkthrough, second band on the marketing page.
+ *
+ * The step number is the editorial detail: huge Anton in brand-100, sitting
+ * behind the title rather than in a badge, so it reads like a printed page
+ * number. It starts below the icon row on purpose — that band belongs to the
+ * dashed connector, which runs from one step's icon to the next on desktop.
+ * The icon tiles carry `bg-surface`, the band's own ground, so they mask the
+ * rule instead of sitting on top of a visible line.
+ */
 export const HowItWorks = () => (
-  <section className="border-y border-line bg-canvas-deep">
-    <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-      <div className="max-w-xl">
-        <Badge tone="moss">How it works</Badge>
-        <h2 className="mt-3 font-display text-3xl font-bold text-ink-900 sm:text-4xl">
-          Four steps from idea to itinerary
-        </h2>
-      </div>
+  <Section id="how-it-works" tone="surface" className="scroll-mt-24">
+    <SectionHeading
+      eyebrow="How it works"
+      title="Four steps from idea to itinerary"
+      sub="Most planning falls apart between the tabs — a map here, a spreadsheet there. TRIPORA keeps stops, days, activities and money in one structure you can hand to someone else."
+    />
 
-      <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STEPS.map((step, index) => (
-          <li
-            key={step.title}
-            className="rounded-3xl border border-line bg-surface p-6 shadow-soft transition-transform duration-300 hover:-translate-y-1"
+    <ol className="relative mt-12 grid gap-10 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-6">
+      {STEPS.map((step, index) => (
+        <li key={step.title} className="relative">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute top-9 right-0 font-display text-[4.5rem] leading-none text-brand-100 select-none sm:text-[5.5rem]"
           >
-            <div className="flex items-center justify-between">
-              <span className="grid size-11 place-items-center rounded-2xl bg-brand-50 text-brand-600">
-                <step.icon className="size-5" aria-hidden />
-              </span>
-              <span className="font-display text-3xl font-bold text-canvas-deep">
-                0{index + 1}
-              </span>
-            </div>
+            {String(index + 1).padStart(2, '0')}
+          </span>
 
-            <h3 className="mt-5 font-display text-base font-semibold text-ink-900">
-              {step.title}
-            </h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{step.body}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
+          {/* Connector to the next step. Absolute, so it never affects the
+              grid's own measure; the trailing -right-6 lands it exactly at
+              the next column's icon because the grid gap there is 1.5rem. */}
+          <span
+            aria-hidden
+            className={cn(
+              'absolute top-7 left-16 -right-6 hidden border-t border-dashed border-line-dashed lg:block',
+              index === STEPS.length - 1 && 'lg:hidden'
+            )}
+          />
+
+          <span className="relative grid size-14 place-items-center rounded-2xl border border-line bg-surface text-brand-500">
+            <step.icon className="size-6" aria-hidden />
+          </span>
+
+          <h3 className="relative mt-6 text-[1.375rem] leading-none uppercase text-ink-900">
+            {step.title}
+          </h3>
+          <p className="relative mt-3 max-w-[36ch] text-sm leading-6 text-ink-700">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </Section>
 );

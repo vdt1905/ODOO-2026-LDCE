@@ -15,7 +15,13 @@ export const ProtectedRoute = () => {
 
   if (!user) {
     // Remember where they were headed so login can send them back.
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+        replace
+      />
+    );
   }
 
   return <Outlet />;

@@ -9,8 +9,17 @@ export const tripApi = {
   /** { items, total, page, pages } */
   list: (params = {}) => api.get('/trips', { params }).then((r) => r.data.data),
 
-  /** Totals across every trip, for the dashboard's budget strip. */
-  stats: () => api.get('/trips/stats').then((r) => r.data.data.stats),
+  /**
+   * Totals across every trip, for the dashboard's budget strip.
+   *
+   * → { tripCount, byStatus, citiesPlanned, totalDaysPlanned, totalPlannedCost,
+   *     avgTripCost, byCategory, nextTrip }
+   *
+   * Not enveloped under a `stats` key — the payload IS the summary. There is no
+   * top-level `currency` either; take it from `nextTrip.currency`, since trips
+   * can each have their own and the server does not convert between them.
+   */
+  summary: () => api.get('/trips/summary').then((r) => r.data.data),
 
   /**
    * The full trip, with `trip.stops` already populated and each stop carrying
@@ -47,11 +56,17 @@ export const tripApi = {
   copy: (id) => api.post(`/trips/${id}/copy`).then((r) => r.data.data),
 
   /** multipart/form-data, field name `cover`. */
-  uploadCover: (id, file) => {
+  uploadCover: (id, file, { onProgress } = {}) => {
     const form = new FormData();
     form.append('cover', file);
     return api
-      .patch(`/trips/${id}/cover`, form, { headers: { 'Content-Type': 'multipart/form-data' } })
+      .patch(`/trips/${id}/cover`, form, {
+        headers: { 'Content-Type': undefined },
+        onUploadProgress: (event) => {
+          if (!onProgress || !event.total) return;
+          onProgress(Math.round((event.loaded / event.total) * 100));
+        },
+      })
       .then((r) => r.data.data);
   },
 

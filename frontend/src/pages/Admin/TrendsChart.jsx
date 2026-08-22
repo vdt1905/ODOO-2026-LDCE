@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Activity } from 'lucide-react';
 
 import { adminApi } from '../../api/admin.api.js';
 import { cn } from '../../lib/cn.js';
@@ -7,7 +8,6 @@ import { formatNumber } from '../../lib/format.js';
 import { useAsync } from '../../hooks/useAsync.js';
 import { Alert, Button, EmptyState } from '../../components/ui/index.js';
 import { Panel } from './Panel.jsx';
-import { Activity } from 'lucide-react';
 
 /** The server clamps `days` to 7–90, so these are the only ranges worth offering. */
 const RANGES = [7, 30, 90];

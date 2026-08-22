@@ -9,6 +9,19 @@ const multipart = { headers: { 'Content-Type': undefined } };
 export const userApi = {
   updateProfile: (payload) => api.patch('/users/me', payload).then((r) => r.data.data.user),
 
+  changePassword: (payload) => api.post('/users/me/password', payload).then((r) => r.data),
+
+  deleteAccount: (password) =>
+    api.delete('/users/me', { data: { password } }).then((r) => r.data.data),
+
+  savedDestinations: () => api.get('/users/me/saved').then((r) => r.data.data.items),
+
+  saveDestination: (cityId) =>
+    api.post(`/users/me/saved/${cityId}`).then((r) => r.data.data.items),
+
+  unsaveDestination: (cityId) =>
+    api.delete(`/users/me/saved/${cityId}`).then((r) => r.data.data.items),
+
   uploadAvatar: (file, { onProgress } = {}) => {
     const form = new FormData();
     form.append('avatar', file);

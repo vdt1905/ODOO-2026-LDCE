@@ -1,0 +1,17 @@
+%%{init: {'flowchart': {'curve': 'linear'}}}%%
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	identify_language(identify_language)
+	fetch_context(fetch_context)
+	generate_suggestions(generate_suggestions)
+	finalize(finalize)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> identify_language;
+	fetch_context --> generate_suggestions;
+	finalize --> __end__;
+	identify_language --> fetch_context;
+	generate_suggestions -.-> finalize;
+	generate_suggestions -. &nbsp;retry&nbsp; .-> generate_suggestions;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

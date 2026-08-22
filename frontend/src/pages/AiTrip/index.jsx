@@ -126,10 +126,12 @@ const AiTripPage = () => {
       <div className="mx-auto max-w-3xl px-4 pt-10 pb-24 sm:px-6">
         {unavailable && (
           <Alert tone="info" title="The planner is switched off on this server" className="mb-6">
-            No Gemini key is configured, so generation would fail. Add{' '}
+            No model key is configured, so generation would fail. Add either{' '}
+            <code className="rounded bg-canvas-deep px-1.5 py-0.5 text-xs">GROQ_API_KEY</code> or{' '}
             <code className="rounded bg-canvas-deep px-1.5 py-0.5 text-xs">GEMINI_API_KEY</code> to{' '}
             <code className="rounded bg-canvas-deep px-1.5 py-0.5 text-xs">backend/.env</code> and
-            restart the API. In the meantime you can{' '}
+            restart the API — the same Groq key the assistant uses works here. In the meantime you
+            can{' '}
             <Link to={ROUTES.newTrip} className="font-semibold underline">
               build a trip by hand
             </Link>

@@ -40,7 +40,7 @@ const DashboardPage = () => {
   const [tripSearch, setTripSearch] = useState('');
   const [group, setGroup] = useState('status');
   const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('soonest');
+  const [sort, setSort] = useState('start-asc');
 
   const debouncedDestination = useDebouncedValue(destinationQuery, 350);
   const debouncedTripSearch = useDebouncedValue(tripSearch, 300);

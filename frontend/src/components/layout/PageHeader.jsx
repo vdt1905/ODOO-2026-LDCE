@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { cn } from '../../lib/cn.js';
-import { useImmersiveHeader } from './chrome.jsx';
+import { useImmersiveHeader } from './chromeContext.js';
 
 /**
  * The masthead every signed-in screen opens with.
@@ -17,7 +17,24 @@ import { useImmersiveHeader } from './chrome.jsx';
  *   · The gradient is dark at BOTH ends — the top stop exists purely so white
  *     nav links stay legible on a pale photo, the bottom stop for the title.
  *     A single bottom-weighted scrim leaves the nav unreadable over sky.
+ *
+ * The top stop carries more weight than it used to: the navbar now has no
+ * backdrop of its own at all, so this gradient is the ONLY thing standing
+ * between white nav links and whatever the photograph happens to be doing.
+ *
+ * The inner wrapper is on the shared `.shell` measure, so the title lines up
+ * with the first <Section> of the page rather than sitting on its own margin.
  */
+
+/** Dark for the nav, open through the middle, dark again for the title. */
+const SCRIM =
+  'linear-gradient(180deg,' +
+  ' rgba(14,18,14,0.86) 0%,' +
+  ' rgba(14,18,14,0.60) 16%,' +
+  ' rgba(14,18,14,0.28) 42%,' +
+  ' rgba(14,18,14,0.62) 78%,' +
+  ' rgba(14,18,14,0.90) 100%)';
+
 export const PageHeader = ({
   image,
   kicker,
@@ -50,26 +67,18 @@ export const PageHeader = ({
         />
       )}
 
-      {/* Dark at the top for the nav, dark at the foot for the title, open in
-          the middle so the photograph is still doing something. */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(18,22,18,0.74) 0%, rgba(18,22,18,0.30) 38%, rgba(18,22,18,0.86) 100%)',
-        }}
-      />
+      <div className="absolute inset-0 -z-10" style={{ background: SCRIM }} />
 
       <div
         className={cn(
-          'mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-28 pb-9 sm:px-6',
+          'shell flex flex-1 flex-col pt-28 pb-10',
           align === 'center' ? 'justify-center text-center' : 'justify-end'
         )}
       >
         {breadcrumb && (
           <nav
             aria-label="Breadcrumb"
-            className="mb-3 flex animate-fade-up flex-wrap items-center gap-1.5 text-xs font-bold text-white/70"
+            className="mb-3 flex animate-fade-up flex-wrap items-center gap-1.5 text-xs font-semibold text-white/70"
           >
             {breadcrumb.map((crumb, index) => (
               <span key={crumb.label} className="flex items-center gap-1.5">
@@ -90,19 +99,21 @@ export const PageHeader = ({
           <div className={cn('min-w-0', align === 'center' && 'mx-auto')}>
             {kicker && <p className="eyebrow delay-1 animate-fade-up text-brand-200">{kicker}</p>}
 
+            {/* Anton, uppercase, pulled tight. `font-display-caps` carries the
+                face and the casing; only the size and leading change per size. */}
             <h1
               className={cn(
-                'delay-2 mt-2.5 animate-fade-up font-display-caps text-white drop-shadow-[0_2px_18px_rgba(18,22,18,0.5)]',
+                'delay-2 mt-3 animate-fade-up font-display-caps text-white drop-shadow-[0_2px_18px_rgba(18,22,18,0.5)]',
                 size === 'lg'
-                  ? 'text-[clamp(34px,6vw,76px)] leading-[0.94]'
-                  : 'text-[clamp(27px,3.8vw,46px)] leading-none'
+                  ? 'text-[clamp(34px,6vw,76px)] leading-[0.92]'
+                  : 'text-[clamp(27px,3.8vw,46px)] leading-[0.92]'
               )}
             >
               {title}
             </h1>
 
             {sub && (
-              <p className="delay-3 mt-3 max-w-2xl animate-fade-up text-sm font-medium text-white/80">
+              <p className="delay-3 mt-4 max-w-2xl animate-fade-up text-sm leading-relaxed text-white/80">
                 {sub}
               </p>
             )}

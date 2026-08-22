@@ -95,7 +95,7 @@ fall outside the trip or overlap another stop. Render them, do not throw.
 **Reorder payloads differ.** Stops need *every* id on the trip or the request is
 rejected; activities accept one day's ids. Both return the full re-sequenced list.
 
-**Route order matters.** `/trips/stats` is declared before `/trips/:tripId`, and
+**Route order matters.** `/trips/summary` is declared before `/trips/:tripId`, and
 `/reorder` before `/:stopId`. Adding a static route below a param route makes
 Express read the literal as an id.
 
@@ -128,20 +128,9 @@ of the top bar. The earlier treatment — a ~150px strip below an opaque nav —
 looked like a YouTube channel banner and is what this replaces. `<main>` has no
 top padding; the header provides its own clearance with `pt-28`.
 
-**Type is switchable at runtime.** `--font-display` and `--font-sans` resolve
-through `--gt-display` / `--gt-body`, which the dev panel rewrites on `<html>`.
-That indirection is the only reason a font swap needs no rebuild.
-
----
-
-## Temporary: the dev type panel
-
-`components/dev/DevSettings.jsx` (button bottom-left, `Ctrl/Cmd + .`) switches
-font pairings, heading casing and base size live, persisted to localStorage.
-
-**Remove before the final build** — delete the component, `lib/devSettings.js`,
-the `bootDevSettings()` call in `main.jsx`, the `<DevSettings />` mount in
-`App.jsx`, and trim `index.html` down to the one pairing that survives.
+**Typography is fixed for production.** Anton is the display face and Source
+Serif 4 is the body face. Both are loaded in `frontend/index.html`, with their
+stacks defined directly in `frontend/src/index.css`.
 
 ---
 

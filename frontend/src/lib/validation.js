@@ -27,6 +27,34 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+export const forgotPasswordSchema = z.object({ email });
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().trim().min(1, 'Reset token is required'),
+    password,
+    confirmPassword: z.string().min(1, 'Confirm your password'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  });
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Enter your current password'),
+    newPassword: password,
+    confirmPassword: z.string().min(1, 'Confirm your new password'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    path: ['newPassword'],
+    message: 'Choose a password different from your current one',
+  });
+
 export const registerSchema = z
   .object({
     firstName: z.string().trim().min(1, 'First name is required').max(60, 'Too long'),

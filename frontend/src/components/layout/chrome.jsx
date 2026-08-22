@@ -1,4 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+
+import { ChromeContext } from './chromeContext.js';
 
 /**
  * Whether the current screen has a dark photographic header for the navbar to
@@ -13,8 +15,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
  * next header before unmounting the previous one, and two booleans racing would
  * leave the nav stuck in the wrong mode.
  */
-const ChromeContext = createContext({ immersive: false, register: () => () => {} });
-
 export const ChromeProvider = ({ children }) => {
   const [count, setCount] = useState(0);
 
@@ -29,13 +29,4 @@ export const ChromeProvider = ({ children }) => {
   const value = useMemo(() => ({ immersive: count > 0, register }), [count, register]);
 
   return <ChromeContext.Provider value={value}>{children}</ChromeContext.Provider>;
-};
-
-export const useChrome = () => useContext(ChromeContext);
-
-/** Called by any header that puts an image behind the navbar. */
-export const useImmersiveHeader = () => {
-  const { register } = useChrome();
-
-  useEffect(() => register(), [register]);
 };

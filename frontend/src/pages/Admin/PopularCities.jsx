@@ -62,9 +62,12 @@ export const PopularCities = ({ limit = 8 }) => {
                 <p className="text-[11px] text-ink-500">{pluralise(city.stops, 'stop')}</p>
               </div>
 
-              <Badge tone="outline" className="hidden shrink-0 sm:inline-flex">
-                {city.region}
-              </Badge>
+              {/* Wrapped rather than given `hidden sm:inline-flex` directly:
+                  Badge already sets `inline-flex`, and two display utilities on
+                  one element resolve by stylesheet order, not attribute order. */}
+              <span className="hidden shrink-0 sm:block">
+                <Badge tone="outline">{city.region}</Badge>
+              </span>
             </li>
           ))}
         </ol>

@@ -8,7 +8,10 @@ import { api } from './client.js';
  * Note `status()` itself requires auth, so it cannot be called before sign-in.
  */
 export const aiApi = {
-  /** { available, model, maxDays }. `model` is null when unavailable. */
+  /**
+   * { available, provider, model, maxDays }. `provider` is 'gemini' | 'groq'
+   * | null, and `model` is null when unavailable.
+   */
   status: () => api.get('/ai/status').then((r) => r.data.data),
 
   /**

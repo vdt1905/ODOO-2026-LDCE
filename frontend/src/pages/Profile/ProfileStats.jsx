@@ -14,7 +14,7 @@ const Tile = ({ icon: Icon, label, value, sub }) => (
 );
 
 /**
- * Totals from tripApi.stats via useTripStats.
+ * Totals from tripApi.summary via useTripStats.
  *
  * That hook treats a failure as a cosmetic loss and settles to `stats: null`
  * rather than surfacing an error, so there is no error branch to render here —
@@ -33,21 +33,21 @@ export const ProfileStats = ({ stats, loading }) => (
           label="Trips"
           value={formatNumber(stats?.tripCount ?? 0)}
           sub={
-            stats?.upcomingCount
-              ? `${pluralise(stats.upcomingCount, 'trip')} still ahead`
+            stats?.byStatus?.upcoming
+              ? `${pluralise(stats.byStatus.upcoming, 'trip')} still ahead`
               : 'planned on your account'
           }
         />
         <Tile
           icon={MapPinned}
           label="Cities"
-          value={formatNumber(stats?.cityCount ?? 0)}
+          value={formatNumber(stats?.citiesPlanned ?? 0)}
           sub="across every itinerary"
         />
         <Tile
           icon={Coins}
           label="Planned spend"
-          value={formatCurrency(stats?.plannedTotal ?? 0, stats?.currency, { compact: true })}
+          value={formatCurrency(stats?.totalPlannedCost ?? 0, stats?.nextTrip?.currency, { compact: true })}
           sub="stops and activities combined"
         />
       </>

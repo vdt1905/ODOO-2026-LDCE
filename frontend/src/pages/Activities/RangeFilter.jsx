@@ -9,8 +9,11 @@ import { useDebouncedValue } from '../../hooks/useDebouncedValue.js';
  * no filter is set); the caller also decides when a value stops being a filter,
  * because it is the one that knows the ceiling. Dragging is local and the
  * committed value is debounced, so one drag is one request rather than forty.
+ *
+ * The readout is Anton and sits in a pill of its own: it is the figure someone
+ * is actually setting, and it has to be legible mid-drag.
  */
-export const RangeFilter = ({ label, value, max, step = 1, format, onCommit, disabled }) => {
+export const RangeFilter = ({ label, hint, value, max, step = 1, format, onCommit, disabled }) => {
   const id = useId();
   const [draft, setDraft] = useState(value);
   const [seen, setSeen] = useState(value);
@@ -34,11 +37,14 @@ export const RangeFilter = ({ label, value, max, step = 1, format, onCommit, dis
 
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium text-ink-700">
+      <div className="flex items-center justify-between gap-3">
+        <label
+          htmlFor={id}
+          className="text-[11px] font-semibold tracking-[0.09em] text-ink-700 uppercase"
+        >
           {label}
         </label>
-        <span className="text-sm text-ink-500">
+        <span className="rounded-full border border-line bg-inset px-3 py-1 font-display text-[13px] leading-none text-ink-900">
           {disabled ? '—' : draft >= max ? 'Any' : format(draft)}
         </span>
       </div>
@@ -52,8 +58,10 @@ export const RangeFilter = ({ label, value, max, step = 1, format, onCommit, dis
         value={draft}
         disabled={disabled}
         onChange={(event) => setDraft(Number(event.target.value))}
-        className="mt-2.5 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-canvas-deep accent-brand-500 disabled:cursor-not-allowed disabled:opacity-55"
+        className="mt-3.5 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-canvas-deep accent-brand-500 disabled:cursor-not-allowed disabled:opacity-55"
       />
+
+      {hint && <p className="mt-2.5 text-xs leading-relaxed text-ink-500">{hint}</p>}
     </div>
   );
 };

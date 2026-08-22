@@ -42,7 +42,7 @@ const TripsPage = () => {
   const [search, setSearch] = useState('');
   const [group, setGroup] = useState('status');
   const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('soonest');
+  const [sort, setSort] = useState('start-asc');
 
   const debouncedSearch = useDebouncedValue(search, 350);
 

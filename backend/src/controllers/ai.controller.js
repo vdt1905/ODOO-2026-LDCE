@@ -29,13 +29,20 @@ export const generateTripFromPrompt = asyncHandler(async (req, res) => {
 /**
  * GET /ai/status — lets the client hide the AI entry point when no key is set,
  * instead of offering a button that always fails.
+ *
+ * `provider` is reported alongside `model` so the client can name the right
+ * env var in its "switched off" notice. Either backend counts as available:
+ * the planner does not care which one answers.
  */
-export const aiStatus = asyncHandler(async (_req, res) =>
-  sendSuccess(res, {
+export const aiStatus = asyncHandler(async (_req, res) => {
+  const provider = env.aiProvider;
+
+  return sendSuccess(res, {
     data: {
-      available: env.gemini.isConfigured,
-      model: env.gemini.isConfigured ? env.gemini.model : null,
+      available: Boolean(provider),
+      provider,
+      model: provider ? env[provider].model : null,
       maxDays: 21,
     },
-  })
-);
+  });
+});

@@ -31,10 +31,7 @@ export const useAsync = (fetcher, deps = [], { enabled = true, initial = null } 
   const [result, setResult] = useState({ key: null, data: initial, error: null });
 
   useEffect(() => {
-    if (!enabled) {
-      setResult({ key, data: initial, error: null });
-      return undefined;
-    }
+    if (!enabled) return undefined;
 
     let cancelled = false;
 
@@ -56,8 +53,8 @@ export const useAsync = (fetcher, deps = [], { enabled = true, initial = null } 
   }, [key, enabled]);
 
   return {
-    data: result.data,
-    error: result.error,
+    data: enabled ? result.data : initial,
+    error: enabled ? result.error : null,
     loading: enabled && result.key !== key,
     refresh,
     /** Patch the local copy after a mutation instead of round-tripping. */

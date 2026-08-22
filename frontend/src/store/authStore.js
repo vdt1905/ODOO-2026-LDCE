@@ -74,6 +74,11 @@ export const useAuthStore = create((set, get) => ({
   /** Replaces the cached user after a profile or avatar change. */
   setUser: (user) => set({ user }),
 
+  clearSession: () => {
+    setAccessToken(null);
+    set({ user: null, error: null, status: 'ready' });
+  },
+
   /**
    * Uploads a profile photo for the signed-in user.
    * Returns { ok } rather than throwing so callers can treat a failed photo as
@@ -103,8 +108,7 @@ export const useAuthStore = create((set, get) => ({
     try {
       await authApi.logout();
     } finally {
-      setAccessToken(null);
-      set({ user: null, error: null, status: 'ready' });
+      get().clearSession();
     }
   },
 }));

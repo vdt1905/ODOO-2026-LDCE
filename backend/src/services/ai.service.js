@@ -3,13 +3,15 @@ import { Activity, City, REGIONS, Stop, Trip, TripActivity } from '../models/ind
 import { ACTIVITY_TYPES } from '../models/Activity.js';
 import { ApiError } from '../utils/ApiError.js';
 import { addDays, startOfUTCDay } from '../utils/dates.js';
-import { generateStructured } from './gemini.service.js';
+import { generateStructured } from './llm.service.js';
 import { buildTripPlannerPrompt, TRIP_RESPONSE_SCHEMA } from './prompts/tripPlanner.prompt.js';
 
 /* --------------------------------------------------------------------------
    Step 2 — validate the model's JSON before anything touches Mongo.
-   The schema Gemini is given constrains shape, not sanity: it can still return
-   0 nights or a 40-hour activity. Reject rather than write garbage.
+   The schema the model is given constrains shape, not sanity: it can still
+   return 0 nights or a 40-hour activity. Reject rather than write garbage.
+   This is also the only gate on the Groq path, whose JSON mode guarantees the
+   response parses but not that it matches the schema.
 -------------------------------------------------------------------------- */
 const aiActivitySchema = z.object({
   name: z.string().trim().min(1).max(160),

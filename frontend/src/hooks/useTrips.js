@@ -18,7 +18,7 @@ import { toApiError } from '../api/client.js';
  * from. Same shape as usePopularCities, so this family can move to TanStack
  * Query in one commit when trip data outgrows it.
  */
-export const useTrips = ({ search = '', filter = 'all', sort = 'soonest', limit = 24 } = {}) => {
+export const useTrips = ({ search = '', filter = 'all', sort = 'start-asc', limit = 24 } = {}) => {
   // Bumped to force a refetch after something else on the page mutates a trip.
   const [nonce, setNonce] = useState(0);
   const refresh = useCallback(() => setNonce((n) => n + 1), []);
@@ -89,7 +89,7 @@ export const useTripStats = () => {
     let cancelled = false;
 
     tripApi
-      .stats()
+      .summary()
       // A missing stats strip is a cosmetic loss; the trips below still render,
       // so a failure settles to null rather than surfacing an error banner.
       .then((stats) => !cancelled && setResult({ key: nonce, stats }))

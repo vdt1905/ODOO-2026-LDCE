@@ -13,6 +13,7 @@ import { BIO_MAX, languageOptions, profileSchema } from './profileSchema.js';
 const toDefaults = (user) => ({
   firstName: user.firstName ?? '',
   lastName: user.lastName ?? '',
+  email: user.email ?? '',
   phone: user.phone ?? '',
   city: user.city ?? '',
   country: user.country ?? '',
@@ -119,19 +120,15 @@ export const ProfileForm = ({ user }) => {
         />
       </div>
 
-      {/* Read-only text, not a disabled input: an input the user cannot type
-          into still reads as "editable, just not right now". Changing an email
-          is an auth flow, not a profile field. */}
-      <div className="rounded-2xl border border-line bg-inset px-4 py-3">
-        <p className="flex items-center gap-1.5 text-xs font-medium text-ink-500">
-          <Mail className="size-3.5" aria-hidden />
-          Email
-        </p>
-        <p className="mt-1 truncate text-sm font-medium text-ink-900">{user.email}</p>
-        <p className="mt-1 text-xs text-ink-500">
-          Your sign-in address cannot be changed from here.
-        </p>
-      </div>
+      <Input
+        label="Email address"
+        type="email"
+        icon={Mail}
+        autoComplete="email"
+        required
+        error={errors.email?.message}
+        {...register('email')}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input

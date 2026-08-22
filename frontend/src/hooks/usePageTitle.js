@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const BASE = 'GlobeTrotter';
+const BASE = 'TRIPORA';
 
 export const usePageTitle = (title) => {
   useEffect(() => {

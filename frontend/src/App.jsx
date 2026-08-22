@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './routes.jsx';
 import { ScrollToTop } from './components/layout/ScrollToTop.jsx';
 import { FullPageLoader } from './components/ui/Spinner.jsx';
-import { DevSettings } from './components/dev/DevSettings.jsx';
+import { AskAi } from './components/ai/AskAi.jsx';
 import { useAuthStore } from './store/authStore.js';
 
 const App = () => {
@@ -25,8 +25,10 @@ const App = () => {
     <BrowserRouter>
       <ScrollToTop />
       <AppRoutes />
-      {/* Development affordance — remove before the final build. */}
-      <DevSettings />
+
+      {/* A fixed overlay that must sit above every route and survive
+          navigation, so it lives here rather than inside a layout. */}
+      <AskAi />
     </BrowserRouter>
   );
 };

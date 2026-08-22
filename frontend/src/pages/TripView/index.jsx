@@ -137,11 +137,11 @@ const TripViewPage = () => {
             Array.from({ length: 4 }, (_, i) => (
               <div key={i} className="h-26 animate-pulse rounded-3xl bg-canvas-deep" />
             ))
-          ) : (
+          ) : !data ? null : (
             <>
-              <Stat icon={CalendarDays} label="Days" value={formatNumber(data?.totalDays ?? 0)} />
-              <Stat icon={MapPin} label="Cities" value={formatNumber(data?.stopCount ?? 0)} />
-              <Stat icon={Ticket} label="Activities" value={formatNumber(data?.activityCount ?? 0)} />
+              <Stat icon={CalendarDays} label="Days" value={formatNumber(data.totalDays)} />
+              <Stat icon={MapPin} label="Cities" value={formatNumber(data.stopCount)} />
+              <Stat icon={Ticket} label="Activities" value={formatNumber(data.activityCount)} />
               <Stat
                 icon={Wallet}
                 label="Budget limit"
@@ -154,97 +154,101 @@ const TripViewPage = () => {
         {trip && (
           <ShareCard
             tripId={id}
+            trip={trip}
             isPublic={trip.isPublic}
             publicSlug={trip.publicSlug}
             onVisibilityChange={applyVisibility}
           />
         )}
 
-        <section>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="font-display text-xl text-ink-900">The plan</h2>
-              <p className="mt-1 text-sm text-ink-500">
-                {loading
-                  ? 'Loading the itinerary…'
-                  : view === 'day'
-                    ? `${pluralise(data?.totalDays ?? 0, 'day')}, empty ones included.`
-                    : `${pluralise(data?.stopCount ?? 0, 'city', 'cities')} in the order you travel them.`}
-              </p>
+        {(loading || data) && (
+          <section>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="font-display text-xl text-ink-900">The plan</h2>
+                <p className="mt-1 text-sm text-ink-500">
+                  {loading
+                    ? 'Loading the itinerary…'
+                    : view === 'day'
+                      ? `${pluralise(data.totalDays, 'day')}, empty ones included.`
+                      : `${pluralise(data.stopCount, 'city', 'cities')} in the order you travel them.`}
+                </p>
+              </div>
+
+              <ViewToggle view={view} onChange={setView} />
             </div>
 
-            <ViewToggle view={view} onChange={setView} />
-          </div>
+            <div className="mt-5">
+              {loading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }, (_, i) => (
+                    <DayCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : view === 'day' ? (
+                <div className="space-y-4">
+                  {data.days.map((day) => (
+                    <DayCard key={day.date} day={day} currency={currency} />
+                  ))}
+                </div>
+              ) : data.byCity.length === 0 ? (
+                <EmptyState
+                  icon={Compass}
+                  title="No cities on this trip yet"
+                  description="Add a stop in the builder and its days will show up here, grouped by city."
+                  action={
+                    <Button to={ROUTES.tripBuilder(id)} size="lg">
+                      Add your first stop
+                    </Button>
+                  }
+                />
+              ) : (
+                <div className="space-y-10">
+                  {data.byCity.map((group, index) => (
+                    <section key={group.stopId}>
+                      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+                        <div className="min-w-0">
+                          <p className="eyebrow text-ink-500">Stop {index + 1}</p>
+                          <h3 className="mt-1 font-display text-2xl text-ink-900">
+                            {group.city}
+                            {group.country && <span className="text-ink-500">, {group.country}</span>}
+                          </h3>
+                        </div>
 
-          <div className="mt-5">
-            {loading ? (
-              <div className="space-y-4">
-                {Array.from({ length: 3 }, (_, i) => (
-                  <DayCardSkeleton key={i} />
-                ))}
-              </div>
-            ) : !data ? null : view === 'day' ? (
-              <div className="space-y-4">
-                {data.days.map((day) => (
-                  <DayCard key={day.date} day={day} currency={currency} />
-                ))}
-              </div>
-            ) : data.byCity.length === 0 ? (
-              <EmptyState
-                icon={Compass}
-                title="No cities on this trip yet"
-                description="Add a stop in the builder and its days will show up here, grouped by city."
-                action={
-                  <Button to={ROUTES.tripBuilder(id)} size="lg">
-                    Add your first stop
-                  </Button>
-                }
-              />
-            ) : (
-              <div className="space-y-10">
-                {data.byCity.map((group, index) => (
-                  <section key={group.stopId}>
-                    <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
-                      <div className="min-w-0">
-                        <p className="eyebrow text-ink-500">Stop {index + 1}</p>
-                        <h3 className="mt-1 font-display text-2xl text-ink-900">
-                          {group.city}
-                          {group.country && (
-                            <span className="text-ink-500">, {group.country}</span>
-                          )}
-                        </h3>
+                        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-500">
+                          <span className="flex items-center gap-1.5">
+                            <CalendarDays className="size-3.5" aria-hidden />
+                            {formatDateRange(group.startDate, group.endDate)}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Moon className="size-3.5" aria-hidden />
+                            {pluralise(group.nights, 'night')}
+                          </span>
+                        </p>
                       </div>
 
-                      <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-500">
-                        <span className="flex items-center gap-1.5">
-                          <CalendarDays className="size-3.5" aria-hidden />
-                          {formatDateRange(group.startDate, group.endDate)}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Moon className="size-3.5" aria-hidden />
-                          {pluralise(group.nights, 'night')}
-                        </span>
-                      </p>
-                    </div>
+                      <div className="mt-4 space-y-4">
+                        {group.days.map((day) => (
+                          <DayCard key={day.date} day={day} currency={currency} showCity={false} />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
 
-                    <div className="mt-4 space-y-4">
-                      {group.days.map((day) => (
-                        <DayCard key={day.date} day={day} currency={currency} showCity={false} />
-                      ))}
-                    </div>
-                  </section>
-                ))}
-
-                {looseDays > 0 && (
-                  <Alert tone="info" title={`${pluralise(looseDays, 'day')} not assigned to a city`}>
-                    They only show up in the by-day view. Stretch a stop's dates in the builder to
-                    cover them.
-                  </Alert>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
+                  {looseDays > 0 && (
+                    <Alert
+                      tone="info"
+                      title={`${pluralise(looseDays, 'day')} not assigned to a city`}
+                    >
+                      They only show up in the by-day view. Stretch a stop's dates in the builder
+                      to cover them.
+                    </Alert>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
       </div>
     </>
   );

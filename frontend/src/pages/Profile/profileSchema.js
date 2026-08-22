@@ -4,13 +4,13 @@ import { z } from 'zod';
  * Mirrors backend/src/validators/user.validator.js.
  *
  * It lives here rather than in lib/validation.js because the server schema is
- * `.strict()` — these seven keys are the *entire* accepted surface of
- * PATCH /users/me, and anything else (email, password, role, avatarUrl) is a
+ * `.strict()` — these eight keys are the *entire* accepted surface of
+ * PATCH /users/me, and anything else (password, role, avatarUrl) is a
  * 422 rather than a silent ignore. Keeping the copy beside its only caller
  * makes that pairing obvious.
  *
  * Every field is required here even though the endpoint takes a partial: the
- * form always holds all seven, and onSubmit narrows the payload down to the
+ * form always holds all eight, and onSubmit narrows the payload down to the
  * fields that actually changed.
  */
 export const profileSchema = z.object({
@@ -24,6 +24,7 @@ export const profileSchema = z.object({
     .trim()
     .min(1, 'Last name is required')
     .max(60, 'Keep it under 60 characters'),
+  email: z.string().trim().min(1, 'Email is required').email('Enter a valid email address'),
   phone: z.string().trim().max(20, 'Keep it under 20 characters'),
   city: z.string().trim().max(80, 'Keep it under 80 characters'),
   country: z.string().trim().max(80, 'Keep it under 80 characters'),

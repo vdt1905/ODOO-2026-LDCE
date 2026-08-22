@@ -6,9 +6,10 @@ import { formatCurrency, formatNumber, pluralise } from '../../lib/format.js';
 import { useAsync } from '../../hooks/useAsync.js';
 import { Alert, EmptyState } from '../../components/ui/index.js';
 import { Panel, RowSkeleton } from './Panel.jsx';
+import { ActivityIcon } from '../../components/ui/ActivityIcon.jsx';
 
 const labelFor = (type) => ACTIVITY_TYPE_META[type]?.label ?? type;
-const emojiFor = (type) => ACTIVITY_TYPE_META[type]?.emoji ?? '•';
+
 
 export const PopularActivities = ({ limit = 8 }) => {
   const { data, loading, error } = useAsync(() => adminApi.popularActivities(limit), [limit]);
@@ -71,8 +72,9 @@ export const PopularActivities = ({ limit = 8 }) => {
               {byType.map((row) => (
                 <li key={row.type}>
                   <div className="flex items-baseline justify-between gap-2 text-xs">
-                    <span className="truncate text-ink-700">
-                      <span aria-hidden>{emojiFor(row.type)}</span> {labelFor(row.type)}
+                    <span className="flex min-w-0 items-center gap-1.5 truncate text-ink-700">
+                      <ActivityIcon type={row.type} className="size-3.5 text-ink-500" />
+                      {labelFor(row.type)}
                     </span>
                     <span className="shrink-0 text-ink-500 tabular-nums">
                       {formatNumber(row.count)}

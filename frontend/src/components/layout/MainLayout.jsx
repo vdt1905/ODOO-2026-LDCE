@@ -2,7 +2,8 @@ import { Outlet } from 'react-router-dom';
 
 import { Navbar } from './Navbar.jsx';
 import { Footer } from './Footer.jsx';
-import { ChromeProvider, useChrome } from './chrome.jsx';
+import { ChromeProvider } from './chrome.jsx';
+import { useChrome } from './chromeContext.js';
 
 /**
  * Shell for every page that carries the site chrome.

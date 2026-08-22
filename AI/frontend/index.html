@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobeTrotter AI Suggestions</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <h1>GlobeTrotter AI Suggestions</h1>
+      <p class="subtitle">Standalone demo for the LangGraph + Sarvam suggestion service — ask in any supported language.</p>
+    </header>
+
+    <section class="config">
+      <label>
+        Service URL
+        <input id="serviceUrl" type="text" value="http://localhost:8000" />
+      </label>
+      <label>
+        Trip ID <span class="optional">(optional — grounds suggestions in a real trip)</span>
+        <input id="tripId" type="text" placeholder="e.g. 64f1c2..." />
+      </label>
+    </section>
+
+    <form id="promptForm" class="prompt-form">
+      <textarea id="prompt" rows="3" placeholder="e.g. Suggest a 3-day budget-friendly itinerary for Paris" required></textarea>
+      <button type="submit" id="submitBtn">Get suggestions</button>
+    </form>
+
+    <section id="status" class="status" hidden></section>
+
+    <section id="result" class="result" hidden>
+      <div class="meta">
+        <span id="languageBadge" class="badge"></span>
+      </div>
+      <p id="summary" class="summary"></p>
+      <ul id="suggestions" class="suggestions"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

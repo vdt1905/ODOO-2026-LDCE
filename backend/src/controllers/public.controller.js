@@ -2,6 +2,7 @@ import { Stop, Trip, TripActivity } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/apiResponse.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 import { buildBudget } from '../services/budget.service.js';
 import { buildItinerary } from '../services/itinerary.service.js';
 
@@ -92,7 +93,9 @@ export const listPublicTrips = asyncHandler(async (req, res) => {
   };
 
   const filter = { isPublic: true };
-  if (search.trim()) filter.name = { $regex: search.trim(), $options: 'i' };
+  // Escaped for the same reason as /cities — an unbalanced bracket typed into
+  // the feed search is a 500 otherwise.
+  if (search.trim()) filter.name = { $regex: escapeRegex(search.trim()), $options: 'i' };
 
   const [trips, total] = await Promise.all([
     Trip.find(filter)

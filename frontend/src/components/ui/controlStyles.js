@@ -25,9 +25,9 @@ export const controlClasses = ({
   return cn(
     'w-full border bg-surface text-ink-900 placeholder:text-ink-300',
     'transition-colors duration-200 outline-none',
-    'focus:border-clay-400 focus:ring-4 focus:ring-clay-500/12',
+    'focus:border-brand-400 focus:ring-4 focus:ring-brand-500/12',
     'disabled:cursor-not-allowed disabled:bg-canvas-deep',
-    error ? 'border-clay-500 bg-clay-50/40' : 'border-line',
+    error ? 'border-brand-500 bg-brand-50/40' : 'border-line',
     scale.base,
     leftIcon && scale.left,
     rightIcon && scale.right

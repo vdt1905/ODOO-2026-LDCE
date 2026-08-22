@@ -56,7 +56,7 @@ export const passwordStrength = (value = '') => {
   const score = checks.filter(Boolean).length;
 
   if (!value) return { score: 0, label: '', tone: 'bg-line' };
-  if (score <= 2) return { score, label: 'Weak', tone: 'bg-clay-500' };
+  if (score <= 2) return { score, label: 'Weak', tone: 'bg-brand-500' };
   if (score === 3) return { score, label: 'Fair', tone: 'bg-cat-meals' };
   if (score === 4) return { score, label: 'Good', tone: 'bg-moss-500' };
   return { score, label: 'Strong', tone: 'bg-moss-600' };

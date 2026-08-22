@@ -43,7 +43,7 @@ export const Footer = () => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-sm text-ink-500 transition-colors hover:text-clay-600"
+                    className="text-sm text-ink-500 transition-colors hover:text-brand-600"
                   >
                     {link.label}
                   </Link>

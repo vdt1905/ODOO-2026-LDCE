@@ -12,6 +12,11 @@ export const tripApi = {
   /** Totals across every trip, for the dashboard's budget strip. */
   stats: () => api.get('/trips/stats').then((r) => r.data.data.stats),
 
+  /**
+   * The full trip, with `trip.stops` already populated and each stop carrying
+   * its own `activities` array. The builder should use this single call rather
+   * than stopApi.list + tripActivityApi.list.
+   */
   byId: (id) => api.get(`/trips/${id}`).then((r) => r.data.data.trip),
 
   /** `cityIds` become stops in the same request, in the order they were picked. */
@@ -19,5 +24,36 @@ export const tripApi = {
 
   update: (id, payload) => api.patch(`/trips/${id}`, payload).then((r) => r.data.data.trip),
 
-  remove: (id) => api.delete(`/trips/${id}`).then((r) => r.data.data.id),
+  /** → { stopCount, activityCount } deleted alongside the trip. */
+  remove: (id) => api.delete(`/trips/${id}`).then((r) => r.data.data),
+
+  /** Full breakdown: byCategory, byStop, one dailySpend row per day, overspend. */
+  budget: (id) => api.get(`/trips/${id}/budget`).then((r) => r.data.data),
+
+  /**
+   * { trip, totalDays, stopCount, activityCount, days, byCity }
+   * `days` covers every calendar day — empty ones included, which is what makes
+   * an unplanned gap visible instead of silently collapsing.
+   */
+  itinerary: (id) => api.get(`/trips/${id}/itinerary`).then((r) => r.data.data),
+
+  /** → { isPublic, publicSlug, path } */
+  share: (id) => api.post(`/trips/${id}/share`).then((r) => r.data.data),
+
+  /** → { isPublic: false } */
+  unshare: (id) => api.delete(`/trips/${id}/share`).then((r) => r.data.data),
+
+  /** Clones a public trip onto your account. → { tripId, stopCount, activityCount } */
+  copy: (id) => api.post(`/trips/${id}/copy`).then((r) => r.data.data),
+
+  /** multipart/form-data, field name `cover`. */
+  uploadCover: (id, file) => {
+    const form = new FormData();
+    form.append('cover', file);
+    return api
+      .patch(`/trips/${id}/cover`, form, { headers: { 'Content-Type': 'multipart/form-data' } })
+      .then((r) => r.data.data);
+  },
+
+  removeCover: (id) => api.delete(`/trips/${id}/cover`).then((r) => r.data.data),
 };

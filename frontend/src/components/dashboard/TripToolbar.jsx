@@ -32,7 +32,7 @@ export const TripToolbar = ({
         onChange={(event) => onSearchChange(event.target.value)}
         placeholder="Search your trips"
         aria-label="Search your trips"
-        className="h-10 w-full rounded-full border border-line bg-canvas pr-10 pl-10 text-sm text-ink-900 transition-colors outline-none placeholder:text-ink-300 focus:border-clay-400 focus:bg-surface focus:ring-4 focus:ring-clay-500/12"
+        className="h-10 w-full rounded-full border border-line bg-canvas pr-10 pl-10 text-sm text-ink-900 transition-colors outline-none placeholder:text-ink-300 focus:border-brand-400 focus:bg-surface focus:ring-4 focus:ring-brand-500/12"
       />
       {search && (
         <button

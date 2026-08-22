@@ -55,7 +55,7 @@ export const CityCard = ({ city, className, onClick }) => {
         <div className="mt-2.5 flex items-center gap-2">
           <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/25">
             <div
-              className="h-full rounded-full bg-clay-300"
+              className="h-full rounded-full bg-brand-300"
               style={{ width: `${city.costIndex}%` }}
             />
           </div>

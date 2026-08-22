@@ -93,7 +93,7 @@ const DashboardPage = () => {
         onQueryChange={setDestinationQuery}
       />
 
-      <div className="mx-auto max-w-6xl space-y-16 px-4 pb-24 sm:px-6">
+      <div className="mx-auto max-w-6xl space-y-16 px-4 pt-12 pb-24 sm:px-6">
         <BudgetHighlights stats={stats} loading={statsLoading} />
 
         {createdId && (

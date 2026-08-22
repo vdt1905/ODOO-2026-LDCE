@@ -29,7 +29,7 @@ export const BudgetPreview = () => (
   <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
     <div className="grid items-center gap-12 lg:grid-cols-2">
       <div>
-        <Badge tone="clay">Budget, live</Badge>
+        <Badge tone="brand">Budget, live</Badge>
         <h2 className="mt-3 font-display text-3xl font-bold text-ink-900 sm:text-4xl">
           Know what the trip costs before you book it
         </h2>

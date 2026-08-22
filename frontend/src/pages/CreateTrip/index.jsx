@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, ArrowRight, CalendarDays, Coins, MapPin, Moon, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, Coins, MapPin, Moon, Wand2 } from 'lucide-react';
 
 import { cityApi } from '../../api/city.api.js';
 import { tripApi } from '../../api/trip.api.js';
 import { userApi } from '../../api/user.api.js';
 import { toApiError } from '../../api/client.js';
-import { CURRENCIES, ROUTES } from '../../lib/constants.js';
+import { BANNERS, CURRENCIES, ROUTES } from '../../lib/constants.js';
 import { createTripSchema } from '../../lib/validation.js';
 import { daysInclusive, nightsBetween } from '../../lib/dates.js';
 import { pluralise } from '../../lib/format.js';
 import { usePageTitle } from '../../hooks/usePageTitle.js';
 import { Alert, Button, Input, Select, TextArea } from '../../components/ui/index.js';
+import { PageHeader } from '../../components/layout/PageHeader.jsx';
 import { CitySuggestions } from './CitySuggestions.jsx';
 import { CoverPhotoPicker } from './CoverPhotoPicker.jsx';
 
@@ -176,31 +177,36 @@ const CreateTripPage = () => {
   const busy = submitting || uploading;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-24 sm:px-6">
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 transition-colors hover:text-clay-600"
-      >
-        <ArrowLeft className="size-4" aria-hidden />
-        Back
-      </button>
+    <>
+      <PageHeader
+        image={BANNERS.newTrip}
+        breadcrumb={[{ label: 'My trips', to: ROUTES.trips }, { label: 'New trip' }]}
+        kicker="Step 1 of 2 · the shape of the trip"
+        title="Plan a new trip"
+        sub="Give it a name and a window. Everything else — stops, activities, the budget — gets built on top of those two answers."
+      />
 
-      <header className="mt-4">
-        <span className="inline-flex items-center gap-2 rounded-full bg-clay-50 px-3.5 py-1.5 text-xs font-medium text-clay-700">
-          <Sparkles className="size-3.5" aria-hidden />
-          Step 1 of 2 · the shape of the trip
-        </span>
-        <h1 className="mt-4 font-display text-3xl font-bold text-ink-900 sm:text-4xl">
-          Plan a new trip
-        </h1>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-500">
-          Give it a name and a window. Everything else — stops, activities, the budget — gets
-          built on top of those two answers.
-        </p>
-      </header>
+      <div className="mx-auto max-w-5xl px-4 pt-10 pb-24 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 transition-colors hover:text-brand-600"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Back
+          </button>
 
-      <form
+          <Link
+            to={ROUTES.aiTrip}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:border-brand-300 hover:text-brand-600"
+          >
+            <Wand2 className="size-3.5" aria-hidden />
+            Or describe it and let AI plan it
+          </Link>
+        </div>
+
+        <form
         onSubmit={handleSubmit(onSubmit)}
         noValidate
         // scroll-mb keeps a focused field clear of the sticky action bar when
@@ -310,7 +316,7 @@ const CreateTripPage = () => {
               progress={progress}
             />
             {coverError && (
-              <p role="alert" className="text-xs font-medium text-clay-600">
+              <p role="alert" className="text-xs font-medium text-brand-600">
                 {coverError}
               </p>
             )}
@@ -359,8 +365,9 @@ const CreateTripPage = () => {
             </div>
           </div>
         </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 };
 

@@ -14,7 +14,7 @@ export const EmptyState = ({ icon: Icon, title, description, action, className, 
     )}
   >
     {Icon && (
-      <span className="grid size-12 place-items-center rounded-2xl bg-clay-50 text-clay-600">
+      <span className="grid size-12 place-items-center rounded-2xl bg-brand-50 text-brand-600">
         <Icon className="size-5" aria-hidden />
       </span>
     )}

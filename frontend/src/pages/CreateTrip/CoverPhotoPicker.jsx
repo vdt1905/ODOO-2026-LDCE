@@ -62,7 +62,7 @@ export const CoverPhotoPicker = ({ file, onChange, onError, uploading = false, p
           className={cn(
             'group relative grid aspect-[16/9] w-full place-items-center overflow-hidden rounded-2xl',
             'border-2 border-dashed border-line bg-canvas-deep transition-colors',
-            'hover:border-clay-400 hover:bg-clay-50 disabled:cursor-wait'
+            'hover:border-brand-400 hover:bg-brand-50 disabled:cursor-wait'
           )}
           aria-label={preview ? 'Change the cover photo' : 'Upload a cover photo'}
         >
@@ -93,7 +93,7 @@ export const CoverPhotoPicker = ({ file, onChange, onError, uploading = false, p
             type="button"
             onClick={clear}
             aria-label="Remove the cover photo"
-            className="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-ink-900/70 text-white backdrop-blur-sm transition-colors hover:bg-clay-600"
+            className="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-ink-900/70 text-white backdrop-blur-sm transition-colors hover:bg-brand-600"
           >
             <Trash2 className="size-4" aria-hidden />
           </button>

@@ -17,7 +17,7 @@ const CityTile = ({ city, selected, disabled, onToggle }) => (
       'group relative aspect-[4/5] overflow-hidden rounded-2xl text-left transition-all duration-300',
       'disabled:cursor-not-allowed disabled:opacity-45',
       selected
-        ? 'ring-3 ring-clay-500 ring-offset-2 ring-offset-surface'
+        ? 'ring-3 ring-brand-500 ring-offset-2 ring-offset-surface'
         : 'hover:-translate-y-1 hover:shadow-lift'
     )}
   >
@@ -31,7 +31,7 @@ const CityTile = ({ city, selected, disabled, onToggle }) => (
     <span
       className={cn(
         'absolute top-2 right-2 grid size-7 place-items-center rounded-full transition-colors',
-        selected ? 'bg-clay-500 text-white' : 'bg-white/25 text-white backdrop-blur-md'
+        selected ? 'bg-brand-500 text-white' : 'bg-white/25 text-white backdrop-blur-md'
       )}
       aria-hidden
     >
@@ -81,7 +81,7 @@ export const CitySuggestions = ({ selected, onToggle, onClear, search, onSearchC
             opening budget the moment you save — you can reorder and edit every one later.
           </p>
         </div>
-        <Badge tone={atLimit ? 'clay' : 'neutral'}>
+        <Badge tone={atLimit ? 'ember' : 'neutral'}>
           {selected.length} / {MAX_SEED_CITIES} picked
         </Badge>
       </div>
@@ -93,15 +93,15 @@ export const CitySuggestions = ({ selected, onToggle, onClear, search, onSearchC
           {selected.map((city, index) => (
             <span
               key={city._id}
-              className="inline-flex items-center gap-1.5 rounded-full bg-clay-50 py-1 pr-1 pl-3 text-xs font-medium text-clay-700"
+              className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 py-1 pr-1 pl-3 text-xs font-medium text-brand-700"
             >
-              <span className="text-clay-500">{index + 1}</span>
+              <span className="text-brand-500">{index + 1}</span>
               {city.name}
               <button
                 type="button"
                 onClick={() => onToggle(city)}
                 aria-label={`Remove ${city.name}`}
-                className="grid size-5 place-items-center rounded-full text-clay-600 transition-colors hover:bg-clay-200"
+                className="grid size-5 place-items-center rounded-full text-brand-600 transition-colors hover:bg-brand-200"
               >
                 <X className="size-3" aria-hidden />
               </button>
@@ -118,7 +118,7 @@ export const CitySuggestions = ({ selected, onToggle, onClear, search, onSearchC
       )}
 
       {error && (
-        <p role="alert" className="mt-3 text-xs font-medium text-clay-600">
+        <p role="alert" className="mt-3 text-xs font-medium text-brand-600">
           {error}
         </p>
       )}
@@ -134,7 +134,7 @@ export const CitySuggestions = ({ selected, onToggle, onClear, search, onSearchC
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Search the city catalog"
           aria-label="Search cities"
-          className="h-11 w-full rounded-full border border-line bg-canvas pr-4 pl-11 text-sm text-ink-900 transition-colors outline-none placeholder:text-ink-300 focus:border-clay-400 focus:bg-surface focus:ring-4 focus:ring-clay-500/12"
+          className="h-11 w-full rounded-full border border-line bg-canvas pr-4 pl-11 text-sm text-ink-900 transition-colors outline-none placeholder:text-ink-300 focus:border-brand-400 focus:bg-surface focus:ring-4 focus:ring-brand-500/12"
         />
       </div>
 

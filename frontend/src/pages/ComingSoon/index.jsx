@@ -12,7 +12,7 @@ export const ComingSoon = ({ title, phase, description }) => {
 
   return (
     <section className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-4 py-20 text-center">
-      <span className="grid size-14 place-items-center rounded-3xl bg-clay-50 text-clay-600">
+      <span className="grid size-14 place-items-center rounded-3xl bg-brand-50 text-brand-600">
         <Construction className="size-6" aria-hidden />
       </span>
 

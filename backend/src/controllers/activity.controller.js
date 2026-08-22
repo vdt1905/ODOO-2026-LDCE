@@ -2,6 +2,7 @@ import { Activity, ACTIVITY_TYPES } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/apiResponse.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 const SORTS = {
   rating: { rating: -1 },
@@ -25,7 +26,9 @@ export const listActivities = asyncHandler(async (req, res) => {
   const filter = {};
   if (city) filter.city = city;
   if (type) filter.type = type;
-  if (search.trim()) filter.name = { $regex: search.trim(), $options: 'i' };
+  // Escaped: a bare "(" from the search box is a valid keystroke but an
+  // invalid regex, and Mongo turns that into a 500.
+  if (search.trim()) filter.name = { $regex: escapeRegex(search.trim()), $options: 'i' };
 
   const maxCost = Number(req.query.maxCost);
   if (Number.isFinite(maxCost)) filter.cost = { $lte: maxCost };

@@ -9,7 +9,7 @@ export const Field = ({ label, htmlFor, error, hint, required, className, childr
         {/* Hidden from the accessibility tree so the field's accessible name
             stays "Password", not "Password *". */}
         {required && (
-          <span className="ml-0.5 text-clay-500" aria-hidden="true">
+          <span className="ml-0.5 text-brand-500" aria-hidden="true">
             *
           </span>
         )}
@@ -19,7 +19,7 @@ export const Field = ({ label, htmlFor, error, hint, required, className, childr
     {children}
 
     {error ? (
-      <p role="alert" className="text-xs font-medium text-clay-600">
+      <p role="alert" className="text-xs font-medium text-brand-600">
         {error}
       </p>
     ) : (

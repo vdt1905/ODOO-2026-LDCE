@@ -7,7 +7,13 @@ import { ROUTES } from './lib/constants.js';
 import LandingPage from './pages/Landing/index.jsx';
 import LoginPage from './pages/Login/index.jsx';
 import RegisterPage from './pages/Register/index.jsx';
+import CitiesPage from './pages/Cities/index.jsx';
+import ActivitiesPage from './pages/Activities/index.jsx';
+import CommunityPage from './pages/Community/index.jsx';
+import PublicTripPage from './pages/PublicTrip/index.jsx';
+import TripsPage from './pages/Trips/index.jsx';
 import CreateTripPage from './pages/CreateTrip/index.jsx';
+import AiTripPage from './pages/AiTrip/index.jsx';
 import NotFoundPage from './pages/NotFound/index.jsx';
 import { ComingSoon } from './pages/ComingSoon/index.jsx';
 
@@ -38,55 +44,21 @@ export const AppRoutes = () => (
     <Route element={<MainLayout />}>
       <Route index element={<LandingPage />} />
 
-      <Route
-        path={ROUTES.cities}
-        element={
-          <ComingSoon
-            title="City search"
-            phase="Phase 6 · Search"
-            description="Search the catalog by name, country and region, then add a city straight to a trip."
-          />
-        }
-      />
-      <Route
-        path={ROUTES.activities}
-        element={
-          <ComingSoon
-            title="Activity search"
-            phase="Phase 6 · Search"
-            description="Filter things to do by type, cost and duration, and attach them to a stop."
-          />
-        }
-      />
-      <Route
-        path={ROUTES.community}
-        element={
-          <ComingSoon
-            title="Community"
-            phase="Phase 8 · Bonus"
-            description="A feed of published itineraries you can browse, open and copy."
-          />
-        }
-      />
+      <Route path={ROUTES.cities} element={<CitiesPage />} />
+      <Route path={ROUTES.activities} element={<ActivitiesPage />} />
+      <Route path={ROUTES.community} element={<CommunityPage />} />
+
+      {/* A shared itinerary. Public on purpose — the whole point of the link is
+          that it works for someone with no account. */}
+      <Route path="/t/:slug" element={<PublicTripPage />} />
 
       {/* Signed-in only */}
       <Route element={<ProtectedRoute />}>
-        <Route
-          path={ROUTES.trips}
-          element={
-            <ComingSoon
-              title="My trips"
-              phase="Phase 3 · Trip CRUD"
-              description="Your trips grouped into ongoing, upcoming and completed."
-            />
-          }
-        />
+        <Route path={ROUTES.trips} element={<TripsPage />} />
+        {/* Both static, so React Router ranks them above /trips/:id unaided. */}
         <Route path={ROUTES.newTrip} element={<CreateTripPage />} />
+        <Route path={ROUTES.aiTrip} element={<AiTripPage />} />
 
-        {/* Downstream trip screens. They are placeholders for now, but they
-            have to exist: a trip card links to them, and an unrouted link
-            would drop the user on the 404 page instead. React Router ranks
-            the static /trips/new above /trips/:id on its own. */}
         <Route
           path="/trips/:id"
           element={

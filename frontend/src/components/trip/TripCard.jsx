@@ -33,7 +33,7 @@ export const TripCard = ({ trip, onDelete, highlighted = false, className }) => 
       className={cn(
         'group relative flex flex-col overflow-hidden rounded-3xl border bg-surface shadow-soft',
         'transition-all duration-300 hover:-translate-y-1 hover:shadow-lift',
-        highlighted ? 'border-clay-400 ring-4 ring-clay-500/15' : 'border-line',
+        highlighted ? 'border-brand-400 ring-4 ring-brand-500/15' : 'border-line',
         className
       )}
     >
@@ -106,7 +106,7 @@ export const TripCard = ({ trip, onDelete, highlighted = false, className }) => 
         {budget && (
           <div>
             <div className="flex items-center justify-between text-[11px]">
-              <span className={budget.over ? 'font-medium text-clay-600' : 'text-ink-500'}>
+              <span className={budget.over ? 'font-medium text-brand-600' : 'text-ink-500'}>
                 {budget.over ? 'Over budget' : `${budget.percent}% of budget`}
               </span>
               <span className="text-ink-500">
@@ -117,7 +117,7 @@ export const TripCard = ({ trip, onDelete, highlighted = false, className }) => 
               <div
                 className={cn(
                   'h-full rounded-full transition-[width] duration-500',
-                  budget.over ? 'bg-clay-500' : 'bg-moss-500'
+                  budget.over ? 'bg-brand-500' : 'bg-moss-500'
                 )}
                 style={{ width: `${Math.max(budget.percent, 2)}%` }}
               />
@@ -130,7 +130,7 @@ export const TripCard = ({ trip, onDelete, highlighted = false, className }) => 
               it in the stacking order so it stays independently clickable. */}
           <Link
             to={ROUTES.trip(trip._id)}
-            className="text-sm font-medium text-clay-600 transition-colors before:absolute before:inset-0 before:content-[''] hover:text-clay-700"
+            className="text-sm font-medium text-brand-600 transition-colors before:absolute before:inset-0 before:content-[''] hover:text-brand-700"
           >
             Open itinerary
           </Link>
@@ -140,7 +140,7 @@ export const TripCard = ({ trip, onDelete, highlighted = false, className }) => 
               type="button"
               onClick={() => onDelete(trip)}
               aria-label={`Delete ${trip.name}`}
-              className="relative z-10 grid size-9 place-items-center rounded-full text-ink-300 transition-colors hover:bg-clay-50 hover:text-clay-600"
+              className="relative z-10 grid size-9 place-items-center rounded-full text-ink-300 transition-colors hover:bg-brand-50 hover:text-brand-600"
             >
               <Trash2 className="size-4" aria-hidden />
             </button>

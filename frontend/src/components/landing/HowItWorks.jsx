@@ -41,7 +41,7 @@ export const HowItWorks = () => (
             className="rounded-3xl border border-line bg-surface p-6 shadow-soft transition-transform duration-300 hover:-translate-y-1"
           >
             <div className="flex items-center justify-between">
-              <span className="grid size-11 place-items-center rounded-2xl bg-clay-50 text-clay-600">
+              <span className="grid size-11 place-items-center rounded-2xl bg-brand-50 text-brand-600">
                 <step.icon className="size-5" aria-hidden />
               </span>
               <span className="font-display text-3xl font-bold text-canvas-deep">

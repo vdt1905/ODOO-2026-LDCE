@@ -62,7 +62,7 @@ export const AvatarUpload = ({
         className={cn(
           'group relative grid place-items-center overflow-hidden rounded-full',
           'border-2 border-dashed border-line bg-canvas-deep transition-colors',
-          'hover:border-clay-400 hover:bg-clay-50 disabled:cursor-wait',
+          'hover:border-brand-400 hover:bg-brand-50 disabled:cursor-wait',
           size
         )}
         aria-label={shown ? 'Change your profile photo' : 'Upload a profile photo'}

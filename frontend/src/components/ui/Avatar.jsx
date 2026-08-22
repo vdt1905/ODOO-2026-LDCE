@@ -13,7 +13,7 @@ export const Avatar = ({ user, className, size = 'size-7' }) => {
     <span
       className={cn(
         base,
-        'grid place-items-center bg-clay-500 text-[11px] font-semibold text-white'
+        'grid place-items-center bg-brand-500 text-[11px] font-semibold text-white'
       )}
       aria-hidden
     >

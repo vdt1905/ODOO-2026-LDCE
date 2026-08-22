@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
 
 const VARIANTS = {
-  primary: 'bg-clay-500 text-white hover:bg-clay-600 shadow-soft',
+  primary: 'bg-brand-500 text-white hover:bg-brand-600 shadow-soft',
   dark: 'bg-ink-900 text-canvas hover:bg-ink-700 shadow-soft',
   light: 'bg-surface text-ink-900 hover:bg-canvas shadow-pill',
   outline: 'border border-line bg-transparent text-ink-900 hover:bg-canvas-deep',

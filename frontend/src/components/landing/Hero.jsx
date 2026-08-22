@@ -4,9 +4,13 @@ import { ROUTES } from '../../lib/constants.js';
 import { Button } from '../ui/Button.jsx';
 import { HeroScene } from './HeroScene.jsx';
 import { HeroSearch } from './HeroSearch.jsx';
+import { useImmersiveHeader } from '../layout/chrome.jsx';
 
 export const Hero = () => {
   const user = useAuthStore((s) => s.user);
+
+  // The scene runs up behind the navbar, same as a PageHeader photo does.
+  useImmersiveHeader();
 
   return (
     <section className="relative isolate flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 pt-28 pb-20">

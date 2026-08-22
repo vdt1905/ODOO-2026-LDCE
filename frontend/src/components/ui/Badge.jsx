@@ -1,7 +1,8 @@
 import { cn } from '../../lib/cn.js';
 
 const TONES = {
-  clay: 'bg-clay-100 text-clay-700',
+  brand: 'bg-brand-50 text-brand-600',
+  ember: 'bg-ember-50 text-ember-700',
   moss: 'bg-moss-100 text-moss-800',
   neutral: 'bg-canvas-deep text-ink-700',
   glass: 'bg-white/20 text-white backdrop-blur-md border border-white/25',

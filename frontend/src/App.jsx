@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './routes.jsx';
 import { ScrollToTop } from './components/layout/ScrollToTop.jsx';
 import { FullPageLoader } from './components/ui/Spinner.jsx';
+import { DevSettings } from './components/dev/DevSettings.jsx';
 import { useAuthStore } from './store/authStore.js';
 
 const App = () => {
@@ -24,6 +25,8 @@ const App = () => {
     <BrowserRouter>
       <ScrollToTop />
       <AppRoutes />
+      {/* Development affordance — remove before the final build. */}
+      <DevSettings />
     </BrowserRouter>
   );
 };

@@ -23,7 +23,7 @@ export const DestinationBoard = ({ query }) => {
     <section id="destinations" className="scroll-mt-24">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Badge tone="clay">Top regional selections</Badge>
+          <Badge tone="brand">Top regional selections</Badge>
           <h2 className="mt-3 font-display text-2xl font-bold text-ink-900 sm:text-3xl">
             {searching ? `Destinations matching “${query.trim()}”` : 'Where people are heading'}
           </h2>

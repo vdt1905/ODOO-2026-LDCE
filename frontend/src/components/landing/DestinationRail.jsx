@@ -16,7 +16,7 @@ export const DestinationRail = () => {
     <section id="destinations" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Badge tone="clay">Top regional selections</Badge>
+          <Badge tone="brand">Top regional selections</Badge>
           <h2 className="mt-3 font-display text-3xl font-bold text-ink-900 sm:text-4xl">
             Where people are heading
           </h2>

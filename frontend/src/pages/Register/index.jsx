@@ -108,7 +108,7 @@ const RegisterPage = () => {
       footer={
         <>
           Already have an account?{' '}
-          <Link to={ROUTES.login} className="font-medium text-clay-600 hover:underline">
+          <Link to={ROUTES.login} className="font-medium text-brand-600 hover:underline">
             Sign in
           </Link>
         </>
@@ -132,7 +132,7 @@ const RegisterPage = () => {
                 : 'Add a profile photo (optional)'}
           </p>
           {avatarError && (
-            <p role="alert" className="max-w-sm text-center text-xs font-medium text-clay-600">
+            <p role="alert" className="max-w-sm text-center text-xs font-medium text-brand-600">
               {avatarError}
             </p>
           )}

@@ -33,11 +33,11 @@ export const HeroSearch = () => {
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Where to? Try Kyoto, Portugal, or somewhere warm"
         aria-label="Search destinations"
-        className="h-14 w-full rounded-full border border-white/30 bg-surface/95 pr-32 pl-13 text-sm text-ink-900 shadow-lift transition-colors outline-none placeholder:text-ink-300 focus:border-clay-400 focus:ring-4 focus:ring-clay-500/20"
+        className="h-14 w-full rounded-full border border-white/30 bg-surface/95 pr-32 pl-13 text-sm text-ink-900 shadow-lift transition-colors outline-none placeholder:text-ink-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-500/20"
       />
       <button
         type="submit"
-        className="absolute top-1/2 right-2 inline-flex h-10 -translate-y-1/2 items-center gap-1.5 rounded-full bg-ink-900 px-4 text-sm font-medium text-canvas transition-colors hover:bg-clay-600 hover:text-white"
+        className="absolute top-1/2 right-2 inline-flex h-10 -translate-y-1/2 items-center gap-1.5 rounded-full bg-ink-900 px-4 text-sm font-medium text-canvas transition-colors hover:bg-brand-600 hover:text-white"
       >
         Search
         <ArrowRight className="size-3.5" aria-hidden />

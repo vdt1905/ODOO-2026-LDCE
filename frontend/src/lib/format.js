@@ -25,6 +25,16 @@ export const formatCurrency = (amount, currency = 'USD', { compact = false } = {
 
 export const formatNumber = (value) => (Number(value) || 0).toLocaleString('en-US');
 
+/** Minutes as "45m" / "3h" / "2h 30m" — the catalog stores raw minutes. */
+export const formatDuration = (minutes) => {
+  const total = Math.max(0, Math.round(Number(minutes) || 0));
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+
+  if (!hours) return `${rest}m`;
+  return rest ? `${hours}h ${rest}m` : `${hours}h`;
+};
+
 /** "3 cities" / "1 city" — pluralisation without pulling in a library. */
 export const pluralise = (count, singular, plural = `${singular}s`) =>
   `${count} ${count === 1 ? singular : plural}`;

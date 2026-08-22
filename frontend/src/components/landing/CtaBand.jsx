@@ -10,7 +10,7 @@ export const CtaBand = () => {
     <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
       <div className="relative overflow-hidden rounded-4xl bg-ink-900 px-6 py-16 text-center sm:px-12">
         {/* Warm glow echoing the hero */}
-        <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-clay-500/25 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-brand-500/25 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-moss-500/20 blur-3xl" />
 
         <h2 className="relative font-display text-3xl font-bold text-white sm:text-4xl">

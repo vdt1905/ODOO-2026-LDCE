@@ -3,6 +3,8 @@ node_modules/
 .pnp
 .pnp.js
 
+
+/Multi-city itinerary Planner
 # env — never commit real credentials
 .env
 .env.local

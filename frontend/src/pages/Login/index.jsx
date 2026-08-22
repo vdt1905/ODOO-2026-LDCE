@@ -57,7 +57,7 @@ const LoginPage = () => {
       footer={
         <>
           New here?{' '}
-          <Link to={ROUTES.register} className="font-medium text-clay-600 hover:underline">
+          <Link to={ROUTES.register} className="font-medium text-brand-600 hover:underline">
             Create an account
           </Link>
         </>
@@ -92,7 +92,7 @@ const LoginPage = () => {
           <div className="mt-2 text-right">
             <Link
               to={ROUTES.forgotPassword}
-              className="text-xs font-medium text-ink-500 transition-colors hover:text-clay-600"
+              className="text-xs font-medium text-ink-500 transition-colors hover:text-brand-600"
             >
               Forgot password?
             </Link>

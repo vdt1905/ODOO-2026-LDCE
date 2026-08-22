@@ -2,7 +2,7 @@ import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
 
 const TONES = {
-  error: { wrap: 'bg-clay-50 border-clay-200 text-clay-700', Icon: AlertCircle },
+  error: { wrap: 'bg-brand-50 border-brand-200 text-brand-700', Icon: AlertCircle },
   success: { wrap: 'bg-moss-50 border-moss-100 text-moss-800', Icon: CheckCircle2 },
   info: { wrap: 'bg-canvas-deep border-line text-ink-700', Icon: Info },
 };

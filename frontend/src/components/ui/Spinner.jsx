@@ -2,7 +2,7 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
 
 export const Spinner = ({ className }) => (
-  <Loader2 className={cn('size-5 animate-spin text-clay-500', className)} aria-hidden />
+  <Loader2 className={cn('size-5 animate-spin text-brand-500', className)} aria-hidden />
 );
 
 /** Full-viewport loader used while the session is being restored on boot. */

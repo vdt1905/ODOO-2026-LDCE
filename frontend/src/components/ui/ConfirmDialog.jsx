@@ -57,7 +57,7 @@ export const ConfirmDialog = ({
     >
       <div className="p-6">
         <div className="flex gap-4">
-          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-clay-50 text-clay-600">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
             <AlertTriangle className="size-5" aria-hidden />
           </span>
           <div className="min-w-0">

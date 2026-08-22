@@ -2,66 +2,107 @@
 
 /* ---------------------------------------------------------------------------
    GlobeTrotter design tokens (Tailwind v4).
+
    Everything visual is defined once here; components only use the token names
-   (bg-canvas, text-ink-700, shadow-lift, ...) and never raw hex values.
+   (bg-canvas, text-ink-700, border-line, ...) and never raw hex values.
+
+   The palette is warm paper + deep forest, taken from the design mockup in
+   `Multi-city itinerary planner/`. Elevation is carried by 1px borders and
+   photographic overlays rather than shadows — the shadow tokens still exist
+   but are deliberately almost invisible, so a stray shadow-* class cannot
+   make a card float off the page and break the flat, editorial feel.
 --------------------------------------------------------------------------- */
 @theme {
   /* Surfaces — warm paper, not cold grey */
-  --color-canvas: #faf6ef;
-  --color-canvas-deep: #f2ebe0;
+  --color-canvas: #f6f4ef;
+  --color-canvas-deep: #edeae0;
   --color-surface: #ffffff;
-  --color-line: #e9e1d5;
+  --color-inset: #f9f8f4;
+
+  /* Borders. `line` is the default card edge; `line-strong` is for controls
+     that must read as interactive (inputs, outline buttons). */
+  --color-line: #e6e3d9;
+  --color-line-soft: #f0ede4;
+  --color-line-strong: #dad7cc;
+  --color-line-dashed: #c9c6ba;
 
   /* Text */
-  --color-ink-900: #17140f;
-  --color-ink-700: #3d372e;
-  --color-ink-500: #6e665a;
-  --color-ink-300: #a79e90;
+  --color-ink-900: #191a15;
+  --color-ink-700: #5c5a51;
+  --color-ink-500: #7a7869;
+  --color-ink-300: #9a988e;
 
-  /* Brand — sunset terracotta */
-  --color-clay-50: #fdf4ee;
-  --color-clay-100: #f9e4d5;
-  --color-clay-200: #f1c9ae;
-  --color-clay-300: #e9ae87;
-  --color-clay-400: #de9260;
-  --color-clay-500: #ce7440;
-  --color-clay-600: #b25c2e;
-  --color-clay-700: #8e4724;
+  /* Brand — deep forest. 500 is the primary action colour. */
+  --color-brand-50: #edf1ea;
+  --color-brand-100: #dfe7db;
+  --color-brand-200: #c8d2c0;
+  --color-brand-300: #94a88c;
+  --color-brand-400: #5a6e56;
+  --color-brand-500: #2e4034;
+  --color-brand-600: #24332a;
+  --color-brand-700: #1d211c;
 
-  /* Secondary — meadow moss */
-  --color-moss-50: #f2f5ee;
-  --color-moss-100: #e2e9d8;
-  --color-moss-300: #b4c29e;
-  --color-moss-500: #7e9264;
-  --color-moss-600: #64764c;
-  --color-moss-800: #3b4630;
+  /* Ember — the warm counter-accent. Over-budget, drafts, destructive intent.
+     Never used for a primary action; if everything is accented, nothing is. */
+  --color-ember-50: #fbf1e9;
+  --color-ember-100: #f0dcc9;
+  --color-ember-300: #dda06d;
+  --color-ember-500: #c2703f;
+  --color-ember-700: #8a4e24;
 
-  /* Sky accents used by the hero scene */
-  --color-dawn-100: #fde8d2;
-  --color-dawn-300: #f7c9a3;
-  --color-dawn-500: #efa98a;
-  --color-dusk-400: #b9a2b0;
-  --color-dusk-600: #7c7488;
+  /* Legacy alias — `moss` predates `brand` and still appears in a few places.
+     Pointed at the same family so the two can never drift apart on screen. */
+  --color-moss-50: #edf1ea;
+  --color-moss-100: #dfe7db;
+  --color-moss-300: #94a88c;
+  --color-moss-500: #5a6e56;
+  --color-moss-600: #2e4034;
+  --color-moss-800: #1d211c;
 
-  /* Budget categories — fixed everywhere: charts, badges, calendar chips */
-  --color-cat-transport: #8b7bb8;
-  --color-cat-stay: #4fa398;
-  --color-cat-activities: #ce7440;
-  --color-cat-meals: #d9a441;
-  --color-cat-other: #a79e90;
+  /* Sky accents used by the hero scene illustration */
+  --color-dawn-100: #f2efe4;
+  --color-dawn-300: #d8dcc8;
+  --color-dawn-500: #a8b89c;
+  --color-dusk-400: #7e8a78;
+  --color-dusk-600: #4f5a49;
 
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Budget categories — fixed everywhere: charts, badges, calendar chips.
+     Chosen to stay distinguishable side by side in a donut. */
+  --color-cat-transport: #5a6e56;
+  --color-cat-stay: #2e4034;
+  --color-cat-activities: #c2703f;
+  --color-cat-meals: #94a88c;
+  --color-cat-other: #9a988e;
+
+  /* Fonts resolve through a second variable so the dev font switcher can
+     repoint them on <html> at runtime without touching a rebuild.
+     See components/dev/DevSettings.jsx. */
+  --font-display: var(--gt-display);
+  --font-sans: var(--gt-body);
 
   --radius-4xl: 2rem;
 
-  --shadow-soft: 0 1px 2px rgba(23, 20, 15, 0.05), 0 8px 24px -12px rgba(23, 20, 15, 0.15);
-  --shadow-lift: 0 2px 4px rgba(23, 20, 15, 0.06), 0 18px 40px -18px rgba(23, 20, 15, 0.28);
-  --shadow-pill: 0 1px 2px rgba(23, 20, 15, 0.06), 0 10px 30px -12px rgba(23, 20, 15, 0.25);
+  /* Near-invisible on purpose — see the note at the top of this block. */
+  --shadow-soft: 0 1px 2px rgba(25, 26, 21, 0.04);
+  --shadow-lift: 0 1px 3px rgba(25, 26, 21, 0.06), 0 12px 28px -20px rgba(25, 26, 21, 0.18);
+  --shadow-pill: 0 1px 2px rgba(25, 26, 21, 0.05), 0 8px 24px -16px rgba(25, 26, 21, 0.16);
 
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-fade-in: fade-in 0.6s ease-out both;
   --animate-float: float 7s ease-in-out infinite;
+}
+
+/* The default pairing. Overridden at runtime on <html> by the dev switcher,
+   and by whatever the user last picked (persisted in localStorage). */
+:root {
+  --gt-display: "Anton", "Oswald", ui-sans-serif, system-ui, sans-serif;
+  --gt-body: "Source Serif 4", "Gelasio", Georgia, serif;
+
+  /* Display faces are condensed and set tight; body faces are not. The
+     switcher rewrites these alongside the families so a swap to a wide
+     display face does not stay artificially cramped. */
+  --gt-display-tracking: 0.005em;
+  --gt-display-weight: 400;
 }
 
 @keyframes fade-up {
@@ -107,18 +148,37 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Headings inherit the display face and its tracking from the same two
+     variables the switcher writes, so every heading moves together. */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    font-weight: var(--gt-display-weight);
+    letter-spacing: var(--gt-display-tracking);
   }
 
   /* Keyboard focus stays visible everywhere; mouse clicks stay clean */
   :focus-visible {
-    outline: 2px solid var(--color-clay-500);
+    outline: 2px solid var(--color-brand-500);
     outline-offset: 2px;
+  }
+
+  ::placeholder {
+    color: var(--color-ink-300);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d8d5cb;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
@@ -143,6 +203,28 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Display type that should shout — banner and hero headings. Condensed
+     faces like Anton only look right uppercased, wide ones often do not,
+     so the dev switcher can turn the casing off across the whole app. */
+  .font-display-caps {
+    font-family: var(--font-display);
+    font-weight: var(--gt-display-weight);
+    letter-spacing: var(--gt-display-tracking);
+    text-transform: uppercase;
+  }
+
+  :root[data-gt-uppercase='off'] .font-display-caps {
+    text-transform: none;
+  }
+
+  /* The eyebrow above a heading: small, wide, quiet. */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 }
 

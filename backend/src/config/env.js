@@ -51,6 +51,26 @@ export const env = {
     allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
   },
 
+  /**
+   * Gemini — server-side only. The key must never reach the browser, which is
+   * why all model traffic goes through /api/v1/ai/*.
+   * Optional like Cloudinary: without a key the API still boots and the AI
+   * route returns a clear 503 instead of crashing at import time.
+   */
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY || '',
+    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    timeoutMs: Number(process.env.AI_TIMEOUT_MS) || 30000,
+    // 0 disables "thinking" on 2.5 models. Thinking tokens come out of the
+    // same output budget, so leaving it on risks a MAX_TOKENS finish with no
+    // usable JSON — a bad trade inside a 30s timeout.
+    thinkingBudget: Number(process.env.GEMINI_THINKING_BUDGET) || 0,
+    maxOutputTokens: Number(process.env.GEMINI_MAX_OUTPUT_TOKENS) || 32768,
+    get isConfigured() {
+      return Boolean(this.apiKey);
+    },
+  },
+
   cookie: {
     name: 'gt_refresh',
     // 7 days in ms — keep in sync with jwt.refreshExpiry

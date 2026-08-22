@@ -12,6 +12,23 @@ export const apiLimiter = rateLimit({
   max: 300,
 });
 
+/**
+ * AI generation is the expensive endpoint — 5 per 15 minutes per user.
+ * Keyed by user id, not IP, so a shared network (or a demo booth) does not
+ * rate-limit everyone at once. Must be mounted after requireAuth.
+ */
+export const aiLimiter = rateLimit({
+  ...options,
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  keyGenerator: (req) => String(req.user?._id || req.ip),
+  message: {
+    success: false,
+    message: 'You have generated a few trips already — try again in 15 minutes.',
+    errors: [],
+  },
+});
+
 /** Tighter budget on credential endpoints to blunt brute-force attempts. */
 export const authLimiter = rateLimit({
   ...options,

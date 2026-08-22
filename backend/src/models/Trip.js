@@ -13,6 +13,8 @@ const tripSchema = new Schema(
     endDate: { type: Date, required: true },
 
     coverPhotoUrl: { type: String, default: '' },
+    // Cloudinary public_id — kept so a replaced cover is not orphaned.
+    coverPublicId: { type: String, default: '', select: false },
     budgetLimit: { type: Number, min: 0, default: null },
     currency: { type: String, default: 'USD' },
 
@@ -25,7 +27,13 @@ const tripSchema = new Schema(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        delete ret.coverPublicId;
+        return ret;
+      },
+    },
     toObject: { virtuals: true },
   }
 );

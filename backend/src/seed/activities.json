@@ -1,0 +1,271 @@
+[
+  { "city": "Paris", "country": "France", "items": [
+    { "name": "Louvre Museum", "type": "culture", "cost": 22, "durationMinutes": 180, "rating": 4.7, "description": "The Mona Lisa, the Venus de Milo and about 30,000 other things. Book the first slot and start at the Denon wing." },
+    { "name": "Eiffel Tower summit", "type": "sightseeing", "cost": 29, "durationMinutes": 150, "rating": 4.6, "description": "Lift to the second floor, then the summit lift for the view down the Champ de Mars." },
+    { "name": "Seine dinner cruise", "type": "food", "cost": 75, "durationMinutes": 135, "rating": 4.5, "description": "Three courses while Notre-Dame, the Louvre and the Musée d'Orsay slide past the window." },
+    { "name": "Le Marais food walking tour", "type": "food", "cost": 95, "durationMinutes": 180, "rating": 4.8, "description": "Falafel on Rue des Rosiers, fromagerie stops, and a bakery that has been running since 1900." },
+    { "name": "Montmartre and Sacré-Cœur", "type": "sightseeing", "cost": 0, "durationMinutes": 120, "rating": 4.6, "description": "Climb to the basilica for the free city view, then wander the painters' square at Place du Tertre." },
+    { "name": "Moulin Rouge show", "type": "nightlife", "cost": 115, "durationMinutes": 120, "rating": 4.4, "description": "The original Belle Époque cabaret. Feathers, champagne and a very long-running can-can." }
+  ]},
+
+  { "city": "Rome", "country": "Italy", "items": [
+    { "name": "Colosseum and Roman Forum", "type": "sightseeing", "cost": 24, "durationMinutes": 180, "rating": 4.8, "description": "One ticket covers the arena, the Forum and Palatine Hill. Go early — the shade runs out by ten." },
+    { "name": "Vatican Museums and Sistine Chapel", "type": "culture", "cost": 30, "durationMinutes": 210, "rating": 4.7, "description": "Four kilometres of galleries ending under Michelangelo's ceiling. Timed entry is essential." },
+    { "name": "Trastevere food tour", "type": "food", "cost": 85, "durationMinutes": 195, "rating": 4.8, "description": "Supplì, carbonara and a family-run gelateria across the river from the tourist crush." },
+    { "name": "Pantheon and Piazza Navona walk", "type": "sightseeing", "cost": 0, "durationMinutes": 90, "rating": 4.6, "description": "The best-preserved Roman building anywhere, then Bernini's fountains two streets away." },
+    { "name": "Pasta-making class in Monti", "type": "food", "cost": 65, "durationMinutes": 180, "rating": 4.7, "description": "Hand-roll cacio e pepe and tonnarelli, then eat what you made with a glass of Frascati." },
+    { "name": "Borghese Gallery", "type": "culture", "cost": 20, "durationMinutes": 120, "rating": 4.6, "description": "Bernini's Apollo and Daphne in a villa set in gardens. Strict two-hour entry slots." }
+  ]},
+
+  { "city": "Barcelona", "country": "Spain", "items": [
+    { "name": "Sagrada Família", "type": "sightseeing", "cost": 26, "durationMinutes": 120, "rating": 4.8, "description": "Gaudí's unfinished basilica. Afternoon light through the west windows is the reason to time it right." },
+    { "name": "Park Güell", "type": "sightseeing", "cost": 10, "durationMinutes": 105, "rating": 4.5, "description": "Mosaic terraces above the city. The monumental zone is ticketed; the surrounding park is free." },
+    { "name": "La Boqueria and Gothic Quarter tapas crawl", "type": "food", "cost": 70, "durationMinutes": 180, "rating": 4.7, "description": "Market pintxos, jamón ibérico and vermouth through the medieval lanes." },
+    { "name": "Picasso Museum", "type": "culture", "cost": 12, "durationMinutes": 105, "rating": 4.4, "description": "His early Barcelona years, in five linked medieval palaces on Carrer Montcada." },
+    { "name": "Barceloneta beach afternoon", "type": "relaxation", "cost": 0, "durationMinutes": 180, "rating": 4.3, "description": "City beach with a boardwalk of chiringuitos. Busy in August, perfect in May." },
+    { "name": "Flamenco at Palau de la Música", "type": "nightlife", "cost": 45, "durationMinutes": 90, "rating": 4.6, "description": "Modernista concert hall with stained glass overhead and serious guitar work on stage." }
+  ]},
+
+  { "city": "Amsterdam", "country": "Netherlands", "items": [
+    { "name": "Rijksmuseum", "type": "culture", "cost": 23, "durationMinutes": 150, "rating": 4.7, "description": "Vermeer, Rembrandt's Night Watch, and a Dutch Golden Age collection worth the whole morning." },
+    { "name": "Anne Frank House", "type": "culture", "cost": 16, "durationMinutes": 90, "rating": 4.8, "description": "The secret annexe behind the bookcase. Tickets release six weeks ahead and sell out same-day." },
+    { "name": "Canal cruise at dusk", "type": "sightseeing", "cost": 18, "durationMinutes": 75, "rating": 4.5, "description": "The seventeenth-century ring canals with the bridge lights coming on." },
+    { "name": "Jordaan cheese and stroopwafel tasting", "type": "food", "cost": 55, "durationMinutes": 150, "rating": 4.6, "description": "Aged Gouda, bitterballen and a warm stroopwafel pressed in front of you." },
+    { "name": "Vondelpark bike ride", "type": "adventure", "cost": 14, "durationMinutes": 120, "rating": 4.5, "description": "Rent a city bike and ride the park loop — the least stressful cycling in the city." },
+    { "name": "Albert Cuyp Market", "type": "shopping", "cost": 0, "durationMinutes": 90, "rating": 4.2, "description": "Two hundred stalls of flowers, fabric and street food in De Pijp." }
+  ]},
+
+  { "city": "Prague", "country": "Czechia", "items": [
+    { "name": "Prague Castle and St Vitus Cathedral", "type": "sightseeing", "cost": 17, "durationMinutes": 180, "rating": 4.7, "description": "The largest ancient castle complex in the world, with Golden Lane inside the walls." },
+    { "name": "Charles Bridge at sunrise", "type": "sightseeing", "cost": 0, "durationMinutes": 60, "rating": 4.8, "description": "Thirty baroque statues and no crowds — but only before about seven." },
+    { "name": "Old Town Square and the Astronomical Clock", "type": "culture", "cost": 0, "durationMinutes": 45, "rating": 4.3, "description": "The apostles parade on the hour. Arrive five minutes early for a spot." },
+    { "name": "Czech beer hall tour", "type": "nightlife", "cost": 35, "durationMinutes": 180, "rating": 4.6, "description": "Tank Pilsner in the old halls, plus a stop at a microbrewery the tour groups miss." },
+    { "name": "Vltava river lunch cruise", "type": "food", "cost": 30, "durationMinutes": 120, "rating": 4.4, "description": "Castle views from the water with a buffet of Czech classics." },
+    { "name": "Vyšehrad fortress and vineyards", "type": "relaxation", "cost": 0, "durationMinutes": 120, "rating": 4.5, "description": "The quiet fort on the other hill, with a cemetery of Czech composers and a view down the river." }
+  ]},
+
+  { "city": "Lisbon", "country": "Portugal", "items": [
+    { "name": "Tram 28 through Alfama", "type": "sightseeing", "cost": 4, "durationMinutes": 75, "rating": 4.4, "description": "The old yellow tram grinding up through the oldest quarter. Board at Martim Moniz for a seat." },
+    { "name": "Belém Tower and Jerónimos Monastery", "type": "culture", "cost": 18, "durationMinutes": 150, "rating": 4.6, "description": "Manueline stonework from the age of exploration, both a short walk apart." },
+    { "name": "Pastéis de Belém tasting", "type": "food", "cost": 8, "durationMinutes": 45, "rating": 4.8, "description": "The original custard tarts, still made to the 1837 recipe. Eat them warm with cinnamon." },
+    { "name": "Fado dinner in Bairro Alto", "type": "nightlife", "cost": 55, "durationMinutes": 150, "rating": 4.7, "description": "Portuguese blues in a small room where the lights go down between songs." },
+    { "name": "Sintra day trip", "type": "adventure", "cost": 45, "durationMinutes": 360, "rating": 4.8, "description": "Pena Palace and the Quinta da Regaleira initiation well, forty minutes by train." },
+    { "name": "LX Factory browsing", "type": "shopping", "cost": 0, "durationMinutes": 90, "rating": 4.3, "description": "Old industrial complex turned bookshops, design studios and rooftop bars under the bridge." }
+  ]},
+
+  { "city": "Santorini", "country": "Greece", "items": [
+    { "name": "Oia sunset from the castle ruins", "type": "sightseeing", "cost": 0, "durationMinutes": 90, "rating": 4.9, "description": "The famous one. Claim a spot on the wall ninety minutes early or watch from a Fira terrace instead." },
+    { "name": "Catamaran caldera cruise", "type": "adventure", "cost": 110, "durationMinutes": 300, "rating": 4.8, "description": "Hot springs, the Red and White beaches, and a barbecue on deck as the sun drops." },
+    { "name": "Assyrtiko wine tasting at Santo Wines", "type": "food", "cost": 45, "durationMinutes": 120, "rating": 4.7, "description": "Volcanic-soil whites tasted on a terrace hanging straight over the caldera." },
+    { "name": "Akrotiri archaeological site", "type": "culture", "cost": 12, "durationMinutes": 105, "rating": 4.5, "description": "A Bronze Age town buried by the eruption and preserved under ash — the Aegean Pompeii." },
+    { "name": "Red Beach swim", "type": "relaxation", "cost": 0, "durationMinutes": 150, "rating": 4.3, "description": "Iron-red cliffs dropping into clear water. Water shoes help on the pebbles." },
+    { "name": "Fira to Oia cliff walk", "type": "adventure", "cost": 0, "durationMinutes": 240, "rating": 4.7, "description": "Ten kilometres along the caldera rim through Imerovigli. Start early; there is no shade." }
+  ]},
+
+  { "city": "Reykjavik", "country": "Iceland", "items": [
+    { "name": "Blue Lagoon", "type": "relaxation", "cost": 75, "durationMinutes": 180, "rating": 4.6, "description": "Geothermal silica water at 38°C in a lava field. Pre-booked slots only." },
+    { "name": "Golden Circle tour", "type": "sightseeing", "cost": 95, "durationMinutes": 480, "rating": 4.8, "description": "Þingvellir rift valley, the Geysir field and Gullfoss waterfall in one loop." },
+    { "name": "Northern lights hunt", "type": "adventure", "cost": 85, "durationMinutes": 240, "rating": 4.5, "description": "Chase clear sky away from the city lights. September to March, and never guaranteed." },
+    { "name": "Hallgrímskirkja tower", "type": "sightseeing", "cost": 8, "durationMinutes": 45, "rating": 4.4, "description": "Lift to the top of the basalt-column church for the coloured rooftops and the bay." },
+    { "name": "Icelandic seafood tasting", "type": "food", "cost": 90, "durationMinutes": 150, "rating": 4.6, "description": "Langoustine, arctic char and cured lamb — plus fermented shark if you insist." },
+    { "name": "Whale watching from the Old Harbour", "type": "adventure", "cost": 105, "durationMinutes": 210, "rating": 4.5, "description": "Minke and humpback in Faxaflói bay. Dress for weather twenty degrees colder than shore." }
+  ]},
+
+  { "city": "Interlaken", "country": "Switzerland", "items": [
+    { "name": "Jungfraujoch railway", "type": "adventure", "cost": 210, "durationMinutes": 420, "rating": 4.8, "description": "Cog railway to the highest station in Europe, 3,454m, through the Eiger itself." },
+    { "name": "Paragliding over Lake Thun", "type": "adventure", "cost": 180, "durationMinutes": 120, "rating": 4.9, "description": "Tandem launch off Beatenberg with the Eiger, Mönch and Jungfrau on one side." },
+    { "name": "Harder Kulm funicular", "type": "sightseeing", "cost": 38, "durationMinutes": 120, "rating": 4.6, "description": "Ten minutes up to a viewing platform on stilts above both lakes." },
+    { "name": "Lake Brienz boat cruise", "type": "relaxation", "cost": 45, "durationMinutes": 150, "rating": 4.7, "description": "Turquoise glacial water past Giessbach Falls on a steamer." },
+    { "name": "Swiss fondue dinner", "type": "food", "cost": 55, "durationMinutes": 120, "rating": 4.5, "description": "Gruyère and Vacherin in a chalet, with kirsch and a basket of day-old bread." },
+    { "name": "Trümmelbach Falls", "type": "sightseeing", "cost": 14, "durationMinutes": 90, "rating": 4.7, "description": "Ten glacier waterfalls inside the mountain, reached by a tunnel lift." }
+  ]},
+
+  { "city": "Tokyo", "country": "Japan", "items": [
+    { "name": "Senso-ji and Nakamise-dori", "type": "culture", "cost": 0, "durationMinutes": 120, "rating": 4.6, "description": "Tokyo's oldest temple, approached down a lane of snack and souvenir stalls." },
+    { "name": "Tsukiji Outer Market breakfast", "type": "food", "cost": 35, "durationMinutes": 120, "rating": 4.8, "description": "Tamagoyaki, uni and grilled scallops standing up, from about seven in the morning." },
+    { "name": "Shibuya Crossing and Hachiko", "type": "sightseeing", "cost": 0, "durationMinutes": 60, "rating": 4.5, "description": "Three thousand people a light. Watch it from the Starbucks window, then walk it yourself." },
+    { "name": "TeamLab Planets", "type": "culture", "cost": 28, "durationMinutes": 120, "rating": 4.7, "description": "Barefoot digital art — you wade through knee-deep water full of projected koi." },
+    { "name": "Golden Gai bar hopping", "type": "nightlife", "cost": 60, "durationMinutes": 180, "rating": 4.6, "description": "Six alleys of bars seating six people each. Check for a cover charge before you sit." },
+    { "name": "Omoide Yokocho yakitori", "type": "food", "cost": 40, "durationMinutes": 120, "rating": 4.7, "description": "Charcoal skewers and highballs under the tracks in Shinjuku's Memory Lane." }
+  ]},
+
+  { "city": "Kyoto", "country": "Japan", "items": [
+    { "name": "Fushimi Inari at sunrise", "type": "sightseeing", "cost": 0, "durationMinutes": 150, "rating": 4.9, "description": "Ten thousand vermilion torii up the mountain. Before seven you will have them almost alone." },
+    { "name": "Arashiyama bamboo grove", "type": "sightseeing", "cost": 0, "durationMinutes": 90, "rating": 4.6, "description": "The bamboo path, then Tenryu-ji's garden and the Togetsukyo bridge." },
+    { "name": "Kinkaku-ji Golden Pavilion", "type": "culture", "cost": 5, "durationMinutes": 75, "rating": 4.7, "description": "Gold leaf reflected in the mirror pond — the most photographed building in Japan." },
+    { "name": "Gion evening walk", "type": "culture", "cost": 0, "durationMinutes": 90, "rating": 4.5, "description": "Wooden machiya teahouses on Hanamikoji at dusk. Photographing geiko in the private lanes is banned." },
+    { "name": "Tea ceremony in Higashiyama", "type": "culture", "cost": 45, "durationMinutes": 90, "rating": 4.8, "description": "Whisk your own matcha in a tatami room after a lesson in the sequence." },
+    { "name": "Nishiki Market food crawl", "type": "food", "cost": 30, "durationMinutes": 120, "rating": 4.6, "description": "Four hundred years of pickles, tofu doughnuts and skewered baby octopus down one covered street." }
+  ]},
+
+  { "city": "Bali", "country": "Indonesia", "items": [
+    { "name": "Tegallalang rice terraces", "type": "sightseeing", "cost": 5, "durationMinutes": 120, "rating": 4.6, "description": "Stepped paddies north of Ubud. Small donations at each terrace gate." },
+    { "name": "Uluwatu Temple and Kecak fire dance", "type": "culture", "cost": 15, "durationMinutes": 150, "rating": 4.7, "description": "Clifftop temple 70m above the surf, with the chanting Ramayana performance at sunset." },
+    { "name": "Sunrise trek up Mount Batur", "type": "adventure", "cost": 45, "durationMinutes": 360, "rating": 4.8, "description": "A 2am start for a two-hour climb, breakfast cooked in volcanic steam at the top." },
+    { "name": "Balinese cooking class in Ubud", "type": "food", "cost": 35, "durationMinutes": 240, "rating": 4.8, "description": "Market shop, then base gede spice paste, sate lilit and black rice pudding." },
+    { "name": "Canggu surf lesson", "type": "adventure", "cost": 30, "durationMinutes": 120, "rating": 4.5, "description": "Beginner beach break at Batu Bolong with board and rashguard included." },
+    { "name": "Spa afternoon in Seminyak", "type": "relaxation", "cost": 25, "durationMinutes": 120, "rating": 4.7, "description": "Two hours of Balinese massage, flower bath and ginger tea for the price of a cocktail at home." }
+  ]},
+
+  { "city": "Bangkok", "country": "Thailand", "items": [
+    { "name": "Grand Palace and Wat Phra Kaew", "type": "culture", "cost": 15, "durationMinutes": 180, "rating": 4.6, "description": "The Emerald Buddha inside the royal compound. Covered shoulders and knees, no exceptions." },
+    { "name": "Wat Arun at sunset", "type": "sightseeing", "cost": 3, "durationMinutes": 90, "rating": 4.7, "description": "Porcelain-encrusted spires across the Chao Phraya. Cross on the 4-baht ferry." },
+    { "name": "Chinatown street food crawl", "type": "food", "cost": 20, "durationMinutes": 180, "rating": 4.9, "description": "Yaowarat after dark: crab curry, oyster omelette, mango sticky rice, on plastic stools." },
+    { "name": "Chatuchak Weekend Market", "type": "shopping", "cost": 0, "durationMinutes": 180, "rating": 4.5, "description": "Fifteen thousand stalls across 27 sections. Go at nine before the heat sets in." },
+    { "name": "Longtail boat through the klongs", "type": "adventure", "cost": 25, "durationMinutes": 120, "rating": 4.5, "description": "The canals of Thonburi, where stilt houses and temple docks back onto the water." },
+    { "name": "Rooftop cocktails at Sky Bar", "type": "nightlife", "cost": 30, "durationMinutes": 120, "rating": 4.4, "description": "Open-air bar 63 floors up on Silom. Smart dress enforced at the lift." }
+  ]},
+
+  { "city": "Singapore", "country": "Singapore", "items": [
+    { "name": "Gardens by the Bay and the Supertree show", "type": "sightseeing", "cost": 20, "durationMinutes": 150, "rating": 4.8, "description": "Cloud Forest dome and the free light show under the Supertrees at 7:45 and 8:45." },
+    { "name": "Hawker dinner at Maxwell Food Centre", "type": "food", "cost": 12, "durationMinutes": 90, "rating": 4.7, "description": "Hainanese chicken rice, char kway teow and sugarcane juice for under fifteen dollars." },
+    { "name": "Marina Bay Sands SkyPark", "type": "sightseeing", "cost": 24, "durationMinutes": 90, "rating": 4.5, "description": "The observation deck on the boat-shaped roof, 200m over the bay." },
+    { "name": "Singapore Zoo and Night Safari", "type": "adventure", "cost": 55, "durationMinutes": 240, "rating": 4.6, "description": "Open-enclosure zoo by day, tram through nocturnal habitats after dark." },
+    { "name": "Kampong Glam and Haji Lane", "type": "shopping", "cost": 0, "durationMinutes": 120, "rating": 4.4, "description": "Independent boutiques and murals in the shophouse lanes beside Sultan Mosque." },
+    { "name": "Singapore Sling at Raffles Long Bar", "type": "nightlife", "cost": 35, "durationMinutes": 90, "rating": 4.3, "description": "Where the drink was invented in 1915. Peanut shells still go on the floor." }
+  ]},
+
+  { "city": "Dubai", "country": "United Arab Emirates", "items": [
+    { "name": "Burj Khalifa At the Top", "type": "sightseeing", "cost": 45, "durationMinutes": 90, "rating": 4.6, "description": "Levels 124 and 125 of the tallest building on earth. Sunset slots cost roughly double." },
+    { "name": "Desert safari with dune bashing", "type": "adventure", "cost": 75, "durationMinutes": 360, "rating": 4.8, "description": "4x4 over the red dunes, camel ride, then a barbecue camp under the stars." },
+    { "name": "Dubai Mall and the Fountain show", "type": "shopping", "cost": 0, "durationMinutes": 150, "rating": 4.5, "description": "1,200 shops, an aquarium wall, and fountains firing every half hour from six." },
+    { "name": "Old Dubai souks and abra crossing", "type": "culture", "cost": 5, "durationMinutes": 120, "rating": 4.5, "description": "Gold and spice souks either side of the Creek, linked by a 1-dirham wooden boat." },
+    { "name": "Dinner cruise on Dubai Marina", "type": "food", "cost": 85, "durationMinutes": 150, "rating": 4.4, "description": "Dhow buffet with the Marina towers lit up on both banks." },
+    { "name": "Jumeirah Beach afternoon", "type": "relaxation", "cost": 0, "durationMinutes": 180, "rating": 4.4, "description": "Public white-sand beach looking straight at the Burj Al Arab." }
+  ]},
+
+  { "city": "Jaipur", "country": "India", "items": [
+    { "name": "Amber Fort", "type": "sightseeing", "cost": 7, "durationMinutes": 180, "rating": 4.7, "description": "Hilltop fort above Maota Lake, with the mirror work of the Sheesh Mahal inside." },
+    { "name": "Hawa Mahal", "type": "sightseeing", "cost": 3, "durationMinutes": 60, "rating": 4.5, "description": "The Palace of Winds — 953 windows built so royal women could watch the street unseen." },
+    { "name": "City Palace and Jantar Mantar", "type": "culture", "cost": 10, "durationMinutes": 150, "rating": 4.6, "description": "Working royal residence next to an eighteenth-century observatory of giant stone instruments." },
+    { "name": "Rajasthani thali at LMB", "type": "food", "cost": 8, "durationMinutes": 90, "rating": 4.6, "description": "Dal baati churma, gatte ki sabzi and endless refills in Johari Bazaar." },
+    { "name": "Block-printing workshop in Sanganer", "type": "culture", "cost": 15, "durationMinutes": 150, "rating": 4.7, "description": "Carve, dye and print your own indigo cloth with a family that has done it for generations." },
+    { "name": "Johari Bazaar jewellery browsing", "type": "shopping", "cost": 0, "durationMinutes": 120, "rating": 4.3, "description": "Kundan and meenakari work in the old gem quarter. Haggling is expected, not rude." }
+  ]},
+
+  { "city": "Goa", "country": "India", "items": [
+    { "name": "Palolem Beach day", "type": "relaxation", "cost": 0, "durationMinutes": 300, "rating": 4.6, "description": "Crescent bay in the south with calm water and beach shacks serving all day." },
+    { "name": "Old Goa churches", "type": "culture", "cost": 0, "durationMinutes": 120, "rating": 4.5, "description": "Basilica of Bom Jesus and Sé Cathedral — Portuguese baroque, and a UNESCO site." },
+    { "name": "Anjuna flea market", "type": "shopping", "cost": 0, "durationMinutes": 150, "rating": 4.3, "description": "Wednesday market on the cliffs, running since the 1970s hippie years." },
+    { "name": "Spice plantation tour with lunch", "type": "food", "cost": 12, "durationMinutes": 180, "rating": 4.5, "description": "Walk through cardamom and vanilla vines, then a banana-leaf Goan thali." },
+    { "name": "Dudhsagar Falls jeep safari", "type": "adventure", "cost": 25, "durationMinutes": 300, "rating": 4.7, "description": "310m of falls in the Western Ghats, reached by a rough jeep track through the forest." },
+    { "name": "Sunset cruise on the Mandovi", "type": "nightlife", "cost": 10, "durationMinutes": 90, "rating": 4.2, "description": "Live Konkani music and dancing on deck as the river turns orange." }
+  ]},
+
+  { "city": "Hanoi", "country": "Vietnam", "items": [
+    { "name": "Old Quarter walking tour", "type": "sightseeing", "cost": 0, "durationMinutes": 150, "rating": 4.6, "description": "Thirty-six guild streets, each still named for the trade it once sold." },
+    { "name": "Bun cha lunch at Huong Lien", "type": "food", "cost": 5, "durationMinutes": 60, "rating": 4.8, "description": "Grilled pork in fish sauce broth. Obama and Bourdain ate at the table upstairs." },
+    { "name": "Hoan Kiem Lake and Ngoc Son Temple", "type": "culture", "cost": 2, "durationMinutes": 90, "rating": 4.5, "description": "The red bridge to the island temple, best at six when the whole city exercises around it." },
+    { "name": "Thang Long water puppet show", "type": "culture", "cost": 8, "durationMinutes": 60, "rating": 4.4, "description": "A thousand-year-old art performed waist-deep behind a bamboo screen." },
+    { "name": "Egg coffee at Cafe Giang", "type": "food", "cost": 3, "durationMinutes": 45, "rating": 4.7, "description": "Whipped yolk and condensed milk over strong coffee, invented here in 1946." },
+    { "name": "Ha Long Bay day cruise", "type": "adventure", "cost": 65, "durationMinutes": 600, "rating": 4.8, "description": "Limestone karsts, a cave stop and kayaking. A long day trip, but the reason most people come." }
+  ]},
+
+  { "city": "New York", "country": "United States", "items": [
+    { "name": "Statue of Liberty and Ellis Island", "type": "sightseeing", "cost": 25, "durationMinutes": 240, "rating": 4.6, "description": "Ferry from Battery Park. Crown tickets sell out months ahead; pedestal access does not." },
+    { "name": "Metropolitan Museum of Art", "type": "culture", "cost": 30, "durationMinutes": 180, "rating": 4.8, "description": "Two million works. Pick three wings and accept you will not see the rest." },
+    { "name": "Broadway show", "type": "nightlife", "cost": 140, "durationMinutes": 165, "rating": 4.8, "description": "Same-day TKTS booth in Times Square discounts up to half off if you are flexible." },
+    { "name": "Katz's Delicatessen", "type": "food", "cost": 30, "durationMinutes": 60, "rating": 4.6, "description": "Hand-carved pastrami on rye since 1888. Keep the ticket they hand you at the door." },
+    { "name": "High Line and Chelsea Market", "type": "shopping", "cost": 0, "durationMinutes": 150, "rating": 4.5, "description": "Elevated park on a disused rail line, ending at a food hall in the old Nabisco factory." },
+    { "name": "Top of the Rock at sunset", "type": "sightseeing", "cost": 40, "durationMinutes": 90, "rating": 4.7, "description": "Better than the Empire State, because the Empire State is in the view." }
+  ]},
+
+  { "city": "San Francisco", "country": "United States", "items": [
+    { "name": "Golden Gate Bridge bike ride", "type": "adventure", "cost": 45, "durationMinutes": 210, "rating": 4.8, "description": "Rent at Fisherman's Wharf, cross to Sausalito, take the ferry back." },
+    { "name": "Alcatraz Island tour", "type": "culture", "cost": 45, "durationMinutes": 180, "rating": 4.7, "description": "The cellhouse audio tour, narrated by former guards and inmates. Book weeks ahead." },
+    { "name": "Ferry Building Marketplace", "type": "food", "cost": 35, "durationMinutes": 90, "rating": 4.5, "description": "Oysters, Cowgirl Creamery cheese and a farmers' market on Saturday mornings." },
+    { "name": "Cable car to Lombard Street", "type": "sightseeing", "cost": 8, "durationMinutes": 90, "rating": 4.4, "description": "Powell-Hyde line up Russian Hill to the eight-hairpin block of Lombard." },
+    { "name": "Mission District taqueria crawl", "type": "food", "cost": 30, "durationMinutes": 150, "rating": 4.7, "description": "Mission burritos on Valencia, plus the murals in Balmy Alley between stops." },
+    { "name": "Muir Woods redwoods", "type": "relaxation", "cost": 55, "durationMinutes": 240, "rating": 4.7, "description": "Thousand-year-old coast redwoods across the bridge. Parking reservations are mandatory." }
+  ]},
+
+  { "city": "Vancouver", "country": "Canada", "items": [
+    { "name": "Stanley Park seawall cycle", "type": "adventure", "cost": 25, "durationMinutes": 180, "rating": 4.8, "description": "Ten kilometres of waterfront path around a 400-hectare forest inside the city." },
+    { "name": "Capilano Suspension Bridge", "type": "adventure", "cost": 50, "durationMinutes": 150, "rating": 4.6, "description": "137m across and 70m above the river, plus a cliff walk bolted to the granite." },
+    { "name": "Granville Island Public Market", "type": "food", "cost": 25, "durationMinutes": 120, "rating": 4.7, "description": "Seafood, produce and bakeries under one roof, reached by a tiny rainbow ferry." },
+    { "name": "Grouse Mountain skyride", "type": "sightseeing", "cost": 60, "durationMinutes": 240, "rating": 4.5, "description": "Gondola to 1,200m for the whole city, the bay and the Gulf Islands on a clear day." },
+    { "name": "Gastown and the steam clock", "type": "sightseeing", "cost": 0, "durationMinutes": 90, "rating": 4.2, "description": "Cobbled original townsite, with a clock that whistles steam on the quarter hour." },
+    { "name": "Sunset kayak on False Creek", "type": "relaxation", "cost": 45, "durationMinutes": 120, "rating": 4.6, "description": "Flat water paddling with the downtown towers going gold behind you." }
+  ]},
+
+  { "city": "Mexico City", "country": "Mexico", "items": [
+    { "name": "Teotihuacán pyramids", "type": "culture", "cost": 30, "durationMinutes": 360, "rating": 4.8, "description": "The Avenue of the Dead between the Sun and Moon pyramids, an hour outside the city." },
+    { "name": "Frida Kahlo Museum", "type": "culture", "cost": 15, "durationMinutes": 120, "rating": 4.6, "description": "La Casa Azul in Coyoacán, where she was born and died. Timed tickets online only." },
+    { "name": "Roma Norte taco tour", "type": "food", "cost": 45, "durationMinutes": 180, "rating": 4.9, "description": "Al pastor off the trompo, suadero, and a mezcal stop between them." },
+    { "name": "Chapultepec Castle", "type": "sightseeing", "cost": 5, "durationMinutes": 150, "rating": 4.5, "description": "The only royal castle in the Americas, on a hill in a park twice the size of Central Park." },
+    { "name": "Xochimilco trajinera boats", "type": "relaxation", "cost": 25, "durationMinutes": 240, "rating": 4.6, "description": "Painted flat-bottomed boats poled through Aztec-era canals, with mariachi for hire." },
+    { "name": "Lucha libre at Arena México", "type": "nightlife", "cost": 20, "durationMinutes": 150, "rating": 4.7, "description": "Masked wrestling on Friday nights. Buy the mask outside, wear it inside." }
+  ]},
+
+  { "city": "Rio de Janeiro", "country": "Brazil", "items": [
+    { "name": "Christ the Redeemer", "type": "sightseeing", "cost": 30, "durationMinutes": 180, "rating": 4.7, "description": "Cog train up through Tijuca forest to the 30m statue on Corcovado." },
+    { "name": "Sugarloaf Mountain cable car", "type": "sightseeing", "cost": 28, "durationMinutes": 150, "rating": 4.7, "description": "Two stages to 396m, with the whole bay and Copacabana laid out below." },
+    { "name": "Ipanema Beach afternoon", "type": "relaxation", "cost": 0, "durationMinutes": 240, "rating": 4.6, "description": "Posto 9 for the people-watching, and the Arpoador rock for the sunset applause." },
+    { "name": "Feijoada lunch in Lapa", "type": "food", "cost": 20, "durationMinutes": 120, "rating": 4.5, "description": "Black bean and pork stew with orange and farofa — traditionally a Saturday meal." },
+    { "name": "Samba night in Lapa", "type": "nightlife", "cost": 25, "durationMinutes": 180, "rating": 4.7, "description": "Live roda de samba under the arches. Friday is the night locals actually go." },
+    { "name": "Tijuca rainforest hike", "type": "adventure", "cost": 35, "durationMinutes": 300, "rating": 4.6, "description": "The largest urban forest in the world, up to Pedra Bonita for the hang-glider view." }
+  ]},
+
+  { "city": "Cusco", "country": "Peru", "items": [
+    { "name": "Machu Picchu day trip", "type": "sightseeing", "cost": 160, "durationMinutes": 720, "rating": 4.9, "description": "Train to Aguas Calientes, bus up the switchbacks, timed circuit through the citadel." },
+    { "name": "Sacred Valley tour", "type": "culture", "cost": 45, "durationMinutes": 480, "rating": 4.7, "description": "Pisac terraces, the Ollantaytambo fortress and the salt pans at Maras." },
+    { "name": "Rainbow Mountain trek", "type": "adventure", "cost": 55, "durationMinutes": 600, "rating": 4.5, "description": "Vinicunca at 5,200m. Acclimatise in Cusco for two days first or you will suffer." },
+    { "name": "San Pedro Market", "type": "shopping", "cost": 0, "durationMinutes": 90, "rating": 4.4, "description": "Alpaca knitwear, forty kinds of potato, and juice stalls that will blend anything." },
+    { "name": "Peruvian cooking class", "type": "food", "cost": 40, "durationMinutes": 180, "rating": 4.7, "description": "Ceviche, lomo saltado and a pisco sour you shake yourself." },
+    { "name": "Qorikancha and Cusco Cathedral", "type": "culture", "cost": 12, "durationMinutes": 120, "rating": 4.5, "description": "A Dominican convent built directly on Inca stonework that has outlasted every earthquake." }
+  ]},
+
+  { "city": "Buenos Aires", "country": "Argentina", "items": [
+    { "name": "Tango show in San Telmo", "type": "nightlife", "cost": 45, "durationMinutes": 150, "rating": 4.7, "description": "Dinner and a live orchestra in a nineteenth-century hall, with a lesson beforehand." },
+    { "name": "Recoleta Cemetery", "type": "culture", "cost": 8, "durationMinutes": 90, "rating": 4.6, "description": "Six thousand marble mausoleums in city blocks, including Eva Perón's." },
+    { "name": "Parrilla steak dinner in Palermo", "type": "food", "cost": 30, "durationMinutes": 120, "rating": 4.8, "description": "Bife de chorizo over wood coals with a Mendoza Malbec. Dinner starts at nine here." },
+    { "name": "La Boca and Caminito", "type": "sightseeing", "cost": 0, "durationMinutes": 120, "rating": 4.3, "description": "Painted corrugated houses and street tango. Stay on the main streets and go by day." },
+    { "name": "San Telmo Sunday market", "type": "shopping", "cost": 0, "durationMinutes": 150, "rating": 4.5, "description": "Antiques and buskers down thirteen blocks of Defensa, every Sunday." },
+    { "name": "Teatro Colón guided tour", "type": "culture", "cost": 18, "durationMinutes": 75, "rating": 4.7, "description": "One of the three best acoustics in the world, seen from the stage and the golden hall." }
+  ]},
+
+  { "city": "Cape Town", "country": "South Africa", "items": [
+    { "name": "Table Mountain cableway", "type": "sightseeing", "cost": 25, "durationMinutes": 180, "rating": 4.8, "description": "Rotating car to the flat top. Check the wind before you go — it closes often." },
+    { "name": "Cape Peninsula and Boulders penguins", "type": "adventure", "cost": 70, "durationMinutes": 480, "rating": 4.8, "description": "Chapman's Peak drive, the Cape of Good Hope, and an African penguin colony on the way back." },
+    { "name": "Stellenbosch wine tasting", "type": "food", "cost": 55, "durationMinutes": 300, "rating": 4.7, "description": "Three estates in the Cape Winelands, with Chenin Blanc and Pinotage on every list." },
+    { "name": "Robben Island tour", "type": "culture", "cost": 35, "durationMinutes": 240, "rating": 4.6, "description": "Ferry to the prison where Mandela spent eighteen years, guided by former political prisoners." },
+    { "name": "Bo-Kaap walk and Cape Malay cooking", "type": "food", "cost": 45, "durationMinutes": 180, "rating": 4.7, "description": "The painted quarter on Signal Hill, then rolling samosas and cooking bobotie in a family kitchen." },
+    { "name": "Camps Bay sunset", "type": "relaxation", "cost": 0, "durationMinutes": 120, "rating": 4.6, "description": "White sand under the Twelve Apostles, with the sun dropping into the Atlantic." }
+  ]},
+
+  { "city": "Marrakech", "country": "Morocco", "items": [
+    { "name": "Jemaa el-Fnaa after dark", "type": "sightseeing", "cost": 0, "durationMinutes": 120, "rating": 4.6, "description": "The main square turns into a food market, storytellers and gnawa drummers at sunset." },
+    { "name": "Bahia Palace and the Saadian Tombs", "type": "culture", "cost": 10, "durationMinutes": 150, "rating": 4.5, "description": "Carved cedar ceilings and zellige tilework, plus a necropolis sealed up for two centuries." },
+    { "name": "Souk shopping in the medina", "type": "shopping", "cost": 0, "durationMinutes": 150, "rating": 4.4, "description": "Lanterns, leather and argan oil. Start at a third of the asking price and stay friendly." },
+    { "name": "Traditional hammam and spa", "type": "relaxation", "cost": 35, "durationMinutes": 120, "rating": 4.7, "description": "Black soap, steam and a gommage scrub, followed by mint tea on a riad roof." },
+    { "name": "Moroccan tagine cooking class", "type": "food", "cost": 45, "durationMinutes": 210, "rating": 4.8, "description": "Shop the spice souk with a dada, then cook lamb with preserved lemon over charcoal." },
+    { "name": "Agafay Desert sunset camel ride", "type": "adventure", "cost": 55, "durationMinutes": 240, "rating": 4.6, "description": "Stony desert forty minutes out, with the Atlas range going pink behind the dunes." }
+  ]},
+
+  { "city": "Zanzibar City", "country": "Tanzania", "items": [
+    { "name": "Stone Town walking tour", "type": "culture", "cost": 20, "durationMinutes": 150, "rating": 4.6, "description": "Carved Zanzibari doors, the old slave market memorial and the House of Wonders." },
+    { "name": "Spice farm tour", "type": "food", "cost": 25, "durationMinutes": 180, "rating": 4.6, "description": "Clove, nutmeg and cinnamon straight off the tree, with a fruit tasting to finish." },
+    { "name": "Prison Island and giant tortoises", "type": "adventure", "cost": 35, "durationMinutes": 240, "rating": 4.5, "description": "Short dhow ride to Changuu, home to Aldabra tortoises over a century old." },
+    { "name": "Nungwi Beach day", "type": "relaxation", "cost": 0, "durationMinutes": 300, "rating": 4.8, "description": "The northern tip, where the tide barely moves the swimming and the water stays turquoise." },
+    { "name": "Forodhani night market", "type": "food", "cost": 12, "durationMinutes": 90, "rating": 4.5, "description": "Grilled seafood skewers and Zanzibari pizza in the harbour gardens." },
+    { "name": "Sunset dhow cruise", "type": "relaxation", "cost": 30, "durationMinutes": 120, "rating": 4.7, "description": "Traditional lateen sail out of the old harbour as the call to prayer carries over the water." }
+  ]},
+
+  { "city": "Sydney", "country": "Australia", "items": [
+    { "name": "Sydney Opera House tour", "type": "culture", "cost": 45, "durationMinutes": 90, "rating": 4.7, "description": "Inside the shells, including the concert hall and the story of how the roof was solved." },
+    { "name": "Bondi to Coogee coastal walk", "type": "adventure", "cost": 0, "durationMinutes": 150, "rating": 4.9, "description": "Six kilometres of clifftop path past Tamarama, Bronte and the Waverley cemetery." },
+    { "name": "Harbour Bridge Climb", "type": "adventure", "cost": 190, "durationMinutes": 210, "rating": 4.8, "description": "Up the arch to 134m, harnessed to the rail the whole way. Dawn climbs are the best value." },
+    { "name": "Taronga Zoo by ferry", "type": "sightseeing", "cost": 50, "durationMinutes": 240, "rating": 4.6, "description": "Twelve-minute ferry from Circular Quay to a hillside zoo with the skyline behind the giraffes." },
+    { "name": "Sydney Fish Market lunch", "type": "food", "cost": 35, "durationMinutes": 90, "rating": 4.5, "description": "Sydney rock oysters and barramundi at the largest fish market in the southern hemisphere." },
+    { "name": "Manly Beach ferry afternoon", "type": "relaxation", "cost": 15, "durationMinutes": 240, "rating": 4.7, "description": "The 30-minute ferry across the heads is the best-value harbour cruise in the city." }
+  ]},
+
+  { "city": "Queenstown", "country": "New Zealand", "items": [
+    { "name": "Kawarau Bridge bungy jump", "type": "adventure", "cost": 165, "durationMinutes": 180, "rating": 4.9, "description": "The original commercial bungy, 43m over the river. The Nevis is 134m if that is too tame." },
+    { "name": "Milford Sound day cruise", "type": "sightseeing", "cost": 150, "durationMinutes": 720, "rating": 4.8, "description": "Long drive through Fiordland to Mitre Peak and waterfalls straight off the cliffs." },
+    { "name": "Skyline Gondola and luge", "type": "adventure", "cost": 55, "durationMinutes": 150, "rating": 4.6, "description": "Steepest cable car lift in the southern hemisphere, then a downhill luge track at the top." },
+    { "name": "Fergburger", "type": "food", "cost": 15, "durationMinutes": 45, "rating": 4.7, "description": "The queue is real and the burger justifies it. Open until 5am." },
+    { "name": "Gibbston Valley wine tour", "type": "food", "cost": 90, "durationMinutes": 300, "rating": 4.6, "description": "Central Otago Pinot Noir tasted in a cave cellar, twenty minutes from town." },
+    { "name": "Lake Wakatipu jet boat", "type": "adventure", "cost": 95, "durationMinutes": 90, "rating": 4.8, "description": "Shotover canyon at 85km/h, inches from the rock walls, with 360-degree spins." }
+  ]}
+]

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 import { connectDB, disconnectDB } from '../config/db.js';
-import { City, User } from '../models/index.js';
+import { Activity, City, User } from '../models/index.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +24,50 @@ const seedCities = async () => {
   );
 
   console.log(`[seed] cities → ${cities.length} upserted`);
+};
+
+/**
+ * The activity catalog. Without it, Activity Search, the builder's activity
+ * drawer and the activities slice of every budget chart all render empty.
+ *
+ * Matched to cities by name + country rather than by id, so the file stays
+ * readable and re-runnable.
+ */
+const seedActivities = async () => {
+  const groups = await readJson('activities.json');
+
+  const cities = await City.find().select('name country').lean();
+  const cityId = new Map(
+    cities.map((city) => [`${city.name.toLowerCase()}|${city.country.toLowerCase()}`, city._id])
+  );
+
+  const operations = [];
+  const missing = [];
+
+  for (const group of groups) {
+    const id = cityId.get(`${group.city.toLowerCase()}|${group.country.toLowerCase()}`);
+    if (!id) {
+      missing.push(`${group.city}, ${group.country}`);
+      continue;
+    }
+
+    for (const item of group.items) {
+      operations.push({
+        updateOne: {
+          filter: { city: id, name: item.name },
+          update: { $set: { ...item, city: id } },
+          upsert: true,
+        },
+      });
+    }
+  }
+
+  if (operations.length) await Activity.bulkWrite(operations);
+
+  console.log(`[seed] activities → ${operations.length} upserted across ${groups.length} cities`);
+  if (missing.length) {
+    console.warn(`[seed] no matching city for: ${missing.join(' · ')} — activities skipped`);
+  }
 };
 
 const seedUsers = async () => {
@@ -62,7 +106,9 @@ const seedUsers = async () => {
 const run = async () => {
   try {
     await connectDB();
+    // Cities first — activities are matched to them by name + country.
     await seedCities();
+    await seedActivities();
     await seedUsers();
     console.log('[seed] done');
   } catch (error) {

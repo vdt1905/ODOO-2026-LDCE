@@ -3,6 +3,7 @@ import { useAuthStore } from '../../store/authStore.js';
 import { ROUTES } from '../../lib/constants.js';
 import { Button } from '../ui/Button.jsx';
 import { HeroScene } from './HeroScene.jsx';
+import { HeroSearch } from './HeroSearch.jsx';
 
 export const Hero = () => {
   const user = useAuthStore((s) => s.user);
@@ -36,7 +37,11 @@ export const Hero = () => {
           One link to share the whole plan.
         </p>
 
-        <div className="delay-3 mt-9 flex animate-fade-up flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="delay-3 mt-9 animate-fade-up">
+          <HeroSearch />
+        </div>
+
+        <div className="delay-4 mt-4 flex animate-fade-up flex-col items-center justify-center gap-3 sm:flex-row">
           <Button
             to={user ? ROUTES.newTrip : ROUTES.register}
             variant="light"
@@ -59,7 +64,7 @@ export const Hero = () => {
 
       <a
         href="#destinations"
-        className="delay-4 absolute bottom-8 flex animate-fade-up items-center gap-2 rounded-full border border-white/25 bg-white/12 px-4 py-2 text-[11px] font-medium tracking-[0.18em] text-white/90 uppercase backdrop-blur-md transition-colors hover:bg-white/22"
+        className="absolute bottom-8 flex animate-fade-up [animation-delay:0.4s] items-center gap-2 rounded-full border border-white/25 bg-white/12 px-4 py-2 text-[11px] font-medium tracking-[0.18em] text-white/90 uppercase backdrop-blur-md transition-colors hover:bg-white/22"
       >
         Scroll
         <ChevronDown className="size-3.5 animate-bounce" />

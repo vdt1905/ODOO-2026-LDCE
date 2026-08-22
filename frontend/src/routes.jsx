@@ -7,6 +7,7 @@ import { ROUTES } from './lib/constants.js';
 import LandingPage from './pages/Landing/index.jsx';
 import LoginPage from './pages/Login/index.jsx';
 import RegisterPage from './pages/Register/index.jsx';
+import CreateTripPage from './pages/CreateTrip/index.jsx';
 import NotFoundPage from './pages/NotFound/index.jsx';
 import { ComingSoon } from './pages/ComingSoon/index.jsx';
 
@@ -80,13 +81,39 @@ export const AppRoutes = () => (
             />
           }
         />
+        <Route path={ROUTES.newTrip} element={<CreateTripPage />} />
+
+        {/* Downstream trip screens. They are placeholders for now, but they
+            have to exist: a trip card links to them, and an unrouted link
+            would drop the user on the 404 page instead. React Router ranks
+            the static /trips/new above /trips/:id on its own. */}
         <Route
-          path={ROUTES.newTrip}
+          path="/trips/:id"
           element={
             <ComingSoon
-              title="Plan a new trip"
-              phase="Phase 3 · Trip CRUD"
-              description="Name it, set the dates, pick a cover, and start dropping in cities."
+              title="Itinerary view"
+              phase="Phase 5 · Budget & views"
+              description="The day-by-day plan for this trip, with costs per day and per city."
+            />
+          }
+        />
+        <Route
+          path="/trips/:id/build"
+          element={
+            <ComingSoon
+              title="Itinerary builder"
+              phase="Phase 4 · Builder"
+              description="Add stops and activities, drag them into order, and watch the budget bar move."
+            />
+          }
+        />
+        <Route
+          path="/trips/:id/budget"
+          element={
+            <ComingSoon
+              title="Budget breakdown"
+              phase="Phase 5 · Budget & views"
+              description="Cost by category and by city, plus the days that go over your limit."
             />
           }
         />

@@ -32,7 +32,7 @@ export const Input = forwardRef(function Input(
           ref={ref}
           id={inputId}
           aria-invalid={Boolean(error)}
-          className={cn(controlClasses(Boolean(error), Boolean(Icon), false), className)}
+          className={cn(controlClasses({ error: Boolean(error), leftIcon: Boolean(Icon) }), className)}
           {...props}
         />
       </div>
@@ -70,7 +70,7 @@ export const PasswordInput = forwardRef(function PasswordInput(
           id={inputId}
           type={visible ? 'text' : 'password'}
           aria-invalid={Boolean(error)}
-          className={cn(controlClasses(Boolean(error), Boolean(Icon), true), className)}
+          className={cn(controlClasses({ error: Boolean(error), leftIcon: Boolean(Icon), rightIcon: true }), className)}
           {...props}
         />
         <button
@@ -109,7 +109,7 @@ export const TextArea = forwardRef(function TextArea(
         rows={rows}
         aria-invalid={Boolean(error)}
         className={cn(
-          controlClasses(Boolean(error), false, false),
+          controlClasses({ error: Boolean(error) }),
           'h-auto resize-none py-3 leading-relaxed',
           className
         )}

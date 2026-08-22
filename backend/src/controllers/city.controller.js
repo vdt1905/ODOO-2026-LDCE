@@ -2,6 +2,7 @@ import { City } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/apiResponse.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 const SORTS = {
   popularity: { popularity: -1 },
@@ -17,7 +18,9 @@ export const listCities = asyncHandler(async (req, res) => {
   const limit = Math.min(48, Math.max(1, Number(req.query.limit) || 12));
 
   const filter = {};
-  if (search.trim()) filter.name = { $regex: search.trim(), $options: 'i' };
+  // Escaped: an unbalanced '(' typed into the search box must return nothing,
+  // not blow up inside Mongo as a 500.
+  if (search.trim()) filter.name = { $regex: escapeRegex(search.trim()), $options: 'i' };
   if (country) filter.country = country;
   if (region) filter.region = region;
 

@@ -43,7 +43,10 @@ const statusFilter = (status) => {
 export const listTrips = asyncHandler(async (req, res) => {
   const { status, search, sort, page, limit } = req.query;
 
-  const filter = { user: req.user._id, ...statusFilter(status) };
+  const filter = {
+    $or: [{ user: req.user._id }, { 'members.user': req.user._id }],
+    ...statusFilter(status),
+  };
   if (search) filter.name = { $regex: search, $options: 'i' };
 
   const [trips, total] = await Promise.all([
@@ -93,7 +96,9 @@ export const listTrips = asyncHandler(async (req, res) => {
  * /trips/:id/budget once per trip.
  */
 export const tripsSummary = asyncHandler(async (req, res) => {
-  const trips = await Trip.find({ user: req.user._id }).lean();
+  const trips = await Trip.find({
+    $or: [{ user: req.user._id }, { 'members.user': req.user._id }],
+  }).lean();
   const costs = await estimateTripCosts(trips.map((trip) => trip._id));
 
   const round2 = (value) => Math.round((Number(value) || 0) * 100) / 100;
@@ -154,19 +159,27 @@ export const tripsSummary = asyncHandler(async (req, res) => {
 /** POST /trips — optionally seeds stops from the cities picked on the create screen. */
 export const createTrip = asyncHandler(async (req, res) => {
   const { cityIds = [], ...payload } = req.body;
+  const cities = cityIds.length ? await City.find({ _id: { $in: cityIds } }).lean() : [];
+
+  if (payload.destinationCountry && cities.some((city) => city.country !== payload.destinationCountry)) {
+    throw ApiError.unprocessable('Choose cities in the trip country', [
+      { field: 'cityIds', message: `This trip is limited to cities in ${payload.destinationCountry}` },
+    ]);
+  }
 
   const trip = await Trip.create({ ...payload, user: req.user._id });
 
   if (cityIds.length) {
-    const cities = await City.find({ _id: { $in: cityIds } }).lean();
+    const cityById = new Map(cities.map((city) => [String(city._id), city]));
+    const orderedCities = cityIds.map((cityId) => cityById.get(String(cityId))).filter(Boolean);
 
     // Split the trip evenly across the chosen cities; the user re-drags after.
     const totalNights = Math.max(1, differenceInDays(trip.endDate, trip.startDate));
-    const per = Math.max(1, Math.floor(totalNights / cities.length));
+    const per = Math.max(1, Math.floor(totalNights / Math.max(1, orderedCities.length)));
 
     let cursor = trip.startDate;
-    const stops = cities.map((city, index) => {
-      const isLast = index === cities.length - 1;
+    const stops = orderedCities.map((city, index) => {
+      const isLast = index === orderedCities.length - 1;
       const startDate = cursor;
       const endDate = isLast ? trip.endDate : addDays(startDate, per);
       cursor = endDate;
@@ -188,7 +201,9 @@ export const createTrip = asyncHandler(async (req, res) => {
 
 /** GET /trips/:tripId — the full object graph the builder renders from. */
 export const getTrip = asyncHandler(async (req, res) => {
-  const { trip, stops, activities } = await loadTripGraph(req.params.tripId, req.user._id);
+  const { trip, stops, activities } = await loadTripGraph(req.params.tripId, req.user._id, {
+    allowViewer: true,
+  });
 
   // Attach each activity to its stop so the client does not have to regroup.
   const byStop = new Map(stops.map((stop) => [String(stop._id), []]));
@@ -210,6 +225,27 @@ export const getTrip = asyncHandler(async (req, res) => {
 export const updateTrip = asyncHandler(async (req, res) => {
   const trip = await loadOwnedTrip(req.params.tripId, req.user._id);
 
+  if (req.body.destinationCountry) {
+    const stops = await Stop.find({ trip: trip._id }).populate('city', 'country').lean();
+    if (stops.some((stop) => stop.city?.country !== req.body.destinationCountry)) {
+      throw ApiError.unprocessable('Choose a country used by every current stop', [
+        { field: 'destinationCountry', message: 'Move or remove cities from other countries first' },
+      ]);
+    }
+
+    // Older trips may contain data that pre-dates newer schema rules. Updating
+    // only their country should not re-validate unrelated legacy fields and
+    // prevent the country-first city picker from working.
+    if (Object.keys(req.body).length === 1) {
+      await Trip.updateOne(
+        { _id: trip._id },
+        { $set: { destinationCountry: req.body.destinationCountry } }
+      );
+      trip.destinationCountry = req.body.destinationCountry;
+      return sendSuccess(res, { data: { trip: trip.toJSON() }, message: 'Trip country updated' });
+    }
+  }
+
   Object.assign(trip, req.body);
 
   // Guard the half-update case: patching only one end of the range must still
@@ -226,7 +262,10 @@ export const updateTrip = asyncHandler(async (req, res) => {
 
 /** DELETE /trips/:tripId — cascades to stops, activities and the cover image. */
 export const deleteTrip = asyncHandler(async (req, res) => {
-  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, { select: '+coverPublicId' });
+  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, {
+    select: '+coverPublicId',
+    ownerOnly: true,
+  });
   const removed = await deleteTripCascade(trip);
 
   return sendSuccess(res, { data: removed, message: 'Trip deleted' });
@@ -264,19 +303,23 @@ export const removeCover = asyncHandler(async (req, res) => {
 
 /** GET /trips/:tripId/budget — every number the budget screen renders. */
 export const getBudget = asyncHandler(async (req, res) => {
-  const { trip, stops, activities } = await loadTripGraph(req.params.tripId, req.user._id);
+  const { trip, stops, activities } = await loadTripGraph(req.params.tripId, req.user._id, {
+    allowViewer: true,
+  });
   return sendSuccess(res, { data: buildBudget({ trip, stops, activities }) });
 });
 
 /** GET /trips/:tripId/itinerary — day-by-day, ready to render. */
 export const getItinerary = asyncHandler(async (req, res) => {
-  const { trip, stops, activities } = await loadTripGraph(req.params.tripId, req.user._id);
+  const { trip, stops, activities } = await loadTripGraph(req.params.tripId, req.user._id, {
+    allowViewer: true,
+  });
   return sendSuccess(res, { data: buildItinerary({ trip, stops, activities }) });
 });
 
 /** POST /trips/:tripId/share — publishes and mints a slug (idempotent). */
 export const shareTrip = asyncHandler(async (req, res) => {
-  const trip = await loadOwnedTrip(req.params.tripId, req.user._id);
+  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, { ownerOnly: true });
 
   trip.isPublic = true;
   if (!trip.publicSlug) trip.publicSlug = publicSlug();
@@ -293,7 +336,7 @@ export const shareTrip = asyncHandler(async (req, res) => {
  * The slug is kept so re-sharing restores the same URL for anyone who saved it.
  */
 export const unshareTrip = asyncHandler(async (req, res) => {
-  const trip = await loadOwnedTrip(req.params.tripId, req.user._id);
+  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, { ownerOnly: true });
 
   trip.isPublic = false;
   await trip.save();

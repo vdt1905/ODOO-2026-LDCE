@@ -70,6 +70,7 @@ export const deleteMe = asyncHandler(async (req, res) => {
   }
 
   if (user.avatarPublicId) await deleteImage(user.avatarPublicId);
+  await Trip.updateMany({ 'members.user': user._id }, { $pull: { members: { user: user._id } } });
   await user.deleteOne();
 
   clearRefreshCookie(res);

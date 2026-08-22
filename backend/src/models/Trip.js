@@ -2,6 +2,14 @@ import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
+const memberSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    role: { type: String, enum: ['editor', 'viewer'], default: 'editor' },
+  },
+  { _id: false, timestamps: { createdAt: 'invitedAt', updatedAt: false } }
+);
+
 const tripSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -17,6 +25,10 @@ const tripSchema = new Schema(
     coverPublicId: { type: String, default: '', select: false },
     budgetLimit: { type: Number, min: 0, default: null },
     currency: { type: String, default: 'USD' },
+    // A trip can be deliberately limited to one country. Stops enforce this
+    // server-side, so a client cannot add an out-of-country city by bypassing
+    // the country picker in the UI.
+    destinationCountry: { type: String, trim: true, maxlength: 100, default: '' },
 
     isPublic: { type: Boolean, default: false },
     publicSlug: { type: String, unique: true, sparse: true, index: true },
@@ -24,6 +36,10 @@ const tripSchema = new Schema(
     // Provenance when this trip came from someone else's "Copy Trip".
     copiedFrom: { type: Schema.Types.ObjectId, ref: 'Trip', default: null },
     viewCount: { type: Number, default: 0 },
+
+    // The owner always retains publishing and deletion control. Editors can
+    // work on the itinerary; viewers can open the itinerary, budget and map.
+    members: { type: [memberSchema], default: [] },
   },
   {
     timestamps: true,
@@ -39,6 +55,7 @@ const tripSchema = new Schema(
 );
 
 tripSchema.index({ user: 1, startDate: -1 });
+tripSchema.index({ 'members.user': 1, startDate: -1 });
 
 tripSchema.virtual('stops', {
   ref: 'Stop',

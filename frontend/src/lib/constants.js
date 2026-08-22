@@ -4,13 +4,20 @@ export const ROUTES = {
   login: '/login',
   register: '/register',
   forgotPassword: '/forgot-password',
+  resetPassword: '/reset-password/:token',
   trips: '/trips',
   newTrip: '/trips/new',
+  trip: '/trips/:id',
+  tripBuild: '/trips/:id/build',
+  tripBudget: '/trips/:id/budget',
+  tripCalendar: '/trips/:id/calendar',
+  tripMembers: '/trips/:id/members',
   cities: '/cities',
   activities: '/activities',
   community: '/community',
   profile: '/profile',
   admin: '/admin',
+  publicTrip: '/t/:slug',
 };
 
 export const NAV_LINKS = [

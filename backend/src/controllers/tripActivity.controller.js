@@ -24,7 +24,7 @@ const dateWarning = (stop, date) => {
 
 /** GET /trips/:tripId/activities — flat list, optionally filtered to one stop. */
 export const listTripActivities = asyncHandler(async (req, res) => {
-  const trip = await loadOwnedTrip(req.params.tripId, req.user._id);
+  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, { allowViewer: true });
 
   const filter = { trip: trip._id };
   if (req.query.stopId) filter.stop = req.query.stopId;
@@ -51,6 +51,9 @@ export const createTripActivity = asyncHandler(async (req, res) => {
     }
     catalogActivity = await Activity.findById(activityId);
     if (!catalogActivity) throw ApiError.badRequest('That activity does not exist');
+    if (String(catalogActivity.city) !== String(stop.city)) {
+      throw ApiError.badRequest('Choose an activity from the same city as this stop');
+    }
   }
 
   // Default cost and duration from the catalog when the client did not send them.
@@ -104,6 +107,9 @@ export const updateTripActivity = asyncHandler(async (req, res) => {
     } else {
       const catalogActivity = await Activity.findById(activityId);
       if (!catalogActivity) throw ApiError.badRequest('That activity does not exist');
+      if (String(catalogActivity.city) !== String(stop.city)) {
+        throw ApiError.badRequest('Choose an activity from the same city as this stop');
+      }
       activity.activity = catalogActivity._id;
       activity.customName = '';
     }
@@ -148,6 +154,20 @@ export const reorderTripActivities = asyncHandler(async (req, res) => {
 
   if (owned.length !== orderedIds.length) {
     throw ApiError.badRequest('Some of those activities do not belong to this trip');
+  }
+
+  const dateKeys = new Set(owned.map((activity) => toDateKey(activity.date)));
+  if (dateKeys.size !== 1) {
+    throw ApiError.badRequest('Reorder activities one day at a time');
+  }
+
+  const dayKey = [...dateKeys][0];
+  const allForDay = (await TripActivity.find({ trip: trip._id }).lean()).filter(
+    (activity) => toDateKey(activity.date) === dayKey
+  );
+  const received = new Set(orderedIds.map(String));
+  if (allForDay.length !== orderedIds.length || allForDay.some((activity) => !received.has(String(activity._id)))) {
+    throw ApiError.badRequest('Send every activity for that day, in the new order');
   }
 
   await resequence(TripActivity, { trip: trip._id }, orderedIds);

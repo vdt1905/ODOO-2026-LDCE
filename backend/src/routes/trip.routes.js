@@ -10,6 +10,7 @@ import {
 } from '../validators/trip.validator.js';
 import stopRoutes from './stop.routes.js';
 import tripActivityRoutes from './tripActivity.routes.js';
+import memberRoutes from './member.routes.js';
 
 const router = Router();
 
@@ -42,6 +43,9 @@ router.post('/:tripId/share', tripController.shareTrip);
 router.delete('/:tripId/share', tripController.unshareTrip);
 
 router.post('/:tripId/copy', tripController.copyTripToMe);
+
+// The owner can invite editors or viewers. Nested before the generic trip id.
+router.use('/:tripId/members', memberRoutes);
 
 // Nested resources — /trips/:tripId/stops and /trips/:tripId/activities
 router.use('/:tripId/stops', stopRoutes);

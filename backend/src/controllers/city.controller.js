@@ -21,6 +21,20 @@ export const listCities = asyncHandler(async (req, res) => {
   if (country) filter.country = country;
   if (region) filter.region = region;
 
+  const maxCost = Number(req.query.maxCost);
+  if (req.query.maxCost !== '' && req.query.maxCost !== undefined && Number.isFinite(maxCost)) {
+    filter.costIndex = { $lte: maxCost };
+  }
+
+  const minPopularity = Number(req.query.minPopularity);
+  if (
+    req.query.minPopularity !== '' &&
+    req.query.minPopularity !== undefined &&
+    Number.isFinite(minPopularity)
+  ) {
+    filter.popularity = { $gte: minPopularity };
+  }
+
   const [items, total] = await Promise.all([
     City.find(filter)
       .sort(SORTS[sort] || SORTS.popularity)

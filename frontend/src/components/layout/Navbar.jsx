@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu, ShieldCheck, X } from 'lucide-react';
 
 import { cn } from '../../lib/cn.js';
 import { NAV_LINKS, ROUTES } from '../../lib/constants.js';
@@ -85,6 +85,16 @@ export const Navbar = ({ floating = false }) => {
           <div className="hidden items-center gap-2 md:flex">
             {user ? (
               <>
+                {user.role === 'admin' && (
+                  <Button
+                    to={ROUTES.admin}
+                    variant={solid ? 'ghost' : 'glass'}
+                    size="sm"
+                    leftIcon={<ShieldCheck className="size-3.5" />}
+                  >
+                    Admin
+                  </Button>
+                )}
                 <Button to={ROUTES.trips} variant={solid ? 'ghost' : 'glass'} size="sm">
                   My trips
                 </Button>
@@ -161,6 +171,17 @@ export const Navbar = ({ floating = false }) => {
             <div className="mt-2 flex flex-col gap-2 border-t border-line pt-3">
               {user ? (
                 <>
+                  {user.role === 'admin' && (
+                    <Button
+                      to={ROUTES.admin}
+                      variant="outline"
+                      fullWidth
+                      leftIcon={<ShieldCheck className="size-4" />}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Admin dashboard
+                    </Button>
+                  )}
                   <Button to={ROUTES.trips} variant="outline" fullWidth onClick={() => setMenuOpen(false)}>
                     My trips
                   </Button>

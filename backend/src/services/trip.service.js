@@ -4,7 +4,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { deleteImage } from './upload.service.js';
 
 /**
- * The single ownership guard for every trip-scoped route.
+ * The single access guard for every trip-scoped route.
  *
  * Returns 404 — not 403 — when the trip exists but belongs to someone else.
  * A 403 would confirm that a given id is a real trip, which is information a
@@ -12,21 +12,30 @@ import { deleteImage } from './upload.service.js';
  *
  * The client-side route guard is UX only; THIS is the security boundary.
  */
-export const loadOwnedTrip = async (tripId, userId, { select } = {}) => {
+export const loadOwnedTrip = async (
+  tripId,
+  userId,
+  { select, allowViewer = false, ownerOnly = false } = {}
+) => {
   if (!mongoose.isValidObjectId(tripId)) throw ApiError.notFound('Trip not found');
 
-  const query = Trip.findOne({ _id: tripId, user: userId });
+  const query = Trip.findById(tripId);
   if (select) query.select(select);
 
   const trip = await query;
   if (!trip) throw ApiError.notFound('Trip not found');
+  if (String(trip.user) === String(userId)) return trip;
 
-  return trip;
+  const membership = trip.members?.find((member) => String(member.user) === String(userId));
+  if (membership && !ownerOnly && (allowViewer || membership.role === 'editor')) return trip;
+
+  // Preserve the 404 response so a stranger cannot use ids to discover trips.
+  throw ApiError.notFound('Trip not found');
 };
 
 /** Loads a trip with its stops (→ city) and every activity (→ catalog entry). */
-export const loadTripGraph = async (tripId, userId) => {
-  const trip = await loadOwnedTrip(tripId, userId);
+export const loadTripGraph = async (tripId, userId, options = {}) => {
+  const trip = await loadOwnedTrip(tripId, userId, options);
 
   const [stops, activities] = await Promise.all([
     Stop.find({ trip: trip._id }).sort({ order: 1 }).populate('city').lean(),

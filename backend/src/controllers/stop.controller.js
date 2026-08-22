@@ -43,7 +43,7 @@ const loadCity = async (cityId) => {
 
 /** GET /trips/:tripId/stops */
 export const listStops = asyncHandler(async (req, res) => {
-  const trip = await loadOwnedTrip(req.params.tripId, req.user._id);
+  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, { allowViewer: true });
   const stops = await Stop.find({ trip: trip._id }).sort({ order: 1 }).populate('city').lean();
 
   return sendSuccess(res, { data: { items: stops } });
@@ -55,6 +55,11 @@ export const createStop = asyncHandler(async (req, res) => {
   const { cityId, order, ...payload } = req.body;
 
   const city = await loadCity(cityId);
+  if (trip.destinationCountry && city.country !== trip.destinationCountry) {
+    throw ApiError.unprocessable('Choose a city in the trip country', [
+      { field: 'cityId', message: `This trip is limited to cities in ${trip.destinationCountry}` },
+    ]);
+  }
 
   const siblings = await Stop.find({ trip: trip._id }).sort({ order: 1 });
   const nextOrder = order ?? siblings.length;
@@ -94,6 +99,11 @@ export const updateStop = asyncHandler(async (req, res) => {
   const { cityId, ...payload } = req.body;
   if (cityId) {
     const city = await loadCity(cityId);
+    if (trip.destinationCountry && city.country !== trip.destinationCountry) {
+      throw ApiError.unprocessable('Choose a city in the trip country', [
+        { field: 'cityId', message: `This trip is limited to cities in ${trip.destinationCountry}` },
+      ]);
+    }
     stop.city = city._id;
   }
   Object.assign(stop, payload);
@@ -161,7 +171,7 @@ export const reorderStops = asyncHandler(async (req, res) => {
  * drawer so a user cannot schedule an activity outside the stay.
  */
 export const stopDays = asyncHandler(async (req, res) => {
-  const trip = await loadOwnedTrip(req.params.tripId, req.user._id);
+  const trip = await loadOwnedTrip(req.params.tripId, req.user._id, { allowViewer: true });
 
   const stop = await Stop.findOne({ _id: req.params.stopId, trip: trip._id }).lean();
   if (!stop) throw ApiError.notFound('Stop not found');

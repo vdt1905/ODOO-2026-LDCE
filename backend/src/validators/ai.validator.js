@@ -20,5 +20,6 @@ export const generateTripSchema = z.object({
   travelers: z.number().int().min(1).max(20).optional().default(1),
   budgetLimit: z.number().min(0).max(1_000_000).optional().default(2000),
   currency: z.string().trim().length(3).toUpperCase().optional().default('USD'),
+  destinationCountry: z.string().trim().min(1, 'Choose a country').max(100).optional(),
   pace: z.enum(['relaxed', 'balanced', 'packed']).optional().default('balanced'),
 });

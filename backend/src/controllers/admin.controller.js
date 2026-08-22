@@ -246,6 +246,8 @@ export const deleteUser = asyncHandler(async (req, res) => {
     await deleteTripCascade(trip);
   }
 
+  await Trip.updateMany({ 'members.user': user._id }, { $pull: { members: { user: user._id } } });
+
   await user.deleteOne();
 
   return sendSuccess(res, {

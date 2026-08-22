@@ -31,6 +31,7 @@ export const createTripSchema = z
     coverPhotoUrl: z.string().trim().optional().default(''),
     budgetLimit: money('Budget limit').nullable().optional(),
     currency: z.string().trim().length(3, 'Use a 3-letter currency code').toUpperCase().optional().default('USD'),
+    destinationCountry: z.string().trim().min(1, 'Choose a country').max(100).optional(),
     // Cities the user pre-selected on the create screen — turned into stops.
     cityIds: z.array(z.string()).max(20, 'That is a lot of cities for one trip').optional(),
   })
@@ -48,6 +49,7 @@ export const updateTripSchema = z
     coverPhotoUrl: z.string().trim().optional(),
     budgetLimit: money('Budget limit').nullable().optional(),
     currency: z.string().trim().length(3).toUpperCase().optional(),
+    destinationCountry: z.string().trim().min(1, 'Choose a country').max(100).optional(),
   })
   .strict()
   .refine((data) => Object.keys(data).length > 0, { message: 'Nothing to update' })

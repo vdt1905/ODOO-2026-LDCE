@@ -45,4 +45,11 @@ export const userApi = {
 
   deleteImage: (publicId) =>
     api.delete(`/users/me/images/${publicId}`).then((r) => r.data.data.removed),
+
+  changePassword: (payload) => api.post('/users/me/password', payload).then((r) => r.data),
+  savedDestinations: () => api.get('/users/me/saved').then((r) => r.data.data.items),
+  saveDestination: (cityId) => api.post(`/users/me/saved/${cityId}`).then((r) => r.data.data.items),
+  unsaveDestination: (cityId) =>
+    api.delete(`/users/me/saved/${cityId}`).then((r) => r.data.data.items),
+  deleteAccount: (password) => api.delete('/users/me', { data: { password } }).then((r) => r.data.data),
 };

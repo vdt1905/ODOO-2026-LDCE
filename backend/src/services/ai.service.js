@@ -96,6 +96,7 @@ const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const resolveCity = async (aiStop) => {
   const exact = await City.findOne({
     name: new RegExp(`^${escapeRegex(aiStop.cityName)}$`, 'i'),
+    country: new RegExp(`^${escapeRegex(aiStop.country)}$`, 'i'),
   });
   if (exact) return exact;
 
@@ -147,7 +148,7 @@ const resolveActivity = async (aiActivity, cityId) => {
  * is exactly why it is safe to demo.
  */
 export const generateTrip = async ({ userId, input }) => {
-  const { prompt, startDate, days, travelers, budgetLimit, currency, pace } = input;
+  const { prompt, startDate, days, travelers, budgetLimit, currency, destinationCountry, pace } = input;
 
   const maxStops = Math.max(1, Math.floor(days / 3));
 
@@ -161,7 +162,7 @@ export const generateTrip = async ({ userId, input }) => {
       travelers,
       maxStops,
     }),
-    userPrompt: `USER BRIEF: ${prompt}`,
+    userPrompt: `${destinationCountry ? `TRIP COUNTRY: ${destinationCountry}. Every stop must be in this country.\n` : ''}USER BRIEF: ${prompt}`,
     responseSchema: TRIP_RESPONSE_SCHEMA,
   });
 
@@ -179,6 +180,10 @@ export const generateTrip = async ({ userId, input }) => {
   }
 
   const plan = parsed.data;
+
+  if (destinationCountry && plan.stops.some((stop) => stop.country.toLowerCase() !== destinationCountry.toLowerCase())) {
+    throw new ApiError(502, `The planner returned a city outside ${destinationCountry}. Please try again.`);
+  }
 
   /* 3 — reconcile */
   reconcileNights(plan.stops, days);
@@ -212,6 +217,7 @@ export const generateTrip = async ({ userId, input }) => {
     endDate: addDays(tripStart, totalNights),
     budgetLimit: budgetLimit ?? null,
     currency: plan.currency || currency,
+    destinationCountry: destinationCountry || '',
   });
 
   try {

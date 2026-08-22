@@ -13,8 +13,6 @@ import { buildItinerary } from '../services/itinerary.service.js';
 const publicOwner = (user) => ({
   firstName: user?.firstName || 'A traveller',
   avatarUrl: user?.avatarUrl || '',
-  city: user?.city || '',
-  country: user?.country || '',
 });
 
 const publicTripSummary = (trip, extra = {}) => ({
@@ -37,7 +35,7 @@ const publicTripSummary = (trip, extra = {}) => ({
 export const getPublicTrip = asyncHandler(async (req, res) => {
   const trip = await Trip.findOne({ publicSlug: req.params.slug, isPublic: true }).populate(
     'user',
-    'firstName avatarUrl city country'
+    'firstName avatarUrl'
   );
 
   if (!trip) throw ApiError.notFound('That itinerary is private or no longer exists');
@@ -99,7 +97,7 @@ export const listPublicTrips = asyncHandler(async (req, res) => {
       .sort(SORTS[sort] || SORTS.recent)
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate('user', 'firstName avatarUrl city country')
+      .populate('user', 'firstName avatarUrl')
       .lean(),
     Trip.countDocuments(filter),
   ]);

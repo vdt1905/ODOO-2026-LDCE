@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar.jsx';
 import { Footer } from './Footer.jsx';
+import { useAuthStore } from '../../store/authStore.js';
 
 /**
  * Shell for every page that has the site chrome.
@@ -9,7 +10,8 @@ import { Footer } from './Footer.jsx';
  */
 export const MainLayout = () => {
   const { pathname } = useLocation();
-  const isLanding = pathname === '/';
+  const user = useAuthStore((state) => state.user);
+  const isLanding = pathname === '/' && !user;
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">

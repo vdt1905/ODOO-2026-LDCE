@@ -58,6 +58,7 @@ export const updateTripSchema = z
 
 export const listTripsQuerySchema = z.object({
   status: z.enum(['ongoing', 'upcoming', 'completed']).optional(),
+  visibility: z.enum(['public']).optional(),
   search: z.string().trim().max(120).optional().default(''),
   sort: z.enum(['recent', 'oldest', 'name', 'start-asc', 'start-desc']).optional().default('start-desc'),
   page: z.coerce.number().int().min(1).optional().default(1),

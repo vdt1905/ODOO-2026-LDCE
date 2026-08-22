@@ -13,9 +13,11 @@
 | Auth API — register / login / refresh / logout / me / forgot / reset | ✅ done & smoke-tested |
 | City catalog API + 30 seeded cities + demo accounts | ✅ done |
 | Cloudinary image uploads — avatars + generic images, live-tested | ✅ done |
+| Trip API — list / stats / create (auto-seeds stops) / read / update / delete | ✅ done & tested |
 | Frontend shell — theme tokens, UI kit, routing, Zustand auth store | ✅ done |
 | **9.1** Login & Signup screens | ✅ done |
-| **9.2** Landing page (hero, destinations, how-it-works, budget preview, CTA) | ✅ done |
+| **9.2** Landing — marketing when signed out, **dashboard when signed in** | ✅ done |
+| **9.3** Create Trip screen | ✅ done |
 | Everything else in §9 | ⬜ next — routed to an honest `ComingSoon` placeholder so no link dead-ends |
 
 Sign in with the seeded accounts: `demo@globetrotter.com / Demo@1234` · `admin@globetrotter.com / Admin@123`
@@ -100,14 +102,14 @@ ODOO-LDCE/
 ├── backend/
 │   ├── .env / .env.example        ✅
 │   └── src/
-│       ├── config/                ✅ env.js, db.js            ⬜ cloudinary.js
+│       ├── config/                ✅ env.js, db.js, cloudinary.js
 │       ├── models/                ✅ User, City, Activity, Trip, Stop, TripActivity, index.js
 │       ├── middleware/            ✅ auth, validate, error, rateLimit
-│       ├── validators/            ✅ auth.validator.js        ⬜ trip, stop, activity
-│       ├── controllers/           ✅ auth, city               ⬜ trip, stop, user, admin
-│       ├── services/              ✅ token.service.js         ⬜ budget, itinerary, copyTrip
-│       ├── routes/                ✅ index, auth, city        ⬜ trip, stop, public, admin
-│       ├── utils/                 ✅ ApiError, apiResponse, asyncHandler
+│       ├── validators/            ✅ auth, user, trip         ⬜ stop, activity
+│       ├── controllers/           ✅ auth, city, user, trip   ⬜ stop, admin
+│       ├── services/              ✅ token, upload, trip      ⬜ budget, itinerary, copyTrip
+│       ├── routes/                ✅ index, auth, city, user, trip  ⬜ stop, public, admin
+│       ├── utils/                 ✅ ApiError, apiResponse, asyncHandler, dates, escapeRegex
 │       ├── seed/                  ✅ cities.json (30), seed.js
 │       ├── app.js  server.js      ✅
 │       └── package.json           ✅
@@ -115,20 +117,23 @@ ODOO-LDCE/
     ├── .env / .env.example        ✅
     └── src/
         ├── index.css              ✅ @theme design tokens (Tailwind v4)
-        ├── api/                   ✅ client.js (axios + silent refresh), auth.api.js, city.api.js
+        ├── api/                   ✅ client.js (axios + silent refresh), auth, city, user, trip
         ├── store/                 ✅ authStore.js             ⬜ builderStore.js
-        ├── lib/                   ✅ cn.js, constants.js, validation.js
-        ├── hooks/                 ✅ usePageTitle, usePopularCities
+        ├── lib/                   ✅ cn, constants, validation, dates, format, env
+        ├── hooks/                 ✅ usePageTitle, usePopularCities, useTrips, useCityCatalog, useDebouncedValue
         ├── components/
-        │   ├── ui/                ✅ Button, Input/PasswordInput/TextArea, Field,
-        │   │                         Alert, Badge, Logo, AvatarUpload, Spinner
+        │   ├── ui/                ✅ Button, Input/PasswordInput/TextArea, Select, Field,
+        │   │                         Alert, Badge, Logo, AvatarUpload, Spinner,
+        │   │                         EmptyState, ConfirmDialog
         │   ├── layout/            ✅ Navbar, Footer, MainLayout, RouteGuards, ScrollToTop
         │   ├── auth/              ✅ AuthLayout
-        │   ├── landing/           ✅ Hero, HeroScene, CityCard, DestinationRail,
+        │   ├── landing/           ✅ Hero, HeroScene, HeroSearch, CityCard, DestinationRail,
         │   │                         HowItWorks, BudgetPreview, CtaBand
-        │   ├── trip/              ⬜ TripCard, StopCard, ActivityCard, BudgetBar
+        │   ├── dashboard/         ✅ DashboardHero, BudgetHighlights, DestinationBoard,
+        │   │                         TripToolbar, TripBoard, PlanTripFab
+        │   ├── trip/              ✅ TripCard   ⬜ StopCard, ActivityCard, BudgetBar
         │   └── charts/            ⬜ BudgetPie, BudgetBar, DailySpendLine
-        ├── pages/                 ✅ Landing, Login, Register, ComingSoon, NotFound
+        ├── pages/                 ✅ Landing, Dashboard, CreateTrip, Login, Register, ComingSoon, NotFound
         ├── routes.jsx  App.jsx  main.jsx  ✅
         └── package.json           ✅
 ```
@@ -287,13 +292,19 @@ Base: `/api/v1`. Every response wraps as `{ success, data, message }`; errors as
 | POST/DELETE | `/me/saved/:cityId` | ⬜ saved destinations |
 
 ### Trips — `/trips` *(all auth-protected, all ownership-checked)*
+
+`✅` live · `⬜` planned. Ownership is re-checked in the controller on every
+single-trip route; a trip that belongs to someone else 404s rather than 403s, so
+the API never confirms that an id exists.
+
 | Method | Path | Notes |
 | --- | --- | --- |
-| GET | `/` | `?status=ongoing\|upcoming\|completed&search=&sort=&page=` |
-| POST | `/` | create; validates end ≥ start |
-| GET | `/:id` | full populate: stops → city, tripActivities → activity |
-| PATCH | `/:id` | edit basics |
-| DELETE | `/:id` | cascades to stops + tripActivities |
+| ✅ GET | `/` | `?status=all\|ongoing\|upcoming\|completed&visibility=&search=&sort=&page=&limit=`. Status is derived from dates, so it is translated to a date filter using the same UTC day boundaries as the `status` virtual. Bad values fall back to defaults instead of 422-ing. Each item carries `stopCount`, `nights`, `cityNames`, `estimatedTotal` and a category `breakdown` |
+| ✅ GET | `/stats` | dashboard totals: `plannedTotal`, `tripCount`, `cityCount`, per-status counts, `nextTrip` |
+| ✅ POST | `/` | create; validates end ≥ start and ≤ 365 days. Optional `cityIds[]` become dated stops in the same request — see `seedStopsFromCities` |
+| ✅ GET | `/:id` | the trip plus its rollup |
+| ✅ PATCH | `/:id` | edit basics; `.strict()` so unknown keys are rejected |
+| ✅ DELETE | `/:id` | cascades to stops + tripActivities |
 | PATCH | `/:id/cover` | multipart cover photo |
 | GET | `/:id/budget` | full breakdown + per-day spend + overbudget flags |
 | GET | `/:id/itinerary` | day-by-day array, ready to render |
@@ -415,19 +426,30 @@ Split layout: full-bleed travel photo on the left, form card on the right. Login
 - **Details:** react-hook-form + zod, inline field errors, password strength hint, show/hide toggle, disabled + spinner button while submitting, toast on failure, redirect to `/` on success
 - **Done when:** a fresh user can register, gets bounced out on refresh-with-no-token, and can log back in
 
-### 9.2 Dashboard / Landing — `/` · **P0** · *(mockup screen 3)*
-Hero banner with a headline and a prominent search bar. Below it: **Top Regional Selections** (horizontal scroll of popular city cards), **Your Upcoming Trips** (next 3, with a countdown badge), **Previous Trips**, a **budget highlight** strip ("You've planned $4,320 across 3 trips"), and a floating **+ Plan a Trip** button bottom-right.
+### 9.2 Dashboard / Landing — `/` · **P0** · *(mockup screen 3)* · ✅ **built**
+`/` is two screens on one route. Signed out it is the marketing page (hero, search bar, destination rail, how-it-works, budget preview, CTA). Signed in it swaps to the dashboard, because a returning user wants their trips, not the pitch they already accepted.
 
-- **Calls:** `GET /cities/popular`, `GET /trips?limit=6`
-- **Details:** logged-out visitors see the hero + popular cities + a "Get started" CTA instead of trip sections. Skeleton cards while loading.
+The dashboard: a full-bleed banner with the welcome message, **+ Plan a new trip**, and a destination search; a **budget-highlight** row (planned spend / cities / upcoming / next departure); **Top Regional Selections**; then **Your trips** under the search · group by · filter · sort controls; and the floating **+ Plan a trip** button bottom-right.
+
+- **Calls:** `GET /trips/stats`, `GET /trips?...`, `GET /cities/popular`, `GET /cities?search=`, `DELETE /trips/:id`
+- **Details:**
+  - The banner search filters the city rail **in place** rather than navigating to a results page, and clicking a city opens Create Trip with it pre-selected (`/trips/new?city=<id>`) — so the search always leads somewhere useful.
+  - Search / filter / sort are server params (search debounced 300ms); **grouping is client-side**, since it only changes how the same trips are stacked.
+  - Budget tiles sit on canvas, not on the banner: the illustration fades to cream at its foot and white-on-cream is not readable.
+  - Every list has three states — skeleton, empty-with-a-CTA, and error-with-a-message — and the empty state differs when a filter is on ("no trips match that") from when the account is genuinely new ("no trips yet").
+  - Deleting a trip goes through a `<dialog>` confirm and cascades server-side.
 - **Done when:** it's a genuinely good first screenshot — this is the judges' first impression
 
-### 9.3 Create Trip — `/trips/new` · **P0** · *(mockup screen 4)*
-Centered card form: trip name, description, start date, end date, cover photo dropzone, optional budget limit. Below the form, a "Suggestions for places to visit" grid of popular cities the user can pre-select — selected ones become stops immediately on save.
+### 9.3 Create Trip — `/trips/new` · **P0** · *(mockup screen 4)* · ✅ **built**
+Two-column card: trip name, description, start/end dates, budget limit + currency on the left; the cover-photo dropzone on the right. Below them, a searchable **"Suggestions for places to visit"** grid — ticked cities become dated stops on save, in the order they were picked.
 
-- **Calls:** `POST /trips`, `POST /trips/:id/stops`, `GET /cities/popular`
-- **Details:** zod refine that `endDate >= startDate`; cover photo previews client-side before upload; on save go straight to `/trips/:id/build` so the flow never dead-ends
-- **Done when:** creating a trip lands you in the builder with any pre-picked cities already listed
+- **Calls:** `GET /cities/popular`, `GET /cities?search=`, `GET /cities/:id` (for `?city=`), `POST /users/me/images?kind=tripCover`, `POST /trips`
+- **Details:**
+  - **One write, not two.** `cityIds` travels with `POST /trips` and the server creates the stops in the same request, so the browser closing mid-flow cannot leave a trip without the stops the user asked for. If a city id is bad, the whole trip is rolled back rather than half-created.
+  - Stops split the trip window evenly (11 nights over 3 cities → 4/4/3) and **share their boundary day** — you arrive in Rome the day you leave Paris — so the day-wise itinerary has no gaps. Each one is seeded with an opening budget from the city's `costIndex` (see `COST_MODEL` in `trip.service.js`) so the budget screen is meaningful immediately.
+  - The cover is uploaded to Cloudinary *before* the trip is created, so the trip is saved with its final URL. If that upload fails — including the 503 you get with no Cloudinary keys — the trip is still created and the reason is carried to the dashboard in router state, so it is read where the user lands instead of flashing on a page that is unmounting.
+  - The start date has no `min`: a past trip is legitimate (the app has a Completed status). The end date's `min` is the start date, the one thing that is genuinely invalid.
+- **Done when:** creating a trip lands you back on the dashboard with it highlighted in the list, its cities as stops and a real cost estimate — and it will land you in the builder instead once §9.5 exists
 
 ### 9.4 My Trips — `/trips` · **P1** · *(mockup screen 6)*
 Search bar + Group by / Filter / Sort controls, then trips grouped under **Ongoing**, **Upcoming**, **Completed** headings. Each card: cover image, name, date range, destination count, total budget, and view / edit / delete actions.

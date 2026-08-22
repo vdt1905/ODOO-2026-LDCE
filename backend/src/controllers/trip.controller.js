@@ -2,7 +2,8 @@ import { City, Stop, Trip, TripActivity } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendCreated, sendSuccess } from '../utils/apiResponse.js';
-import { addDays, differenceInDays } from '../utils/dates.js';
+import { addDays, differenceInDays, startOfUTCDay } from '../utils/dates.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 import { publicSlug } from '../utils/slug.js';
 import { deleteTripCascade, loadOwnedTrip, loadTripGraph } from '../services/trip.service.js';
 import { buildBudget } from '../services/budget.service.js';
@@ -24,15 +25,20 @@ const SORTS = {
  * Keep this in sync with the virtual on the Trip model.
  */
 const statusOf = (trip) => {
-  const today = new Date();
-  if (trip.endDate < today) return 'completed';
-  if (trip.startDate > today) return 'upcoming';
+  const today = startOfUTCDay(new Date());
+  if (startOfUTCDay(trip.endDate) < today) return 'completed';
+  if (startOfUTCDay(trip.startDate) > today) return 'upcoming';
   return 'ongoing';
 };
 
-/** Turns ?status= into a date filter — `status` is a virtual, so it can't be queried. */
+/**
+ * Turns ?status= into a date filter — `status` is a virtual, so it can't be queried.
+ * Compared at the UTC day boundary, matching the Trip model's virtual: a trip
+ * whose last day is today is still ongoing, and must not drop out of the
+ * "Ongoing" filter just because the clock passed midnight UTC of that day.
+ */
 const statusFilter = (status) => {
-  const today = new Date();
+  const today = startOfUTCDay(new Date());
   if (status === 'completed') return { endDate: { $lt: today } };
   if (status === 'upcoming') return { startDate: { $gt: today } };
   if (status === 'ongoing') return { startDate: { $lte: today }, endDate: { $gte: today } };
@@ -41,10 +47,11 @@ const statusFilter = (status) => {
 
 /** GET /trips */
 export const listTrips = asyncHandler(async (req, res) => {
-  const { status, search, sort, page, limit } = req.query;
+  const { status, visibility, search, sort, page, limit } = req.query;
 
   const filter = { user: req.user._id, ...statusFilter(status) };
-  if (search) filter.name = { $regex: search, $options: 'i' };
+  if (visibility === 'public') filter.isPublic = true;
+  if (search) filter.name = { $regex: escapeRegex(search), $options: 'i' };
 
   const [trips, total] = await Promise.all([
     Trip.find(filter)
@@ -55,30 +62,112 @@ export const listTrips = asyncHandler(async (req, res) => {
     Trip.countDocuments(filter),
   ]);
 
-  // One grouped query for the counts, rather than N queries inside a map.
+  // One grouped query each — stops (with city names, for the card's "Paris,
+  // Rome" line) and activity costs — rather than N queries inside a map.
   const ids = trips.map((trip) => trip._id);
-  const [stopCounts, activityCounts] = await Promise.all([
-    Stop.aggregate([{ $match: { trip: { $in: ids } } }, { $group: { _id: '$trip', count: { $sum: 1 } } }]),
+  const [stops, activityCounts] = await Promise.all([
+    Stop.find({ trip: { $in: ids } })
+      .select('trip city order startDate endDate transportCost accommodationCost mealBudgetPerDay')
+      .sort('order')
+      .populate('city', 'name')
+      .lean(),
     TripActivity.aggregate([
       { $match: { trip: { $in: ids } } },
       { $group: { _id: '$trip', count: { $sum: 1 }, cost: { $sum: '$cost' } } },
     ]),
   ]);
 
-  const stopsBy = Object.fromEntries(stopCounts.map((row) => [String(row._id), row.count]));
+  const stopsBy = new Map();
+  stops.forEach((stop) => {
+    const key = String(stop.trip);
+    if (!stopsBy.has(key)) stopsBy.set(key, []);
+    stopsBy.get(key).push(stop);
+  });
   const actsBy = Object.fromEntries(activityCounts.map((row) => [String(row._id), row]));
 
-  const items = trips.map((trip) => ({
-    ...trip,
-    status: statusOf(trip),
-    stopCount: stopsBy[String(trip._id)] || 0,
-    activityCount: actsBy[String(trip._id)]?.count || 0,
-    plannedCost: actsBy[String(trip._id)]?.cost || 0,
-    days: differenceInDays(trip.endDate, trip.startDate) + 1,
-  }));
+  const items = trips.map((trip) => {
+    const tripStops = stopsBy.get(String(trip._id)) || [];
+    // Same formula as budget.service.js's `total`, minus the day-by-day spread
+    // a list card has no use for — so this figure never disagrees with the
+    // budget screen for the same trip.
+    const stopCost = tripStops.reduce((sum, stop) => {
+      const nights = Math.max(0, differenceInDays(stop.endDate, stop.startDate));
+      return (
+        sum + (stop.transportCost || 0) + (stop.accommodationCost || 0) + (stop.mealBudgetPerDay || 0) * nights
+      );
+    }, 0);
+    const activityCost = actsBy[String(trip._id)]?.cost || 0;
+
+    return {
+      ...trip,
+      status: statusOf(trip),
+      stopCount: tripStops.length,
+      cityNames: tripStops.map((stop) => stop.city?.name).filter(Boolean),
+      activityCount: actsBy[String(trip._id)]?.count || 0,
+      plannedCost: activityCost,
+      estimatedTotal: Math.round((stopCost + activityCost) * 100) / 100,
+      days: differenceInDays(trip.endDate, trip.startDate) + 1,
+      nights: differenceInDays(trip.endDate, trip.startDate),
+    };
+  });
 
   return sendSuccess(res, {
     data: { items, total, page, pages: Math.ceil(total / limit) || 1 },
+  });
+});
+
+/** GET /trips/stats — totals for the dashboard's budget strip, unfiltered by list controls. */
+export const tripStats = asyncHandler(async (req, res) => {
+  const trips = await Trip.find({ user: req.user._id })
+    .select('name startDate endDate currency')
+    .lean();
+
+  const ids = trips.map((trip) => trip._id);
+  const [stops, activityCosts] = await Promise.all([
+    Stop.find({ trip: { $in: ids } })
+      .select('city startDate endDate transportCost accommodationCost mealBudgetPerDay')
+      .lean(),
+    TripActivity.aggregate([{ $match: { trip: { $in: ids } } }, { $group: { _id: null, cost: { $sum: '$cost' } } }]),
+  ]);
+
+  // "Planned spend" must match the sum of the cards below it, so it uses the
+  // same stop-cost formula as listTrips rather than counting activities alone.
+  const stopCost = stops.reduce((sum, stop) => {
+    const nights = Math.max(0, differenceInDays(stop.endDate, stop.startDate));
+    return sum + (stop.transportCost || 0) + (stop.accommodationCost || 0) + (stop.mealBudgetPerDay || 0) * nights;
+  }, 0);
+  const cityCount = new Set(stops.map((stop) => String(stop.city))).size;
+
+  let upcomingCount = 0;
+  let ongoingCount = 0;
+  let completedCount = 0;
+  let nextTrip = null;
+
+  trips.forEach((trip) => {
+    const status = statusOf(trip);
+    if (status === 'upcoming') {
+      upcomingCount += 1;
+      if (!nextTrip || trip.startDate < nextTrip.startDate) nextTrip = trip;
+    } else if (status === 'ongoing') {
+      ongoingCount += 1;
+    } else {
+      completedCount += 1;
+    }
+  });
+
+  return sendSuccess(res, {
+    data: {
+      stats: {
+        tripCount: trips.length,
+        upcomingCount,
+        ongoingCount,
+        completedCount,
+        cityCount,
+        plannedTotal: Math.round((stopCost + (activityCosts[0]?.cost || 0)) * 100) / 100,
+        currency: trips[0]?.currency || 'USD',
+        nextTrip: nextTrip ? { name: nextTrip.name, startDate: nextTrip.startDate } : null,
+      },
+    },
   });
 });
 

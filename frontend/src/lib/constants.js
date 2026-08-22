@@ -6,6 +6,9 @@ export const ROUTES = {
   forgotPassword: '/forgot-password',
   trips: '/trips',
   newTrip: '/trips/new',
+  trip: (id) => `/trips/${id}`,
+  tripBuilder: (id) => `/trips/${id}/build`,
+  tripBudget: (id) => `/trips/${id}/budget`,
   cities: '/cities',
   activities: '/activities',
   community: '/community',
@@ -48,3 +51,65 @@ export const FALLBACK_CITIES = [
   { _id: 'f5', name: 'Lisbon', country: 'Portugal', region: 'Europe', costIndex: 52, popularity: 86 },
   { _id: 'f6', name: 'Queenstown', country: 'New Zealand', region: 'Oceania', costIndex: 76, popularity: 82 },
 ];
+
+/* -------------------------------------------------------------------------
+   Trip list controls — shared by the dashboard and, later, the My Trips
+   screen. `value` is exactly what the API expects, so a control can be wired
+   straight to a query param with no translation layer in between.
+------------------------------------------------------------------------- */
+
+/** Sent as ?status= / ?visibility=. */
+export const TRIP_FILTERS = [
+  { value: 'all', label: 'All trips' },
+  { value: 'ongoing', label: 'On the road' },
+  { value: 'upcoming', label: 'Upcoming' },
+  { value: 'completed', label: 'Past trips' },
+  { value: 'public', label: 'Shared publicly' },
+];
+
+/** Sent as ?sort=. */
+export const TRIP_SORTS = [
+  { value: 'soonest', label: 'Date · soonest' },
+  { value: 'latest', label: 'Date · latest' },
+  { value: 'recent', label: 'Recently added' },
+  { value: 'name', label: 'Name · A to Z' },
+];
+
+/** Purely presentational, so grouping happens on the client. */
+export const TRIP_GROUPS = [
+  { value: 'status', label: 'Status' },
+  { value: 'month', label: 'Departure month' },
+  { value: 'none', label: 'Nothing' },
+];
+
+/** Order and copy for the status headings, plus the badge tone each one uses. */
+export const TRIP_STATUS_META = {
+  ongoing: { label: 'On the road', tone: 'moss', blurb: 'Happening right now.' },
+  upcoming: { label: 'Upcoming', tone: 'clay', blurb: 'Packed and waiting.' },
+  completed: { label: 'Past trips', tone: 'neutral', blurb: 'Been there.' },
+};
+
+export const TRIP_STATUS_ORDER = ['ongoing', 'upcoming', 'completed'];
+
+/** Matches City.REGIONS on the server. */
+export const REGIONS = [
+  'Europe',
+  'Asia',
+  'North America',
+  'South America',
+  'Africa',
+  'Oceania',
+];
+
+/** Currencies offered on the Create Trip form. One base currency per trip. */
+export const CURRENCIES = [
+  { value: 'USD', label: 'USD · US dollar' },
+  { value: 'EUR', label: 'EUR · Euro' },
+  { value: 'GBP', label: 'GBP · Pound sterling' },
+  { value: 'INR', label: 'INR · Indian rupee' },
+  { value: 'JPY', label: 'JPY · Japanese yen' },
+  { value: 'AUD', label: 'AUD · Australian dollar' },
+];
+
+/** Cap enforced by the API's createTripSchema — mirrored for instant feedback. */
+export const MAX_SEED_CITIES = 12;

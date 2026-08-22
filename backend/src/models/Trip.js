@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { startOfUTCDay } from '../utils/dates.js';
 
 const { Schema, model } = mongoose;
 
@@ -47,11 +48,22 @@ tripSchema.virtual('stops', {
   options: { sort: { order: 1 } },
 });
 
-/** 'upcoming' | 'ongoing' | 'completed', derived from today — never stored. */
+/**
+ * 'upcoming' | 'ongoing' | 'completed', derived from today — never stored.
+ *
+ * Compared at UTC day boundaries, not by instant: a trip whose last day is
+ * today is still *ongoing*, and it must not flip to completed just because the
+ * server clock has passed midnight-UTC-of-that-day.
+ *
+ * trip.controller.js filters by the same boundaries, so the list a user asks
+ * for and the badge on the card can never disagree.
+ */
 tripSchema.virtual('status').get(function () {
-  const today = new Date();
-  if (this.endDate && this.endDate < today) return 'completed';
-  if (this.startDate && this.startDate > today) return 'upcoming';
+  if (!this.startDate || !this.endDate) return 'upcoming';
+
+  const today = startOfUTCDay(new Date());
+  if (startOfUTCDay(this.endDate) < today) return 'completed';
+  if (startOfUTCDay(this.startDate) > today) return 'upcoming';
   return 'ongoing';
 });
 

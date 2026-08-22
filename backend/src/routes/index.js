@@ -11,7 +11,7 @@ import aiRoutes from './ai.routes.js';
 const router = Router();
 
 router.get('/health', (_req, res) =>
-  res.json({ success: true, message: 'GlobeTrotter API is up', data: { uptime: process.uptime() } })
+  res.json({ success: true, message: 'TRIPORA API is up', data: { uptime: process.uptime() } })
 );
 
 router.use('/auth', authRoutes);
